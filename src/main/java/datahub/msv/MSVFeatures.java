@@ -39,7 +39,7 @@ public class MSVFeatures {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 BlockPos blockPos = BlockPos.ofFloored(player.getX(), player.getEyeY(), player.getZ());
                 if (player.isWet() && player.getCommandTags().contains("hydrofob")) {
-                    player.damage(player.getDamageSources().generic(), 1.5F);
+                    player.damage(NewDamage.createDamageSource(player.getWorld(), NewDamage.RAIN), 1.5F);
                 }
                 else if (player.getWorld().isDay() && player.getWorld().isSkyVisibleAllowingSea(blockPos) && player.getCommandTags().contains("vampire")) {
                     player.setFireTicks(20);
