@@ -25,12 +25,12 @@ import java.util.Objects;
 
 import static net.minecraft.component.DataComponentTypes.CUSTOM_DATA;
 
-public class TestFeatures {
+public class MSVFeatures {
     public static void registerModFeatures() {
         Main.LOGGER.info("Registering mod for" + Main.MOD_ID);
-        TestFeatures.waterDamageBurning();
-        TestFeatures.electrolysing();
-        TestFeatures.zombieEating();
+        MSVFeatures.waterDamageBurning();
+        MSVFeatures.electrolysing();
+        MSVFeatures.zombieEating();
 
     }
 
