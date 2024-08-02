@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "datahub.msv.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"AllowDataEditMixin",
+		"ExampleMixin",
+		"PlayerEntityMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
