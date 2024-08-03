@@ -17,7 +17,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
@@ -29,7 +28,7 @@ import static net.minecraft.component.DataComponentTypes.CUSTOM_DATA;
 
 public class Features {
     public static void registerModFeatures() {
-        Main.LOGGER.info("Registering MSVFeatures for" + Main.MOD_ID);
+        Main.LOGGER.info("Registering Features for" + Main.MOD_ID);
         Features.waterDmgAndBurning();
         Features.electrolysing();
         Features.zombieEating();
@@ -79,7 +78,7 @@ public class Features {
                     return ActionResult.PASS;
                 }
 
-                if (!world.isClient && player.getHungerManager().isNotFull()) {
+                if (player.getHungerManager().isNotFull()) {
                     if (world instanceof ServerWorld) {
                         ((ServerWorld) world).spawnParticles(ParticleTypes.CRIMSON_SPORE, entity.getX(), entity.getY(), entity.getZ(), 5, 0.25, 0.5, 0.25, 0);
                     }
@@ -98,11 +97,8 @@ public class Features {
     }
 
     public static boolean checkHazmat(PlayerEntity player) {
-        PlayerInventory inventory = player.getInventory();
-
         for (int i = 3; i >= 0; i--) {
-            ItemStack armorPiece = inventory.armor.get(i);
-            ComponentMap nbt = armorPiece.getComponents();
+            ComponentMap nbt = player.getInventory().armor.get(i).getComponents();
             if (Objects.requireNonNull(nbt.get(CUSTOM_DATA)).contains("hazmat")) {
                 return false;
             }
