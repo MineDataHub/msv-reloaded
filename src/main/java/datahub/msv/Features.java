@@ -17,11 +17,13 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 import static net.minecraft.component.DataComponentTypes.CUSTOM_DATA;
 
@@ -34,20 +36,27 @@ public class Features {
 
     }
 
+    private static int tickCounter = 0;
+
     public static void waterDmgAndBurning() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                BlockPos blockPos = BlockPos.ofFloored(player.getX(), player.getEyeY(), player.getZ());
-                if (player.isWet() && player.getCommandTags().contains("hydrofob")) {
-                    player.damage(MSVDamage.createDamageSource(player.getWorld(), MSVDamage.WATER), 1.5F);
-                }
-                if (player.getWorld().isDay() && player.getWorld().isSkyVisibleAllowingSea(blockPos) && player.getCommandTags().contains("vampire")) {
-                    player.setFireTicks(20);
+            tickCounter++;
+            if (tickCounter >= 10) {
+                tickCounter = 0;
+
+                for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                    BlockPos blockPos = BlockPos.ofFloored(player.getX(), player.getEyeY(), player.getZ());
+                    if (player.isWet() && player.getCommandTags().contains("hydrofob")) {
+                        player.damage(MSVDamage.createDamageSource(player.getWorld(), MSVDamage.WATER), 1.5F);
+                    }
+                    if (player.getWorld().isDay() && player.getWorld().isSkyVisibleAllowingSea(blockPos) && player.getCommandTags().contains("vampire")) {
+                        player.setFireTicks(20);
+                    }
                 }
             }
         });
     }
-// player.setVelocity(player.getVelocity().x, 0, player.getVelocity().z);
+
     public static void electrolysing() {
         EntityElytraEvents.ALLOW.register(entity -> {
             if (entity instanceof PlayerEntity player) {
@@ -106,5 +115,24 @@ public class Features {
                 LiteralArgumentBuilder.<ServerCommandSource>literal("spawnZombie")
                         .executes(SpawnInfZombie::spawnZombie)
         );
+    }
+
+    public static void dropItem(PlayerEntity player) {
+        Random random = new Random();
+
+        ItemStack stackToDrop;
+        if (random.nextBoolean()) {
+            stackToDrop = player.getOffHandStack();
+            if (stackToDrop.isEmpty()) {
+                return;
+            }
+        } else {
+            stackToDrop = player.getMainHandStack();
+            if (stackToDrop.isEmpty()) {
+                return;
+            }
+        }
+
+        player.dropItem(stackToDrop.split(1), false);
     }
 }
