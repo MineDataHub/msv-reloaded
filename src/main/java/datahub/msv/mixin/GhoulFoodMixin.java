@@ -27,7 +27,7 @@ public abstract class GhoulFoodMixin {
         LivingEntity entity = (LivingEntity) (Object) this;
         ComponentMap nbt = stack.getComponents();
         if (entity.getCommandTags().contains("ghoul") && nbt.get(FOOD) != null) {
-            if (entity.hasStatusEffect(StatusEffects.HUNGER) && stack.getItem() == Items.ROTTEN_FLESH) {
+            if (stack.getItem() == Items.ROTTEN_FLESH) {
                 entity.removeStatusEffect(StatusEffects.HUNGER);
             } else if (stack.getItem() != Items.ROTTEN_FLESH){
                 entity.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 300, 0));
