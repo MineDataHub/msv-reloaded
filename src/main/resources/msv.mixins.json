@@ -5,7 +5,7 @@
 	"mixins": [
 		"AllowDataEditMixin",
 		"ExampleMixin",
-		"PlayerEntityMixin"
+		"GhoulFoodMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

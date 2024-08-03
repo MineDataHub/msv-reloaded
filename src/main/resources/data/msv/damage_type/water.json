@@ -1,6 +1,6 @@
 {
-  "message_id": "rain",
-  "exhaustion": 0,
+  "message_id": "water",
+  "exhaustion": 0.1,
   "scaling": "never",
   "death_message_type": "default"
 }

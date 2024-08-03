@@ -8,9 +8,9 @@ import net.minecraft.world.World;
 
 import static datahub.msv.Main.id;
 
-public class NewDamage{
+public class MSVDamage {
 
-    public static final RegistryKey<DamageType> RAIN = register("rain");
+    public static final RegistryKey<DamageType> WATER = register("water");
 
     public static DamageSource createDamageSource(World world, RegistryKey<DamageType> damageTypeRegistryKey) {
         return new DamageSource(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(damageTypeRegistryKey));

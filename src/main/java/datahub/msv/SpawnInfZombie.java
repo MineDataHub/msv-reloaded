@@ -11,7 +11,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.Random;
 
-public class SpawnZombieCommand {
+public class SpawnInfZombie {
 
     static int spawnZombie(CommandContext<ServerCommandSource> ctx) {
         ServerCommandSource source = ctx.getSource();

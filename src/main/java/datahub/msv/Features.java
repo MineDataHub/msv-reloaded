@@ -25,29 +25,29 @@ import java.util.Objects;
 
 import static net.minecraft.component.DataComponentTypes.CUSTOM_DATA;
 
-public class MSVFeatures {
+public class Features {
     public static void registerModFeatures() {
-        Main.LOGGER.info("Registering mod for" + Main.MOD_ID);
-        MSVFeatures.waterDamageBurning();
-        MSVFeatures.electrolysing();
-        MSVFeatures.zombieEating();
+        Main.LOGGER.info("Registering MSVFeatures for" + Main.MOD_ID);
+        Features.waterDmgAndBurning();
+        Features.electrolysing();
+        Features.zombieEating();
 
     }
 
-    public static void waterDamageBurning() {
+    public static void waterDmgAndBurning() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 BlockPos blockPos = BlockPos.ofFloored(player.getX(), player.getEyeY(), player.getZ());
                 if (player.isWet() && player.getCommandTags().contains("hydrofob")) {
-                    player.damage(NewDamage.createDamageSource(player.getWorld(), NewDamage.RAIN), 1.5F);
+                    player.damage(MSVDamage.createDamageSource(player.getWorld(), MSVDamage.WATER), 1.5F);
                 }
-                else if (player.getWorld().isDay() && player.getWorld().isSkyVisibleAllowingSea(blockPos) && player.getCommandTags().contains("vampire")) {
+                if (player.getWorld().isDay() && player.getWorld().isSkyVisibleAllowingSea(blockPos) && player.getCommandTags().contains("vampire")) {
                     player.setFireTicks(20);
                 }
             }
         });
     }
-
+// player.setVelocity(player.getVelocity().x, 0, player.getVelocity().z);
     public static void electrolysing() {
         EntityElytraEvents.ALLOW.register(entity -> {
             if (entity instanceof PlayerEntity player) {
@@ -62,7 +62,7 @@ public class MSVFeatures {
 
     public static void zombieEating() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (entity instanceof ZombieEntity) {
+            if (entity instanceof ZombieEntity && player.getCommandTags().contains("ghoul")) {
                 long currentTime = System.currentTimeMillis();
                 long lastUseTime = lastUseTimes.getOrDefault(player, 0L);
 
@@ -101,10 +101,10 @@ public class MSVFeatures {
         return true;
     }
 
-    public static void zombieSpawn(CommandDispatcher<ServerCommandSource> dispatcher) {
+    public static void zombieSpawnCommand(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
                 LiteralArgumentBuilder.<ServerCommandSource>literal("spawnZombie")
-                        .executes(SpawnZombieCommand::spawnZombie) // Используем метод ссылки
+                        .executes(SpawnInfZombie::spawnZombie)
         );
     }
 }
