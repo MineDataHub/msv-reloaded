@@ -24,7 +24,7 @@ public abstract class DamageTriggerMixin {
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, true, false));
                 World world = player.getWorld();
                 world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_WARDEN_HEARTBEAT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                Features.dropItem(player);
+                Features.INSTANCE.dropItem(player);
             }
         }
     }

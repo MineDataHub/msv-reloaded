@@ -14,28 +14,22 @@ import java.util.Random;
 public class SpawnInfZombie {
 
     static int spawnZombie(CommandContext<ServerCommandSource> ctx) {
-        ServerCommandSource source = ctx.getSource();
-        ServerPlayerEntity player = source.getPlayer();
-
+        ServerPlayerEntity player = ctx.getSource().getPlayer();
 
         assert player != null;
-        World world = player.getWorld(); // Используем getWorld()
-        Vec3d playerPos = player.getPos();
-        Random random = new Random();
-        BlockPos playerBlockPos = player.getBlockPos();
 
         // Попробуем найти подходящее место для спавна
-        BlockPos targetPos = findDarkSpot(world, playerBlockPos, playerPos, player.getRotationVec(1.0F), random);
+        BlockPos targetPos = findDarkSpot(player.getWorld(), player.getBlockPos(), player.getPos(), player.getRotationVec(1.0F), new Random());
 
         if (targetPos != null) {
-            Entity zombie = EntityType.ZOMBIE.create(world);
+            Entity zombie = EntityType.ZOMBIE.create(player.getWorld());
 
             assert zombie != null;
             zombie.getCommandTags().add("infected");
 
             // Убедитесь, что зомби не заспавнится внутри блоков
             zombie.refreshPositionAndAngles(targetPos, 0.0F, 0.0F);
-            world.spawnEntity(zombie);
+            player.getWorld().spawnEntity(zombie);
 
         }
         return 1;
@@ -50,26 +44,12 @@ public class SpawnInfZombie {
 
             // Проверяем, что позиция не находится прямо перед игроком и на достаточном расстоянии
             Vec3d posVec = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
-            Vec3d directionToPos = posVec.subtract(playerPos).normalize();
-            Vec3d normalizedPlayerDirection = playerDirection.normalize();
-            double dotProduct = directionToPos.dotProduct(normalizedPlayerDirection);
+            double dotProduct = posVec.subtract(playerPos).normalize().dotProduct(playerDirection.normalize());
 
-            double distance = posVec.distanceTo(playerPos);
-
-            if (world.getLightLevel(pos) < 8 && !world.getBlockState(pos).isSolidBlock(world, pos) && dotProduct < -0.5 && distance >= 2.0) {
+            if (world.getLightLevel(pos) < 8 && !world.getBlockState(pos).isSolidBlock(world, pos) && dotProduct < -0.5 && posVec.distanceTo(playerPos) >= 2.0) {
                 return pos;
             }
         }
         return null;
     }
 }
-
-
-
-
-
-
-
-
-
-
