@@ -21,7 +21,7 @@ public abstract class DamageTriggerMixin {
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof PlayerEntity player) {
             if (player.getCommandTags().contains("damagetrigger")) {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1));
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, true, false));
                 World world = player.getWorld();
                 world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_WARDEN_HEARTBEAT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 Features.dropItem(player);
