@@ -6,7 +6,8 @@
 		"AllowDataEditMixin",
 		"DamageTriggerMixin",
 		"ExampleMixin",
-		"GhoulFoodMixin"
+		"GhoulFoodMixin",
+		"NewNbtMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
