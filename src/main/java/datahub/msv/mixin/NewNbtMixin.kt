@@ -1,12 +1,8 @@
 package datahub.msv.mixin
 
-import com.mojang.authlib.GameProfile
-import datahub.msv.MsvNewNbtTags
-import net.minecraft.entity.player.PlayerEntity
+import datahub.msv.MSVNbtTags
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.World
 import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.Unique
 import org.spongepowered.asm.mixin.injection.At
@@ -21,11 +17,11 @@ abstract class NewNbtMixin {
 
     @Inject(method = ["writeCustomDataToNbt"], at = [At("TAIL")])
     fun writeCustomDataToNbt(nbt: NbtCompound, ci: CallbackInfo?) {
-        nbt.putInt(MsvNewNbtTags.FREEZE_COOLDOWN, this.freeze_cooldown)
+        nbt.putInt(MSVNbtTags.FREEZE_COOLDOWN, this.freeze_cooldown)
     }
 
     @Inject(method = ["readCustomDataFromNbt"], at = [At("TAIL")])
     fun readCustomDataFromNbt(nbt: NbtCompound, ci: CallbackInfo?) {
-        this.freeze_cooldown = nbt.getInt(MsvNewNbtTags.FREEZE_COOLDOWN)
+        this.freeze_cooldown = nbt.getInt(MSVNbtTags.FREEZE_COOLDOWN)
     }
 }

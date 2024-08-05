@@ -62,9 +62,9 @@ object Features {
     }
 
     private val lastUseTimes = mutableMapOf<PlayerEntity, Long>()
+    const val cd = 500L
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
-            val cd = 500L
             if (entity is ZombieEntity && "ghoul" in player.commandTags) {
                 val lastUseTime = lastUseTimes[player] ?: 0L
 
@@ -105,16 +105,12 @@ object Features {
     }
 
     fun dropItem(player: PlayerEntity) {
-        // Выбираем случайную руку (левая или правая)
         val stackToDrop: ItemStack = if (Random().nextBoolean()) {
-            player.offHandStack // Левая рука
+            player.offHandStack
         } else {
-            player.mainHandStack // Правая рука
+            player.mainHandStack
         }
-
-        // Проверяем, что в руке есть предмет
         if (!stackToDrop.isEmpty) {
-            // Выбрасываем один предмет из этой руки
             player.dropItem(stackToDrop.split(1), false)
         }
     }
