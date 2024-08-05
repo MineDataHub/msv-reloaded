@@ -62,13 +62,14 @@ object Features {
     }
 
     private val lastUseTimes = mutableMapOf<PlayerEntity, Long>()
-    const val cd = 500L
+    private const val COOLDOWN_PERIOD = 1000L // Кулдаун в миллисекундах (0.5 секунды)
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
             if (entity is ZombieEntity && "ghoul" in player.commandTags) {
                 val lastUseTime = lastUseTimes[player] ?: 0L
+                val currentTime = System.currentTimeMillis()
 
-                if (System.currentTimeMillis() - lastUseTime < cd) {
+                if (currentTime - lastUseTime < COOLDOWN_PERIOD) {
                     return@register ActionResult.PASS
                 }
 
@@ -80,7 +81,7 @@ object Features {
                     player.hungerManager.add(3, 0.5f)
                     entity.kill()
 
-                    lastUseTimes[player] = System.currentTimeMillis()
+                    lastUseTimes[player] = currentTime
 
                     return@register ActionResult.SUCCESS
                 }

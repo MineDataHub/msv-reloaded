@@ -3,10 +3,9 @@
 	"package": "datahub.msv.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"DamageTriggerMixin",
-		"ExampleMixin",
-		"GhoulFoodMixin",
-		"NewNbtMixin"
+		"GhoulMixin",
+		"NbtTagsMixin",
+		"DamageTriggerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

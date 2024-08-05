@@ -9,9 +9,8 @@ import org.spongepowered.asm.mixin.injection.At
 import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
-
 @Mixin(ServerPlayerEntity::class)
-abstract class NewNbtMixin {
+abstract class NbtTagsMixin {
     @Unique
     var freeze_cooldown: Int = 0
     var sneeze_cooldown: Int = 0
