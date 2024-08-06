@@ -8,9 +8,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.component.DataComponentTypes
+import net.minecraft.entity.Entity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.command.CommandManager.RegistrationEnvironment
 import net.minecraft.server.command.ServerCommandSource
@@ -37,7 +39,7 @@ object Features {
 
     private fun elytraClosing() {
         EntityElytraEvents.ALLOW.register { entity ->
-            !entity.commandTags.contains("fallen")
+            readMSV(entity, MSVNbtTags.MUTATION) != "fallen"
         }
     }
 
@@ -47,14 +49,14 @@ object Features {
             if (++tickCounter >= 10) {
                 tickCounter = 0
 
-                server.playerManager.playerList.forEach { player ->
-                    val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
+                server.playerManager.playerList.parallelStream().forEach { player ->
 
-                    player.takeIf { it.isWet && it.commandTags.contains("hydrofob") }
-                        ?.damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
+                    if (player.isWet && readMSV(player, MSVNbtTags.MUTATION) == "hydrofob") {
+                        player.damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
+                    }
 
-                    player.takeIf { it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && it.commandTags.contains("vampire") }?.apply {
-                        fireTicks = 20
+                    if (player.world.isDay && player.world.isSkyVisibleAllowingSea(BlockPos.ofFloored(player.x, player.eyeY, player.z)) && readMSV(player, MSVNbtTags.MUTATION) == "vampire") {
+                        player.fireTicks = 20
                     }
                 }
             }
@@ -65,7 +67,7 @@ object Features {
     private const val COOLDOWN_PERIOD = 1000L // Кулдаун в миллисекундах (0.5 секунды)
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
-            if (entity is ZombieEntity && "ghoul" in player.commandTags) {
+            if (entity is ZombieEntity && readMSV(player, MSVNbtTags.MUTATION) == "ghoul") {
                 val lastUseTime = lastUseTimes[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 
@@ -114,5 +116,9 @@ object Features {
         if (!stackToDrop.isEmpty) {
             player.dropItem(stackToDrop.split(1), false)
         }
+    }
+
+    fun readMSV(entity: Entity, tagPath: String): String {
+        return entity.writeNbt(NbtCompound()).getCompound(MSVNbtTags.MSV).getString(tagPath)
     }
 }

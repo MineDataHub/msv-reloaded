@@ -11,7 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 @Mixin(ServerPlayerEntity::class)
 abstract class NbtTagsMixin {
+
     @Unique
+    var mutation: String = ""
     var freeze_cooldown: Int = 0
     var sneeze_cooldown: Int = 0
     var blindness_cooldown: Int = 0
@@ -22,25 +24,31 @@ abstract class NbtTagsMixin {
 
     @Inject(method = ["writeCustomDataToNbt"], at = [At("TAIL")])
     fun writeCustomDataToNbt(nbt: NbtCompound, ci: CallbackInfo?) {
-        nbt.putInt(MSVNbtTags.FREEZE_COOLDOWN, this.freeze_cooldown)
-        nbt.putInt(MSVNbtTags.SNEEZE_COOLDOWN, this.sneeze_cooldown)
-        nbt.putInt(MSVNbtTags.BLINDNESS_COOLDOWN, this.blindness_cooldown)
-        nbt.putInt(MSVNbtTags.NAUSEA_COOLDOWN, this.nausea_cooldown)
-        nbt.putInt(MSVNbtTags.SLOWNESS_COOLDOWN, this.slowness_cooldown)
-        nbt.putInt(MSVNbtTags.MINING_FATIGUE_COOLDOWN, this.mining_fatigue_cooldown)
-        nbt.putInt(MSVNbtTags.CREEPER_SOUND_COOLDOWN, this.creeper_sound_cooldown)
+        val msv = NbtCompound()
+        msv.putString(MSVNbtTags.MUTATION, this.mutation)
+        msv.putInt(MSVNbtTags.FREEZE_COOLDOWN, this.freeze_cooldown)
+        msv.putInt(MSVNbtTags.SNEEZE_COOLDOWN, this.sneeze_cooldown)
+        msv.putInt(MSVNbtTags.BLINDNESS_COOLDOWN, this.blindness_cooldown)
+        msv.putInt(MSVNbtTags.NAUSEA_COOLDOWN, this.nausea_cooldown)
+        msv.putInt(MSVNbtTags.SLOWNESS_COOLDOWN, this.slowness_cooldown)
+        msv.putInt(MSVNbtTags.MINING_FATIGUE_COOLDOWN, this.mining_fatigue_cooldown)
+        msv.putInt(MSVNbtTags.CREEPER_SOUND_COOLDOWN, this.creeper_sound_cooldown)
+        nbt.put(MSVNbtTags.MSV, msv)
     }
 
     @Inject(method = ["readCustomDataFromNbt"], at = [At("TAIL")])
     fun readCustomDataFromNbt(nbt: NbtCompound, ci: CallbackInfo?) {
-        this.freeze_cooldown = nbt.getInt(MSVNbtTags.FREEZE_COOLDOWN)
-        this.sneeze_cooldown = nbt.getInt(MSVNbtTags.SNEEZE_COOLDOWN)
-        this.blindness_cooldown = nbt.getInt(MSVNbtTags.BLINDNESS_COOLDOWN)
-        this.nausea_cooldown = nbt.getInt(MSVNbtTags.NAUSEA_COOLDOWN)
-        this.slowness_cooldown = nbt.getInt(MSVNbtTags.SLOWNESS_COOLDOWN)
-        this.mining_fatigue_cooldown = nbt.getInt(MSVNbtTags.MINING_FATIGUE_COOLDOWN)
-        this.creeper_sound_cooldown = nbt.getInt(MSVNbtTags.CREEPER_SOUND_COOLDOWN)
-
+        if (nbt.contains(MSVNbtTags.MSV)) {
+            val msv = nbt.getCompound(MSVNbtTags.MSV)
+            this.mutation = msv.getString(MSVNbtTags.MUTATION)
+            this.freeze_cooldown = msv.getInt(MSVNbtTags.FREEZE_COOLDOWN)
+            this.sneeze_cooldown = msv.getInt(MSVNbtTags.SNEEZE_COOLDOWN)
+            this.blindness_cooldown = msv.getInt(MSVNbtTags.BLINDNESS_COOLDOWN)
+            this.nausea_cooldown = msv.getInt(MSVNbtTags.NAUSEA_COOLDOWN)
+            this.slowness_cooldown = msv.getInt(MSVNbtTags.SLOWNESS_COOLDOWN)
+            this.mining_fatigue_cooldown = msv.getInt(MSVNbtTags.MINING_FATIGUE_COOLDOWN)
+            this.creeper_sound_cooldown = msv.getInt(MSVNbtTags.CREEPER_SOUND_COOLDOWN)
+        }
 
     }
 }
