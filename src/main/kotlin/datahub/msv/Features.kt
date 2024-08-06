@@ -49,15 +49,14 @@ object Features {
             if (++tickCounter >= 10) {
                 tickCounter = 0
 
-                server.playerManager.playerList.parallelStream().forEach { player ->
+                server.playerManager.playerList.forEach { player ->
+                    val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                    if (player.isWet && readMSV(player, MSVNbtTags.MUTATION) == "hydrofob") {
-                        player.damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
-                    }
+                    player.takeIf { it.isWet && it.commandTags.contains("hydrofob") }
+                        ?.damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
 
-                    if (player.world.isDay && player.world.isSkyVisibleAllowingSea(BlockPos.ofFloored(player.x, player.eyeY, player.z)) && readMSV(player, MSVNbtTags.MUTATION) == "vampire") {
-                        player.fireTicks = 20
-                    }
+                    player.takeIf { it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && it.commandTags.contains("vampire") }?.apply {
+                        fireTicks = 20}
                 }
             }
         }
