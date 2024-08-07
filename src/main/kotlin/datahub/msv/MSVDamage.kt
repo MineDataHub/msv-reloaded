@@ -9,6 +9,7 @@ import net.minecraft.world.World
 
 object MSVDamage {
     val WATER: RegistryKey<DamageType> = register("water")
+    val RAIN: RegistryKey<DamageType> = register("rain")
 
     fun createDamageSource(world: World, damageTypeRegistryKey: RegistryKey<DamageType>?): DamageSource {
         return DamageSource(world.registryManager.get(RegistryKeys.DAMAGE_TYPE).entryOf(damageTypeRegistryKey))

@@ -21,6 +21,7 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
 import java.util.*
 
 object Features {
@@ -52,8 +53,13 @@ object Features {
                 server.playerManager.playerList.forEach { player ->
                     val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                    player.takeIf { it.isWet && it.commandTags.contains("hydrofob") }
-                        ?.damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
+                    if (readMSV(player, MSVNbtTags.MUTATION) == "hydrophobic") {
+                        player.takeIf {it.isTouchingWater}?.apply {
+                            damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)}
+
+                        player.takeIf { it.world.isRaining && it.world.isSkyVisibleAllowingSea(blockPos) }?.apply {
+                            damage(MSVDamage.createDamageSource(player.world, MSVDamage.RAIN), 1.5f)}
+                    }
 
                     player.takeIf { it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && it.commandTags.contains("vampire") }?.apply {
                         fireTicks = 20}
@@ -63,7 +69,7 @@ object Features {
     }
 
     private val lastUseTimes = mutableMapOf<PlayerEntity, Long>()
-    private const val COOLDOWN_PERIOD = 1000L // Кулдаун в миллисекундах (0.5 секунды)
+    private const val COOLDOWN_PERIOD = 1000L
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
             if (entity is ZombieEntity && readMSV(player, MSVNbtTags.MUTATION) == "ghoul") {
