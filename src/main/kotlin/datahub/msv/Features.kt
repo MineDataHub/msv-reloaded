@@ -8,11 +8,9 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.component.DataComponentTypes
-import net.minecraft.entity.Entity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtCompound
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.command.CommandManager.RegistrationEnvironment
 import net.minecraft.server.command.ServerCommandSource
@@ -21,15 +19,14 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.BlockPos
-import net.minecraft.world.World
 import java.util.*
 
 object Features {
 
     fun registerModFeatures() {
         Main.LOGGER.info("Registering Features for" + Main.MOD_ID)
-        waterDmgAndBurning()
-        elytraClosing()
+        playerEffects()
+        elytraFlapping()
         zombieEating()
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher: CommandDispatcher<ServerCommandSource?>?, dedicated: CommandRegistryAccess?, environment: RegistrationEnvironment? ->
             zombieSpawnCommand(
@@ -38,31 +35,39 @@ object Features {
         })
     }
 
-    private fun elytraClosing() {
+    private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register { entity ->
-            readMSV(entity, MSVNbtTags.MUTATION) != "fallen"
+            MSVNbtTags.readStringMSV(entity, MSVNbtTags.MUTATION) != "fallen"
         }
     }
 
     private var tickCounter = 0
-    private fun waterDmgAndBurning() {
+    private fun playerEffects() {
         ServerTickEvents.END_SERVER_TICK.register { server ->
-            if (++tickCounter >= 10) {
-                tickCounter = 0
-
-                server.playerManager.playerList.forEach { player ->
+            ++tickCounter
+            server.playerManager.playerList.forEach { player ->
+                if (tickCounter % 10 == 0) {
+                    if (tickCounter >= 200) {
+                        tickCounter = 0
+                        MSVNbtTags.playerTimer(player)
+                    }
                     val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                    if (readMSV(player, MSVNbtTags.MUTATION) == "hydrophobic") {
-                        player.takeIf {it.isTouchingWater}?.apply {
-                            damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)}
+                    if (MSVNbtTags.readStringMSV(player, MSVNbtTags.MUTATION) == "hydrophobic") {
+                        player.takeIf { it.isTouchingWater }?.apply {
+                            damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
+                        }
 
                         player.takeIf { it.world.isRaining && it.world.isSkyVisibleAllowingSea(blockPos) }?.apply {
-                            damage(MSVDamage.createDamageSource(player.world, MSVDamage.RAIN), 1.5f)}
+                            damage(MSVDamage.createDamageSource(player.world, MSVDamage.RAIN), 1.5f)
+                        }
                     }
 
-                    player.takeIf { it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && it.commandTags.contains("vampire") }?.apply {
-                        fireTicks = 20}
+                    player.takeIf {
+                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && it.commandTags.contains("vampire")
+                    }?.apply {
+                        fireTicks = 50
+                    }
                 }
             }
         }
@@ -72,7 +77,7 @@ object Features {
     private const val COOLDOWN_PERIOD = 1000L
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
-            if (entity is ZombieEntity && readMSV(player, MSVNbtTags.MUTATION) == "ghoul") {
+            if (entity is ZombieEntity && MSVNbtTags.readStringMSV(player, MSVNbtTags.MUTATION) == "ghoul") {
                 val lastUseTime = lastUseTimes[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 
@@ -103,7 +108,6 @@ object Features {
                 .executes { SpawnInfZombie.spawnZombie(it) }
         )
     }
-
     fun checkHazmat(player: PlayerEntity): Boolean {
         for (i in 3 downTo 0) {
             val nbt = player.inventory.armor[i].components
@@ -121,9 +125,5 @@ object Features {
         if (!stackToDrop.isEmpty) {
             player.dropItem(stackToDrop.split(1), false)
         }
-    }
-
-    fun readMSV(entity: Entity, tagPath: String): String {
-        return entity.writeNbt(NbtCompound()).getCompound(MSVNbtTags.MSV).getString(tagPath)
     }
 }

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "msv:water"
+    "msv:water",
+    "msv:rain"
   ]
 }

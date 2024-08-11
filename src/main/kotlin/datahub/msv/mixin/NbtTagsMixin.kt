@@ -13,26 +13,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 abstract class NbtTagsMixin {
 
     @Unique
-    var mutation: String = ""
-    var freeze_cooldown: Int = 0
-    var sneeze_cooldown: Int = 0
-    var blindness_cooldown: Int = 0
-    var nausea_cooldown: Int = 0
-    var slowness_cooldown: Int = 0
-    var mining_fatigue_cooldown: Int = 0
-    var creeper_sound_cooldown: Int = 0
+    private var mutation: String = ""
+    private var freezeCooldown: Int = 0
+    private var sneezeCooldown: Int = 0
+    private var blindnessCooldown: Int = 0
+    private var nauseaCooldown: Int = 0
+    private var slownessCooldown: Int = 0
+    private var miningFatigueCooldown: Int = 0
+    private var creeperSoundCooldown: Int = 0
+    private var stage: Int = 0
+    private var timeForUpStage: Int = 0
 
     @Inject(method = ["writeCustomDataToNbt"], at = [At("TAIL")])
     fun writeCustomDataToNbt(nbt: NbtCompound, ci: CallbackInfo?) {
         val msv = NbtCompound()
         msv.putString(MSVNbtTags.MUTATION, this.mutation)
-        msv.putInt(MSVNbtTags.FREEZE_COOLDOWN, this.freeze_cooldown)
-        msv.putInt(MSVNbtTags.SNEEZE_COOLDOWN, this.sneeze_cooldown)
-        msv.putInt(MSVNbtTags.BLINDNESS_COOLDOWN, this.blindness_cooldown)
-        msv.putInt(MSVNbtTags.NAUSEA_COOLDOWN, this.nausea_cooldown)
-        msv.putInt(MSVNbtTags.SLOWNESS_COOLDOWN, this.slowness_cooldown)
-        msv.putInt(MSVNbtTags.MINING_FATIGUE_COOLDOWN, this.mining_fatigue_cooldown)
-        msv.putInt(MSVNbtTags.CREEPER_SOUND_COOLDOWN, this.creeper_sound_cooldown)
+        msv.putInt(MSVNbtTags.FREEZE_COOLDOWN, this.freezeCooldown)
+        msv.putInt(MSVNbtTags.SNEEZE_COOLDOWN, this.sneezeCooldown)
+        msv.putInt(MSVNbtTags.BLINDNESS_COOLDOWN, this.blindnessCooldown)
+        msv.putInt(MSVNbtTags.NAUSEA_COOLDOWN, this.nauseaCooldown)
+        msv.putInt(MSVNbtTags.SLOWNESS_COOLDOWN, this.slownessCooldown)
+        msv.putInt(MSVNbtTags.MINING_FATIGUE_COOLDOWN, this.miningFatigueCooldown)
+        msv.putInt(MSVNbtTags.CREEPER_SOUND_COOLDOWN, this.creeperSoundCooldown)
+        msv.putInt(MSVNbtTags.STAGE, this.stage)
+        msv.putInt(MSVNbtTags.TIME_FOR_UP_STAGE, this.timeForUpStage)
         nbt.put(MSVNbtTags.MSV, msv)
     }
 
@@ -41,13 +45,15 @@ abstract class NbtTagsMixin {
         if (nbt.contains(MSVNbtTags.MSV)) {
             val msv = nbt.getCompound(MSVNbtTags.MSV)
             this.mutation = msv.getString(MSVNbtTags.MUTATION)
-            this.freeze_cooldown = msv.getInt(MSVNbtTags.FREEZE_COOLDOWN)
-            this.sneeze_cooldown = msv.getInt(MSVNbtTags.SNEEZE_COOLDOWN)
-            this.blindness_cooldown = msv.getInt(MSVNbtTags.BLINDNESS_COOLDOWN)
-            this.nausea_cooldown = msv.getInt(MSVNbtTags.NAUSEA_COOLDOWN)
-            this.slowness_cooldown = msv.getInt(MSVNbtTags.SLOWNESS_COOLDOWN)
-            this.mining_fatigue_cooldown = msv.getInt(MSVNbtTags.MINING_FATIGUE_COOLDOWN)
-            this.creeper_sound_cooldown = msv.getInt(MSVNbtTags.CREEPER_SOUND_COOLDOWN)
+            this.freezeCooldown = msv.getInt(MSVNbtTags.FREEZE_COOLDOWN)
+            this.sneezeCooldown = msv.getInt(MSVNbtTags.SNEEZE_COOLDOWN)
+            this.blindnessCooldown = msv.getInt(MSVNbtTags.BLINDNESS_COOLDOWN)
+            this.nauseaCooldown = msv.getInt(MSVNbtTags.NAUSEA_COOLDOWN)
+            this.slownessCooldown = msv.getInt(MSVNbtTags.SLOWNESS_COOLDOWN)
+            this.miningFatigueCooldown = msv.getInt(MSVNbtTags.MINING_FATIGUE_COOLDOWN)
+            this.creeperSoundCooldown = msv.getInt(MSVNbtTags.CREEPER_SOUND_COOLDOWN)
+            this.stage = msv.getInt(MSVNbtTags.STAGE)
+            this.timeForUpStage = msv.getInt(MSVNbtTags.TIME_FOR_UP_STAGE)
         }
 
     }
