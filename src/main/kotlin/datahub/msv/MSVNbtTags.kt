@@ -32,7 +32,7 @@ object MSVNbtTags{
         val msv = nbt.getCompound(MSV)
         var stage = msv.getInt(STAGE)
 
-        stage.takeIf { it in 1..7 }.apply {
+        if (stage in 1..7 ) {
             var timeForUpStage = msv.getInt(TIME_FOR_UP_STAGE)
             if (timeForUpStage <= 0) {
                 msv.putInt(STAGE, ++stage)
@@ -41,7 +41,7 @@ object MSVNbtTags{
             msv.putInt(TIME_FOR_UP_STAGE, --timeForUpStage)
         }
 
-        stage.takeIf { it in 2..7 }.apply {
+        if (stage in 2..7 ) {
             var sneezeCooldown = msv.getInt(SNEEZE_COOLDOWN)
             if (sneezeCooldown <= 0) {
                 sneezeCooldown = 27 + Random.nextInt(-14, 14) - stage
@@ -50,7 +50,7 @@ object MSVNbtTags{
             msv.putInt(SNEEZE_COOLDOWN, --sneezeCooldown)
         }
 
-        stage.takeIf { it in 3..7 }.apply {
+        if (stage in 3..7 ) {
             var creeperSoundCooldown = msv.getInt(CREEPER_SOUND_COOLDOWN)
             if (creeperSoundCooldown <= 0) {
                 creeperSoundCooldown = 24 + Random.nextInt(-14, 14) - stage
@@ -59,7 +59,7 @@ object MSVNbtTags{
             msv.putInt(CREEPER_SOUND_COOLDOWN, --creeperSoundCooldown)
         }
 
-        stage.takeIf { it in 5..7 }.apply {
+        if (stage in 5..7 ) {
             var freezeCooldown = msv.getInt(FREEZE_COOLDOWN)
             if (freezeCooldown <= 0) {
                 freezeCooldown = 24 + Random.nextInt(-4, 4) - stage
