@@ -10,7 +10,7 @@ class InfectedStatusEffect : StatusEffect(StatusEffectCategory.HARMFUL, 0xFF0000
         return this
     }
 }
-class CuredStatusEffect : StatusEffect(StatusEffectCategory.HARMFUL, 0xFF0000), PolymerStatusEffect {
+class CuredStatusEffect : StatusEffect(StatusEffectCategory.BENEFICIAL, 0xFF0000), PolymerStatusEffect {
     override fun getPolymerReplacement(player: ServerPlayerEntity): StatusEffect {
         return this
     }
