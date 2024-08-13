@@ -30,7 +30,7 @@ object SpawnInfZombie {
         playerDirection: Vec3d,
         random: Random
     ): BlockPos? {
-        return (0..9).asSequence().map { attempt ->
+        return (0..9).asSequence().map {
             val xOffset = random.nextInt(20) - 10
             val yOffset = random.nextInt(8) - 4
             val zOffset = random.nextInt(20) - 10

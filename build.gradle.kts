@@ -41,6 +41,7 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
 	maven("https://maven.nucleoid.xyz")
+	maven("https://maven.ladysnake.org/releases")
 }
 
 dependencies {
@@ -51,6 +52,12 @@ dependencies {
 	modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_loader_version")}")
 	implementation(kotlin("stdlib"))
 	modImplementation("eu.pb4:polymer-core:${project.property("polymer_version")}")
+	val ccaVersion = property("cca_version") as String
+
+	modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-base:$ccaVersion")
+	modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-entity:$ccaVersion")
+	include("org.ladysnake.cardinal-components-api:cardinal-components-base:$ccaVersion")
+	include("org.ladysnake.cardinal-components-api:cardinal-components-entity:$ccaVersion")
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
 }
