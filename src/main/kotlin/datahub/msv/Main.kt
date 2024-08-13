@@ -19,6 +19,7 @@ class Main : ModInitializer {
     override fun onInitialize() {
         registerModFeatures()
         Registry.register(Registries.STATUS_EFFECT, id("infected"), InfectedStatusEffect())
+        Registry.register(Registries.STATUS_EFFECT, id("cured"), CuredStatusEffect())
         LOGGER.info("Hello Fabric world!")
     }
 
