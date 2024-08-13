@@ -64,9 +64,9 @@ object Features {
                     }
 
                     player.takeIf {
-                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && it.commandTags.contains("vampire")
+                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVNbtTags.readStringMSV(player, MSVNbtTags.MUTATION) == "vampire"
                     }?.apply {
-                        fireTicks = 50
+                        fireTicks = 160
                     }
                 }
             }
