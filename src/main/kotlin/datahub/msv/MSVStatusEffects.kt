@@ -5,12 +5,12 @@ import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectCategory
 import net.minecraft.server.network.ServerPlayerEntity
 
-class InfectedStatusEffect : StatusEffect(StatusEffectCategory.HARMFUL, 0xFF0000), PolymerStatusEffect {
+class InfectedStatusEffect : StatusEffect(StatusEffectCategory.HARMFUL, 0x5CFF5C), PolymerStatusEffect {
     override fun getPolymerReplacement(player: ServerPlayerEntity): StatusEffect {
         return this
     }
 }
-class CuredStatusEffect : StatusEffect(StatusEffectCategory.BENEFICIAL, 0xFF0000), PolymerStatusEffect {
+class CuredStatusEffect : StatusEffect(StatusEffectCategory.BENEFICIAL, 0xFFAE5C), PolymerStatusEffect {
     override fun getPolymerReplacement(player: ServerPlayerEntity): StatusEffect {
         return this
     }

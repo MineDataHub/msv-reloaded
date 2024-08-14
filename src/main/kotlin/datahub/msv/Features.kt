@@ -1,24 +1,23 @@
 package datahub.msv
 
-import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import com.mojang.brigadier.Command
+import datahub.msv.Main.Companion.id
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
-import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.component.DataComponentTypes
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.particle.ParticleTypes
-import net.minecraft.server.command.CommandManager.RegistrationEnvironment
-import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.registry.Registries
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
 import java.util.*
 
 object Features {
@@ -28,11 +27,6 @@ object Features {
         playerEffects()
         elytraFlapping()
         zombieEating()
-        CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher: CommandDispatcher<ServerCommandSource?>?, dedicated: CommandRegistryAccess?, environment: RegistrationEnvironment? ->
-            zombieSpawnCommand(
-                dispatcher
-            )
-        })
     }
 
     private fun elytraFlapping() {
@@ -102,12 +96,6 @@ object Features {
         }
     }
 
-    private fun zombieSpawnCommand(dispatcher: CommandDispatcher<ServerCommandSource?>?) {
-        dispatcher?.register(
-            literal<ServerCommandSource>("spawnZombie")
-                .executes { SpawnInfZombie.spawnZombie(it) }
-        )
-    }
     fun checkHazmat(player: PlayerEntity): Boolean {
         for (i in 3 downTo 0) {
             val nbt = player.inventory.armor[i].components
@@ -125,5 +113,13 @@ object Features {
         if (!stackToDrop.isEmpty) {
             player.dropItem(stackToDrop.split(1), false)
         }
+    }
+
+    fun spawnBlackSneeze(world: World, pos: BlockPos): Int {
+        val entity = Registries.ENTITY_TYPE.get(id("black_sneeze")).create(world)
+        entity?.setPos(pos.x.toDouble(), pos.y.toDouble(), pos.x.toDouble())
+        world.spawnEntity(entity)
+
+        return Command.SINGLE_SUCCESS
     }
 }
