@@ -1,29 +1,24 @@
 package datahub.msv
 
-import com.mojang.brigadier.Command
-import datahub.msv.Main.Companion.id
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.component.DataComponentTypes
-import net.minecraft.entity.EntityType
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.particle.ParticleTypes
-import net.minecraft.registry.Registries
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.BlockPos
-import net.minecraft.world.World
 import java.util.*
 
 object Features {
 
     fun registerModFeatures() {
-        Main.LOGGER.info("Registering Features for" + Main.MOD_ID)
+        Main.LOGGER.info("Registering features for" + Main.MOD_ID)
         playerEffects()
         elytraFlapping()
         zombieEating()
@@ -58,7 +53,10 @@ object Features {
                     }
 
                     player.takeIf {
-                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVNbtTags.readStringMSV(player, MSVNbtTags.MUTATION) == "vampire"
+                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVNbtTags.readStringMSV(
+                            player,
+                            MSVNbtTags.MUTATION
+                        ) == "vampire"
                     }?.apply {
                         fireTicks = 160
                     }
@@ -68,22 +66,40 @@ object Features {
     }
 
     private val lastUseTimes = mutableMapOf<PlayerEntity, Long>()
-    private const val COOLDOWN_PERIOD = 1000L
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
             if (entity is ZombieEntity && MSVNbtTags.readStringMSV(player, MSVNbtTags.MUTATION) == "ghoul") {
                 val lastUseTime = lastUseTimes[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 
-                if (currentTime - lastUseTime < COOLDOWN_PERIOD) {
+                if (currentTime - lastUseTime < 1000L) {
                     return@register ActionResult.PASS
                 }
 
                 if (player.hungerManager.isNotFull) {
                     if (world is ServerWorld) {
-                        world.spawnParticles(ParticleTypes.CRIMSON_SPORE, entity.x, entity.y, entity.z, 5, 0.25, 0.5, 0.25, 0.001)
+                        world.spawnParticles(
+                            ParticleTypes.CRIMSON_SPORE,
+                            entity.x,
+                            entity.y,
+                            entity.z,
+                            5,
+                            0.25,
+                            0.5,
+                            0.25,
+                            0.001
+                        )
                     }
-                    world.playSound(null, player.x, player.y, player.z, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5f, world.random.nextFloat() * 0.1f + 0.9f)
+                    world.playSound(
+                        null,
+                        player.x,
+                        player.y,
+                        player.z,
+                        SoundEvents.ENTITY_PLAYER_BURP,
+                        SoundCategory.PLAYERS,
+                        0.5f,
+                        world.random.nextFloat() * 0.1f + 0.9f
+                    )
                     player.hungerManager.add(3, 0.5f)
                     entity.kill()
 
@@ -113,13 +129,5 @@ object Features {
         if (!stackToDrop.isEmpty) {
             player.dropItem(stackToDrop.split(1), false)
         }
-    }
-
-    fun spawnBlackSneeze(world: World, pos: BlockPos): Int {
-        val entity = Registries.ENTITY_TYPE.get(id("black_sneeze")).create(world)
-        entity?.setPos(pos.x.toDouble(), pos.y.toDouble(), pos.x.toDouble())
-        world.spawnEntity(entity)
-
-        return Command.SINGLE_SUCCESS
     }
 }

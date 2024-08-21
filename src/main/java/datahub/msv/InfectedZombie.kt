@@ -8,7 +8,7 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import java.util.*
 
-object SpawnInfZombie {
+object InfectedZombie {
     fun spawnZombie(ctx: CommandContext<ServerCommandSource>): Int {
         val player = ctx.source.player ?: return 0
 
