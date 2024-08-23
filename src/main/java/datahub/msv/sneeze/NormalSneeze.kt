@@ -17,7 +17,7 @@ import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.Vec3d
 
 object NormalSneeze {
-    private val playerTimers = mutableListOf<PlayerTimer>()
+    private val playerSneezing = mutableListOf<PlayerTimer>()
     private val useItemCallback = UseItemCallback { player, _, _ ->
         if (player.mainHandStack.item == Items.GLASS_BOTTLE) { // Check if the held item is an empty bottle
             collect(player, player.mainHandStack)
@@ -30,9 +30,9 @@ object NormalSneeze {
     data class PlayerTimer(val player: PlayerEntity, val timer: Long)
 
     private fun collect(player: PlayerEntity, itemStack: ItemStack) {
-        val playerTimer = playerTimers.find { it.player == player }
+        val playerTimer = playerSneezing.find { it.player == player }
         if (playerTimer != null) {
-            playerTimers.remove(playerTimer)
+            playerSneezing.remove(playerTimer)
 
             itemStack.decrement(1)
             val item = ItemStack(Items.POTION)
@@ -46,7 +46,7 @@ object NormalSneeze {
     fun spawn(player: PlayerEntity): Int {
         val timer = System.currentTimeMillis() + 5000L
         val playerTimer = PlayerTimer(player, timer)
-        playerTimers.add(playerTimer)
+        playerSneezing.add(playerTimer)
 
         val world = player.world as? ServerWorld ?
 
@@ -54,13 +54,13 @@ object NormalSneeze {
         world?.spawnParticles(
             ParticleTypes.SNEEZE,
             particlePos.x,
-            particlePos.y - 0.5, // Чуть ниже уровня глаз
+            particlePos.y - 0.5,
             particlePos.z,
-            3, // Количество частиц
-            0.25, // Разброс по X
-            0.25, // Разброс по Y
-            0.25, // Разброс по Z
-            0.0 // Скорость движения частиц
+            3,
+            0.25,
+            0.25,
+            0.25,
+            0.0
         )
         world?.playSound(null, player.x, player.y, player.z, SoundEvents.ENTITY_PANDA_SNEEZE, SoundCategory.PLAYERS, 0.7f, world.random.nextFloat() * 0.2f + 0.5f)
 
@@ -76,12 +76,12 @@ object NormalSneeze {
 
     private fun checkSneezedPlayers(): List<Int> {
         val results = mutableListOf<Int>()
-        playerTimers.removeIf { playerTimer ->
+        playerSneezing.removeIf { playerTimer ->
             if (System.currentTimeMillis() > playerTimer.timer) {
                 results.add(0)
-                true // remove from list
+                true
             } else {
-                false // keep in list
+                false
             }
         }
         return results
