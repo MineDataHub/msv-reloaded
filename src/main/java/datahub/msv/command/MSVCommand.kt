@@ -4,9 +4,8 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
-import datahub.msv.BlackSneeze
-import datahub.msv.Features
-
+import datahub.msv.sneeze.BlackSneeze
+import datahub.msv.sneeze.NormalSneeze
 import net.minecraft.command.CommandSource
 import net.minecraft.server.command.ServerCommandSource
 
@@ -23,6 +22,12 @@ object MSVCommand : Command<CommandSource> {
                             LiteralArgumentBuilder.literal<ServerCommandSource>("black")
                                 .executes { ctx ->
                                     ctx.source.player?.let { BlackSneeze.spawn(ctx.source.world, it) }!!
+                                }
+                        )
+                        .then(
+                            LiteralArgumentBuilder.literal<ServerCommandSource>("normal")
+                                .executes { ctx ->
+                                    ctx.source.player?.let { NormalSneeze.spawn(it) }!!
                                 }
                         )
                 )

@@ -1,6 +1,8 @@
-package datahub.msv
+package datahub.msv.sneeze
 
 import com.mojang.brigadier.Command
+import datahub.msv.MSVNbtTags
+import datahub.msv.MSVStatusEffects
 import datahub.msv.Main.Companion.id
 import eu.pb4.polymer.core.api.entity.PolymerEntity
 import net.minecraft.component.DataComponentTypes
@@ -10,9 +12,7 @@ import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.SpawnGroup
 import net.minecraft.entity.data.DataTracker
-import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.effect.StatusEffectInstance
-import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -28,7 +28,6 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.world.World
 import java.util.*
-
 
 class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
 
