@@ -17,17 +17,17 @@ object MSVStatusEffects {
     val INFECTION: RegistryEntry<StatusEffect> =
         Registry.registerReference(Registries.STATUS_EFFECT, id("infection"), InfectionStatusEffect)
     val INFECTION_POTION: RegistryEntry<Potion> =
-        Registry.registerReference(Registries.POTION, id("infection_potion"), InfectionPotion)
+        Registry.registerReference(Registries.POTION, id("infection"), InfectionPotion)
 
     val CURE: RegistryEntry<StatusEffect> =
         Registry.registerReference(Registries.STATUS_EFFECT, id("cure"), CureStatusEffect)
     val CURE_POTION: RegistryEntry<Potion> =
-        Registry.registerReference(Registries.POTION, id("cure_potion"), CurePotion)
+        Registry.registerReference(Registries.POTION, id("cure"), CurePotion)
 
     val CURSE: RegistryEntry<StatusEffect> =
         Registry.registerReference(Registries.STATUS_EFFECT, id("curse"), CurseStatusEffect)
     val CURSE_POTION: RegistryEntry<Potion> =
-        Registry.registerReference(Registries.POTION, id("curse_potion"), CursePotion)
+        Registry.registerReference(Registries.POTION, id("curse"), CursePotion)
 
     fun register() {
         Main.LOGGER.info("Registering Status-effects & Potions for" + Main.MOD_ID)

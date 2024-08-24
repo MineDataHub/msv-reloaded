@@ -4,53 +4,49 @@ import com.mojang.brigadier.Command
 import datahub.msv.MSVStatusEffects
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseItemCallback
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.particle.ParticleTypes
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.util.ActionResult
 import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.World
 
 object NormalSneeze {
     private val playerSneezing = mutableListOf<PlayerTimer>()
-    private val useItemCallback = UseItemCallback { player, _, _ ->
-        if (player.mainHandStack.item == Items.GLASS_BOTTLE) { // Check if the held item is an empty bottle
-            collect(player, player.mainHandStack)
-        } else if (player.offHandStack.item == Items.GLASS_BOTTLE) {
-            collect(player, player.offHandStack)
-        }
-        TypedActionResult.pass(ItemStack.EMPTY)
-    }
 
     data class PlayerTimer(val player: PlayerEntity, val timer: Long)
 
-    private fun collect(player: PlayerEntity, itemStack: ItemStack) {
+    private fun collect(player: ServerPlayerEntity, items: ItemStack) {
         val playerTimer = playerSneezing.find { it.player == player }
         if (playerTimer != null) {
             playerSneezing.remove(playerTimer)
 
-            itemStack.decrement(1)
+            items.decrement(1)
             val item = ItemStack(Items.POTION)
             item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(MSVStatusEffects.INFECTION_POTION))
             player.giveItemStack(item)
             player.world.playSound(null, player.x, player.y, player.z, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.PLAYERS, 0.5f, 1f)
-            player.world.playSound(null, player.x, player.y, player.z, SoundEvents.BLOCK_MUD_FALL, SoundCategory.PLAYERS, 0.5f, 0.5f)
+            player.world.playSound(null, player.x, player.y, player.z, SoundEvents.BLOCK_MUD_FALL, SoundCategory.PLAYERS, 0.5f, 1.5f)
         }
     }
 
-    fun spawn(player: PlayerEntity): Int {
+    fun spawn(player: ServerPlayerEntity): Int {
         val timer = System.currentTimeMillis() + 5000L
         val playerTimer = PlayerTimer(player, timer)
         playerSneezing.add(playerTimer)
 
         val world = player.world as? ServerWorld ?
 
-        val particlePos = Vec3d(player.x, player.y + player.standingEyeHeight, player.z).add(player.getRotationVec(1.0f).multiply(0.5))
+        val particlePos = Vec3d(player.x, player.eyeY, player.z).add(player.getRotationVec(1.0f).multiply(0.5))
         world?.spawnParticles(
             ParticleTypes.SNEEZE,
             particlePos.x,
@@ -71,7 +67,21 @@ object NormalSneeze {
         ServerTickEvents.END_SERVER_TICK.register {
             checkSneezedPlayers()
         }
-        UseItemCallback.EVENT.register(useItemCallback)
+        UseItemCallback.EVENT.register { player, world, hand ->
+            if (world.isClient) {
+                return@register TypedActionResult.pass(player.getStackInHand(hand))
+            }
+
+            val serverPlayer = player as ServerPlayerEntity
+            val itemStack = serverPlayer.getStackInHand(hand)
+
+            if (itemStack.item == Items.GLASS_BOTTLE) {
+                collect(serverPlayer, itemStack)
+                TypedActionResult.success(itemStack, world.isClient)
+            } else {
+                TypedActionResult.pass(itemStack)
+            }
+        }
     }
 
     private fun checkSneezedPlayers(): List<Int> {

@@ -1,9 +1,9 @@
 package datahub.msv
 
 import com.mojang.brigadier.CommandDispatcher
-import datahub.msv.BlackSneeze.Companion.BLACK_SNEEZE
 import datahub.msv.Features.registerModFeatures
 import datahub.msv.command.MSVCommand.command
+import datahub.msv.sneeze.BlackSneeze.Companion.BLACK_SNEEZE
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback

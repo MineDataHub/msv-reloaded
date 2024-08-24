@@ -1,5 +1,6 @@
 package datahub.msv.mixin;
 
+import datahub.msv.MSVNbtTags;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -13,6 +14,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Objects;
+
 import static net.minecraft.component.DataComponentTypes.FOOD;
 
 @Mixin(PlayerEntity.class)
@@ -22,9 +25,8 @@ public abstract class GhoulFoodMixin {
     @Inject(method = "eatFood", at = @At("RETURN"))
     private void modifyRottenFleshEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
         PlayerEntity entity = (PlayerEntity) (Object) this;
-        ComponentMap nbt = stack.getComponents();
 
-        if (entity.getCommandTags().contains("ghoul") && nbt.get(FOOD) != null) {
+        if (Objects.equals(MSVNbtTags.INSTANCE.readStringMSV(entity, "mutation"),"ghoul") && stack.getComponents().get(FOOD) != null) {
             if (stack.getItem() == Items.ROTTEN_FLESH) {
                 entity.removeStatusEffect(StatusEffects.HUNGER);
             } else {

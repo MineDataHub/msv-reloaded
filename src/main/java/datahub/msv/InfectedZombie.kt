@@ -1,17 +1,15 @@
 package datahub.msv
 
-import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.Command
 import net.minecraft.entity.EntityType
-import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import java.util.*
 
 object InfectedZombie {
-    fun spawnZombie(ctx: CommandContext<ServerCommandSource>): Int {
-        val player = ctx.source.player ?: return 0
-
+    fun spawn(player: PlayerEntity): Int {
         val targetPos = findDarkSpot(player.world, player.blockPos, player.pos, player.getRotationVec(1.0f), Random())
 
         if (targetPos != null) {
@@ -20,7 +18,7 @@ object InfectedZombie {
             zombie.refreshPositionAndAngles(targetPos, 0.0f, 0.0f)
             player.world.spawnEntity(zombie)
         }
-        return 1
+        return Command.SINGLE_SUCCESS
     }
 
     private fun findDarkSpot(
