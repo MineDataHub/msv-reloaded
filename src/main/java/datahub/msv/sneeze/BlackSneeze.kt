@@ -1,7 +1,7 @@
 package datahub.msv.sneeze
 
 import com.mojang.brigadier.Command
-import datahub.msv.MSVNbtTags
+import datahub.msv.MSVPlayerData
 import datahub.msv.MSVStatusEffects
 import datahub.msv.Main.Companion.id
 import eu.pb4.polymer.core.api.entity.PolymerEntity
@@ -82,7 +82,7 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
         val radius = 0.5
         for (entity in world.getOtherEntities(this, boundingBox.expand(radius))
             .filterIsInstance<LivingEntity>()) {
-            if (this.squaredDistanceTo(entity) <= radius * radius && MSVNbtTags.readInt(entity, "stage") != 0){
+            if (this.squaredDistanceTo(entity) <= radius * radius && MSVPlayerData.readInt(entity, "stage") != 0){
                 entity.addStatusEffect(StatusEffectInstance(MSVStatusEffects.CURSE, 100, 0))
             }
         }

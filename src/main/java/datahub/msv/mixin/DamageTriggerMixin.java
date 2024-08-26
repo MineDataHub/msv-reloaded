@@ -1,7 +1,7 @@
 package datahub.msv.mixin;
 
 import datahub.msv.Features;
-import datahub.msv.MSVNbtTags;
+import datahub.msv.MSVPlayerData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -19,7 +19,7 @@ public abstract class DamageTriggerMixin {
     @Inject(method = "damage", at = @At("HEAD"))
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof PlayerEntity player) {
-            if (MSVNbtTags.INSTANCE.readInt(player, MSVNbtTags.STAGE) > 1) {
+            if (MSVPlayerData.INSTANCE.readInt(player, MSVPlayerData.STAGE) > 1) {
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false));
                 player.getWorld().playSound(player,
                         player.getX(),

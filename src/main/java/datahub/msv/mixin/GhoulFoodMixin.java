@@ -1,6 +1,6 @@
 package datahub.msv.mixin;
 
-import datahub.msv.MSVNbtTags;
+import datahub.msv.MSVPlayerData;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -25,7 +25,7 @@ public abstract class GhoulFoodMixin {
     private void modifyRottenFleshEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
         PlayerEntity entity = (PlayerEntity) (Object) this;
 
-        if (Objects.equals(MSVNbtTags.INSTANCE.readStr(entity, MSVNbtTags.MUTATION),"ghoul") && stack.getComponents().get(FOOD) != null) {
+        if (Objects.equals(MSVPlayerData.INSTANCE.readStr(entity, MSVPlayerData.MUTATION),"ghoul") && stack.getComponents().get(FOOD) != null) {
             if (stack.getItem() == Items.ROTTEN_FLESH) {
                 entity.removeStatusEffect(StatusEffects.HUNGER);
             } else {

@@ -26,7 +26,7 @@ object Features {
 
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register { entity ->
-            MSVNbtTags.readStr(entity, MSVNbtTags.MUTATION) != "fallen"
+            MSVPlayerData.readStr(entity, MSVPlayerData.MUTATION) != "fallen"
         }
     }
 
@@ -38,11 +38,11 @@ object Features {
                 if (tickCounter % 10 == 0) {
                     if (tickCounter >= 200) {
                         tickCounter = 0
-                        MSVNbtTags.playerTimer(player)
+                        MSVPlayerData.playerTimer(player)
                     }
                     val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                    if (MSVNbtTags.readStr(player, MSVNbtTags.MUTATION) == "hydrophobic") {
+                    if (MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "hydrophobic") {
                         player.takeIf { it.isTouchingWater }?.apply {
                             damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
                         }
@@ -53,7 +53,7 @@ object Features {
                     }
 
                     player.takeIf {
-                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVNbtTags.readStr(player, MSVNbtTags.MUTATION) == "vampire" && !MSVItems.UmbrellaItem.check(player)
+                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "vampire" && !MSVItems.UmbrellaItem.check(player)
                     }?.apply {
                         fireTicks = 160
                     }
@@ -66,7 +66,7 @@ object Features {
     private val zombieEatingCD = mutableMapOf<PlayerEntity, Long>()
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
-            if (entity is ZombieEntity && MSVNbtTags.readStr(player, MSVNbtTags.MUTATION) == "ghoul") {
+            if (entity is ZombieEntity && MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "ghoul") {
                 val lastUseTime = zombieEatingCD[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 
