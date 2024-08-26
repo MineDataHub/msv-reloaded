@@ -19,7 +19,7 @@ public abstract class DamageTriggerMixin {
     @Inject(method = "damage", at = @At("HEAD"))
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof PlayerEntity player) {
-            if (MSVNbtTags.INSTANCE.readIntMSV(player, "stage") > 1) {
+            if (MSVNbtTags.INSTANCE.readInt(player, MSVNbtTags.STAGE) > 1) {
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false));
                 player.getWorld().playSound(player,
                         player.getX(),

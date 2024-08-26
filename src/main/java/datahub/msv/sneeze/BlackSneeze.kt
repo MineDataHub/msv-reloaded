@@ -82,7 +82,7 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
         val radius = 0.5
         for (entity in world.getOtherEntities(this, boundingBox.expand(radius))
             .filterIsInstance<LivingEntity>()) {
-            if (this.squaredDistanceTo(entity) <= radius * radius && MSVNbtTags.readIntMSV(entity, "stage") != 0){
+            if (this.squaredDistanceTo(entity) <= radius * radius && MSVNbtTags.readInt(entity, "stage") != 0){
                 entity.addStatusEffect(StatusEffectInstance(MSVStatusEffects.CURSE, 100, 0))
             }
         }

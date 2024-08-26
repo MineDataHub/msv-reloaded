@@ -26,7 +26,7 @@ object Features {
 
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register { entity ->
-            MSVNbtTags.readStringMSV(entity, MSVNbtTags.MUTATION) != "fallen"
+            MSVNbtTags.readStr(entity, MSVNbtTags.MUTATION) != "fallen"
         }
     }
 
@@ -42,21 +42,18 @@ object Features {
                     }
                     val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                    if (MSVNbtTags.readStringMSV(player, MSVNbtTags.MUTATION) == "hydrophobic") {
+                    if (MSVNbtTags.readStr(player, MSVNbtTags.MUTATION) == "hydrophobic") {
                         player.takeIf { it.isTouchingWater }?.apply {
                             damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
                         }
 
-                        player.takeIf { it.world.isRaining && it.world.isSkyVisibleAllowingSea(blockPos) }?.apply {
+                        player.takeIf { it.world.isRaining && it.world.isSkyVisibleAllowingSea(blockPos) && !MSVItems.UmbrellaItem.check(player)}?.apply {
                             damage(MSVDamage.createDamageSource(player.world, MSVDamage.RAIN), 1.5f)
                         }
                     }
 
                     player.takeIf {
-                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVNbtTags.readStringMSV(
-                            player,
-                            MSVNbtTags.MUTATION
-                        ) == "vampire"
+                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVNbtTags.readStr(player, MSVNbtTags.MUTATION) == "vampire" && !MSVItems.UmbrellaItem.check(player)
                     }?.apply {
                         fireTicks = 160
                     }
@@ -66,11 +63,11 @@ object Features {
         }
     }
 
-    private val lastUseTimes = mutableMapOf<PlayerEntity, Long>()
+    private val zombieEatingCD = mutableMapOf<PlayerEntity, Long>()
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
-            if (entity is ZombieEntity && MSVNbtTags.readStringMSV(player, MSVNbtTags.MUTATION) == "ghoul") {
-                val lastUseTime = lastUseTimes[player] ?: 0L
+            if (entity is ZombieEntity && MSVNbtTags.readStr(player, MSVNbtTags.MUTATION) == "ghoul") {
+                val lastUseTime = zombieEatingCD[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 
                 if (currentTime - lastUseTime < 1000L) {
@@ -104,7 +101,7 @@ object Features {
                     player.hungerManager.add(3, 0.5f)
                     entity.kill()
 
-                    lastUseTimes[player] = currentTime
+                    zombieEatingCD[player] = currentTime
 
                     return@register ActionResult.SUCCESS
                 }
@@ -121,7 +118,15 @@ object Features {
         return true
     }
 
-    fun dropItem(player: PlayerEntity) {
+    private val itemDroppingCD = mutableMapOf<PlayerEntity, Long>()
+    fun dropItem(player: PlayerEntity): ActionResult {
+        val lastUseTime = itemDroppingCD[player] ?: 0L
+        val currentTime = System.currentTimeMillis()
+
+        if (currentTime - lastUseTime < 500L) {
+            return ActionResult.PASS
+        }
+        
         val stackToDrop: ItemStack = if (Random().nextBoolean()) {
             player.offHandStack
         } else {
@@ -130,5 +135,8 @@ object Features {
         if (!stackToDrop.isEmpty) {
             player.dropItem(stackToDrop.split(1), false)
         }
+        itemDroppingCD[player] = currentTime
+
+        return ActionResult.SUCCESS
     }
 }

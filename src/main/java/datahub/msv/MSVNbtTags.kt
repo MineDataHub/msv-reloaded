@@ -19,11 +19,11 @@ object MSVNbtTags{
     const val STAGE = "stage"
     const val TIME_FOR_UP_STAGE = "time_for_up_stage"
 
-    fun readStringMSV(player: Entity, tagPath: String): String {
+    fun readStr(player: Entity, tagPath: String): String {
         return player.writeNbt(NbtCompound()).getCompound(MSV).getString(tagPath)
     }
 
-    fun readIntMSV(player: Entity, tagPath: String): Int {
+    fun readInt(player: Entity, tagPath: String): Int {
         return player.writeNbt(NbtCompound()).getCompound(MSV).getInt(tagPath)
     }
 

@@ -1,11 +1,10 @@
-package datahub.msv.command
+package datahub.msv
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
-import datahub.msv.InfectedZombie
 import datahub.msv.sneeze.BlackSneeze
 import datahub.msv.sneeze.NormalSneeze
 import net.minecraft.command.CommandSource

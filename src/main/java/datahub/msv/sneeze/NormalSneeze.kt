@@ -4,7 +4,6 @@ import com.mojang.brigadier.Command
 import datahub.msv.MSVStatusEffects
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseItemCallback
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent
 import net.minecraft.entity.player.PlayerEntity
@@ -15,10 +14,8 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.util.ActionResult
 import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.Vec3d
-import net.minecraft.world.World
 
 object NormalSneeze {
     private val playerSneezing = mutableListOf<PlayerTimer>()

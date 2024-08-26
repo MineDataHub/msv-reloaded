@@ -2,18 +2,20 @@ package datahub.msv
 
 import com.mojang.brigadier.CommandDispatcher
 import datahub.msv.Features.registerModFeatures
-import datahub.msv.command.MSVCommand.command
+import datahub.msv.MSVCommand.command
 import datahub.msv.sneeze.BlackSneeze.Companion.BLACK_SNEEZE
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.CommandRegistryAccess
+import net.minecraft.registry.Registries
+import net.minecraft.registry.Registry
+import net.minecraft.registry.RegistryKey
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Identifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 
 class Main : ModInitializer {
 
@@ -26,7 +28,8 @@ class Main : ModInitializer {
         })
         PolymerEntityUtils.registerType(BLACK_SNEEZE)
         MSVStatusEffects.register()
-        LOGGER.info("Initialised MSV: Reloaded!")
+        MSVItems.register()
+        LOGGER.info("Successfully initialised MSV: Reloaded!")
     }
 
     companion object {
