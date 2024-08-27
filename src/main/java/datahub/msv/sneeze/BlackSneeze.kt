@@ -40,7 +40,7 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
                 .build()
         )
 
-        fun spawn(player: ServerPlayerEntity): Int {
+        fun spawn(player: PlayerEntity): Int {
             val entity = ENTITY_TYPE.get(id("black_sneeze")).create(player.world)
             val offsetX = Random().nextInt(3) - 1
             val offsetZ = Random().nextInt(3) - 1

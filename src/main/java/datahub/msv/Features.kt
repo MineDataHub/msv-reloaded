@@ -1,5 +1,8 @@
 package datahub.msv
 
+import datahub.msv.MSVPlayerData.FREEZE_COOLDOWN
+import datahub.msv.MSVPlayerData.MSV
+import datahub.msv.MSVPlayerData.STAGE
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
@@ -7,6 +10,7 @@ import net.minecraft.component.DataComponentTypes
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
@@ -55,7 +59,18 @@ object Features {
                     player.takeIf {
                         it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "vampire" && !MSVItems.UmbrellaItem.check(player)
                     }?.apply {
-                        fireTicks = 160
+                        fireTicks = 80
+                    }
+                }
+                val nbt = player.writeNbt(NbtCompound())
+                val msv = nbt.getCompound(MSV)
+                if (msv.getInt(FREEZE_COOLDOWN) < 0) {
+                    player.isFrozen
+                    player.frozenTicks += 3
+                    if (player.frozenTicks >= 160) {
+                        msv.putInt(FREEZE_COOLDOWN, 30 + Random().nextInt(12) - msv.getInt(STAGE))
+                        nbt.put(MSV, msv)
+                        player.readNbt(nbt)
                     }
                 }
             }

@@ -36,7 +36,7 @@ object NormalSneeze {
         }
     }
 
-    fun spawn(player: ServerPlayerEntity): Int {
+    fun spawn(player: PlayerEntity): Int {
         val timer = System.currentTimeMillis() + 5000L
         val playerTimer = PlayerTimer(player, timer)
         playerSneezing.add(playerTimer)

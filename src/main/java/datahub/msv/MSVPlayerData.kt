@@ -1,8 +1,14 @@
 package datahub.msv
 
+import datahub.msv.sneeze.BlackSneeze
+import datahub.msv.sneeze.NormalSneeze
 import net.minecraft.entity.Entity
+import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -73,7 +79,7 @@ object MSVPlayerData {
             var timeForUpStage = msv.getInt(TIME_FOR_UP_STAGE)
             if (timeForUpStage <= 0) {
                 msv.putInt(STAGE, ++stage)
-                timeForUpStage = ((180 + Random.nextInt(-9, 9)) * (2).toDouble().pow((stage - 1))).toInt()
+                timeForUpStage = ((257 + Random.nextInt(27)) * (2).toDouble().pow((stage - 1))).toInt()
             }
             msv.putInt(TIME_FOR_UP_STAGE, --timeForUpStage)
         }
@@ -81,8 +87,9 @@ object MSVPlayerData {
         if (stage in 2..7) {
             var sneezeCooldown = msv.getInt(SNEEZE_COOLDOWN)
             if (sneezeCooldown <= 0) {
-                sneezeCooldown = 27 + Random.nextInt(-14, 14) - stage
-                println("${player.name} чихнул")
+                sneezeCooldown = 15 + Random.nextInt(42) - stage
+                if (stage in 2..6) { NormalSneeze.spawn(player) }
+                else { BlackSneeze.spawn(player) }
             }
             msv.putInt(SNEEZE_COOLDOWN, --sneezeCooldown)
         }
@@ -90,45 +97,41 @@ object MSVPlayerData {
         if (stage in 3..7) {
             var creeperSoundCooldown = msv.getInt(CREEPER_SOUND_COOLDOWN)
             if (creeperSoundCooldown <= 0) {
-                creeperSoundCooldown = 24 + Random.nextInt(-14, 14) - stage
-                println("${player.name} испугался")
+                creeperSoundCooldown = 15 + Random.nextInt(42) - stage
+                player.world.playSound(player,player.x,player.y,player.z,SoundEvents.ENTITY_CREEPER_PRIMED,SoundCategory.PLAYERS)
             }
             msv.putInt(CREEPER_SOUND_COOLDOWN, --creeperSoundCooldown)
         }
 
         if (stage in 5..7) {
             var freezeCooldown = msv.getInt(FREEZE_COOLDOWN)
-            if (freezeCooldown <= 0) {
-                freezeCooldown = 24 + Random.nextInt(-4, 4) - stage
-                println("${player.name} замёрз")
-            }
             msv.putInt(FREEZE_COOLDOWN, --freezeCooldown)
 
             var blindnessCooldown = msv.getInt(BLINDNESS_COOLDOWN)
             if (blindnessCooldown <= 0) {
-                blindnessCooldown = 24 + Random.nextInt(-4, 4) - stage
-                println("У ${player.name} потемнело в глазах")
+                blindnessCooldown = 15 + Random.nextInt(42) - stage
+                player.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 200, 0, true, false))
             }
             msv.putInt(BLINDNESS_COOLDOWN, --blindnessCooldown)
 
             var nauseaCooldown = msv.getInt(NAUSEA_COOLDOWN)
             if (nauseaCooldown <= 0) {
-                nauseaCooldown = 24 + Random.nextInt(-4, 4) - stage
-                println("У ${player.name} кружится голова")
+                nauseaCooldown = 15 + Random.nextInt(42) - stage
+                player.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 200, 0, true, false))
             }
             msv.putInt(NAUSEA_COOLDOWN, --nauseaCooldown)
 
             var slownessCooldown = msv.getInt(SLOWNESS_COOLDOWN)
             if (slownessCooldown <= 0) {
-                slownessCooldown = 24 + Random.nextInt(-4, 4) - stage
-                println("У ${player.name} устали ноги")
+                slownessCooldown = 15 + Random.nextInt(42) - stage
+                player.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 200, 0, true, false))
             }
             msv.putInt(SLOWNESS_COOLDOWN, --slownessCooldown)
 
             var miningFatigueCooldown = msv.getInt(MINING_FATIGUE_COOLDOWN)
             if (miningFatigueCooldown <= 0) {
-                miningFatigueCooldown = 24 + Random.nextInt(-4, 4) - stage
-                println("У ${player.name} устали руки")
+                miningFatigueCooldown = 15 + Random.nextInt(42) - stage
+                player.addStatusEffect(StatusEffectInstance(StatusEffects.MINING_FATIGUE, 200, 0, true, false))
             }
             msv.putInt(MINING_FATIGUE_COOLDOWN, --miningFatigueCooldown)
         }
