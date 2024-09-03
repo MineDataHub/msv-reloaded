@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "msv:water",
-    "msv:rain"
+    "msv:rain",
+    "msv:potion"
   ]
 }

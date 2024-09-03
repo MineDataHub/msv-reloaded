@@ -44,24 +44,26 @@ object Features {
                         tickCounter = 0
                         MSVPlayerData.playerTimer(player)
                     }
-                    val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
+                }
 
-                    if (MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "hydrophobic") {
-                        player.takeIf { it.isTouchingWater }?.apply {
-                            damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
-                        }
+                val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                        player.takeIf { it.world.isRaining && it.world.isSkyVisibleAllowingSea(blockPos) && !MSVItems.UmbrellaItem.check(player)}?.apply {
-                            damage(MSVDamage.createDamageSource(player.world, MSVDamage.RAIN), 1.5f)
-                        }
+                if (MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "hydrophobic") {
+                    player.takeIf { it.isTouchingWater }?.apply {
+                        damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
                     }
 
-                    player.takeIf {
-                        it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "vampire" && !MSVItems.UmbrellaItem.check(player)
-                    }?.apply {
-                        fireTicks = 80
+                    player.takeIf { it.world.isRaining && it.world.isSkyVisibleAllowingSea(blockPos) && !MSVItems.UmbrellaItem.check(player)}?.apply {
+                        damage(MSVDamage.createDamageSource(player.world, MSVDamage.RAIN), 1.5f)
                     }
                 }
+
+                player.takeIf {
+                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "vampire" && !MSVItems.UmbrellaItem.check(player)
+                }?.apply {
+                    fireTicks = 80
+                }
+
                 val nbt = player.writeNbt(NbtCompound())
                 val msv = nbt.getCompound(MSV)
                 if (msv.getInt(FREEZE_COOLDOWN) < 0) {

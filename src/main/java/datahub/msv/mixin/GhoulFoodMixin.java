@@ -19,8 +19,6 @@ import static net.minecraft.component.DataComponentTypes.FOOD;
 
 @Mixin(PlayerEntity.class)
 public abstract class GhoulFoodMixin {
-
-
     @Inject(method = "eatFood", at = @At("RETURN"))
     private void modifyRottenFleshEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
         PlayerEntity entity = (PlayerEntity) (Object) this;

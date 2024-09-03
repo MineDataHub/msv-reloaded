@@ -130,6 +130,6 @@ object MSVItems {
     fun register() {
         UMBRELLA
 
-        Registry.register(Registries.ITEM_GROUP, RegistryKey.of(Registries.ITEM_GROUP.key, id("msv_tab")), MSV_TAB)
+        PolymerItemGroupUtils.registerPolymerItemGroup(RegistryKey.of(Registries.ITEM_GROUP.key, id("msv_tab")), MSV_TAB)
     }
 }

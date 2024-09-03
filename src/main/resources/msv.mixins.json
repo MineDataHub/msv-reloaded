@@ -1,13 +1,15 @@
 {
-	"required": true,
-	"package": "datahub.msv.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"DamageTriggerMixin",
-		"GhoulFoodMixin",
-		"NbtTagsMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "datahub.msv.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "DamageMixin",
+    "GhoulFoodMixin",
+    "IgnoringVampiresMixin",
+    "NbtTagsMixin",
+    "PotionDamageMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }
