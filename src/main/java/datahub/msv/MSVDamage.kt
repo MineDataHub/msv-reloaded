@@ -1,8 +1,10 @@
 package datahub.msv
 
 import datahub.msv.Main.Companion.id
+import net.minecraft.entity.damage.DamageEffects
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.damage.DamageType
+import net.minecraft.entity.damage.DamageTypes
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.world.World
@@ -18,5 +20,6 @@ object MSVDamage {
 
     private fun register(id: String): RegistryKey<DamageType> {
         return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id(id))
+        DamageTypes.LAVA
     }
 }

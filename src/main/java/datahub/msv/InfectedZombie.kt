@@ -2,6 +2,7 @@ package datahub.msv
 
 import com.mojang.brigadier.Command
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.damage.DamageTypes
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
