@@ -20,7 +20,7 @@ class Main : ModInitializer {
         registerModFeatures()
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher: CommandDispatcher<ServerCommandSource?>?, dedicated: CommandRegistryAccess?, environment: CommandManager.RegistrationEnvironment? ->
             command(
-                dispatcher
+                dispatcher!!
             )
         })
         PolymerEntityUtils.registerType(BLACK_SNEEZE)
