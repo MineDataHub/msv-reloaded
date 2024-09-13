@@ -33,7 +33,7 @@ object MSVItems {
     object UmbrellaItem : Item(Settings().maxCount(1).maxDamage(250)), PolymerItem {
         private val UMBRELLA_STATE: ComponentType<Boolean> = Registry.register(
             Registries.DATA_COMPONENT_TYPE,
-            id("umbrella_state"),
+            "umbrella_state",
             ComponentType.builder<Boolean>().codec(Codec.BOOL).build()
         )
 

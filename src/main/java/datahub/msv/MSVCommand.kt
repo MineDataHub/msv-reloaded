@@ -2,7 +2,6 @@ package datahub.msv
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
@@ -13,14 +12,10 @@ import datahub.msv.sneeze.BlackSneeze
 import datahub.msv.sneeze.NormalSneeze
 import net.minecraft.command.CommandSource
 import net.minecraft.command.EntitySelector
-import net.minecraft.command.argument.ArgumentTypes
 import net.minecraft.command.argument.EntityArgumentType
-import net.minecraft.command.argument.EnumArgumentType
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.nbt.NbtCompound
-import kotlin.enums.enumEntries
-import kotlin.reflect.typeOf
 
 object MSVCommand : Command<CommandSource> {
     override fun run(context: CommandContext<CommandSource>): Int {

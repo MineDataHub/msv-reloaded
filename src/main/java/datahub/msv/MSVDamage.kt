@@ -20,6 +20,5 @@ object MSVDamage {
 
     private fun register(id: String): RegistryKey<DamageType> {
         return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id(id))
-        DamageTypes.LAVA
     }
 }

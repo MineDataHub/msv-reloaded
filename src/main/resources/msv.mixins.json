@@ -6,6 +6,8 @@
     "DamageMixin",
     "GhoulFoodMixin",
     "IgnoringVampiresMixin",
+    "InfectedMobsMixin",
+    "InfectedSheepMixin",
     "NbtTagsMixin",
     "PotionDamageMixin"
   ],

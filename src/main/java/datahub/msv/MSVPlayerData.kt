@@ -24,6 +24,7 @@ object MSVPlayerData {
     const val CREEPER_SOUND_COOLDOWN: String = "CreeperSoundCooldown"
     const val STAGE: String = "Stage"
     const val TIME_FOR_UP_STAGE: String = "TimeForUpStage"
+    const val INFECTED: String = "Infected"
 
     private var mutation: String = ""
     private var freezeCooldown = 0
@@ -35,9 +36,11 @@ object MSVPlayerData {
     private var creeperSoundCooldown = 0
     private var stage = 0
     private var timeForUpStage = 0
+    private var infected = false
 
     fun writeToNbt(nbt: NbtCompound) {
         nbt.putString(MUTATION, this.mutation)
+        nbt.putBoolean(INFECTED, this.infected)
         nbt.putInt(FREEZE_COOLDOWN, this.freezeCooldown)
         nbt.putInt(SNEEZE_COOLDOWN, this.sneezeCooldown)
         nbt.putInt(BLINDNESS_COOLDOWN, this.blindnessCooldown)
@@ -51,6 +54,7 @@ object MSVPlayerData {
 
     fun readFromNbt(nbt: NbtCompound) {
         this.mutation = nbt.getString(MUTATION)
+        this.infected = nbt.getBoolean(INFECTED)
         this.freezeCooldown = nbt.getInt(FREEZE_COOLDOWN)
         this.sneezeCooldown = nbt.getInt(SNEEZE_COOLDOWN)
         this.blindnessCooldown = nbt.getInt(BLINDNESS_COOLDOWN)
@@ -62,12 +66,16 @@ object MSVPlayerData {
         this.timeForUpStage = nbt.getInt(TIME_FOR_UP_STAGE)
     }
 
-    fun readStr(player: Entity, tagPath: String): String {
-        return player.writeNbt(NbtCompound()).getCompound(MSV).getString(tagPath)
+    fun readStr(entity: Entity, tagPath: String): String {
+        return entity.writeNbt(NbtCompound()).getCompound(MSV).getString(tagPath)
     }
 
-    fun readInt(player: Entity, tagPath: String): Int {
-        return player.writeNbt(NbtCompound()).getCompound(MSV).getInt(tagPath)
+    fun readInt(entity: Entity, tagPath: String): Int {
+        return entity.writeNbt(NbtCompound()).getCompound(MSV).getInt(tagPath)
+    }
+
+    fun readBool(entity: Entity, tagPath: String): Boolean {
+        return entity.writeNbt(NbtCompound()).getCompound(MSV).getBoolean(tagPath)
     }
 
     fun playerTimer(player: PlayerEntity) {

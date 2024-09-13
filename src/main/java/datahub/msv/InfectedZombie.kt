@@ -1,24 +1,35 @@
 package datahub.msv
 
 import com.mojang.brigadier.Command
+import datahub.msv.MSVPlayerData.MSV
 import net.minecraft.entity.EntityType
-import net.minecraft.entity.damage.DamageTypes
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
+import net.minecraft.world.biome.BiomeKeys
 import java.util.*
 
 object InfectedZombie {
     fun spawn(player: PlayerEntity): Int {
+        val zombieType: EntityType<*> = when (player.world.getBiome(player.blockPos)) {
+            BiomeKeys.DESERT, BiomeKeys.BADLANDS, BiomeKeys.SAVANNA, BiomeKeys.SAVANNA_PLATEAU -> EntityType.HUSK
+            BiomeKeys.OCEAN, BiomeKeys.RIVER, BiomeKeys.FROZEN_OCEAN, BiomeKeys.FROZEN_RIVER -> EntityType.DROWNED
+            else -> EntityType.ZOMBIE
+        }
+
         val targetPos = findDarkSpot(player.world, player.blockPos, player.pos, player.getRotationVec(1.0f), Random())
 
-        if (targetPos != null) {
-            val zombie = EntityType.ZOMBIE.create(player.world)!!.also { it.commandTags.add("infected") }
-
-            zombie.refreshPositionAndAngles(targetPos, 0.0f, 0.0f)
-            player.world.spawnEntity(zombie)
+        val zombie = zombieType.create(player.world)!!.also {
+            val nbt = it.writeNbt(NbtCompound())
+            val msv = nbt.getCompound(MSV)
+            msv.putBoolean(MSVPlayerData.INFECTED, true)
+            nbt.put(MSV, msv)
+            player.readNbt(nbt)
         }
+        zombie.refreshPositionAndAngles(targetPos, 0.0f, 0.0f)
+        player.world.spawnEntity(zombie)
         return Command.SINGLE_SUCCESS
     }
 
