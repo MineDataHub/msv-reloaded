@@ -16,6 +16,7 @@ import net.minecraft.command.argument.EntityArgumentType
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.Text
 
 object MSVCommand : Command<CommandSource> {
     override fun run(context: CommandContext<CommandSource>): Int {
@@ -31,12 +32,14 @@ object MSVCommand : Command<CommandSource> {
                             LiteralArgumentBuilder.literal<ServerCommandSource>("black")
                                 .executes { ctx ->
                                     BlackSneeze.spawn(ctx.source.player!!)
+                                    Command.SINGLE_SUCCESS
                                 }
                                 .then(
                                     RequiredArgumentBuilder.argument<ServerCommandSource, EntitySelector>("target", EntityArgumentType.player())
                                         .executes { ctx ->
                                             val player = EntityArgumentType.getPlayer(ctx, "target")
                                             BlackSneeze.spawn(player)
+                                            Command.SINGLE_SUCCESS
                                         }
                                 )
                         )
@@ -44,12 +47,14 @@ object MSVCommand : Command<CommandSource> {
                             LiteralArgumentBuilder.literal<ServerCommandSource>("normal")
                                 .executes { ctx ->
                                     NormalSneeze.spawn(ctx.source.player!!)
+                                    Command.SINGLE_SUCCESS
                                 }
                                 .then(
                                     RequiredArgumentBuilder.argument<ServerCommandSource, EntitySelector>("target", EntityArgumentType.player())
                                         .executes { ctx ->
                                             val player = EntityArgumentType.getPlayer(ctx, "target")
                                             NormalSneeze.spawn(player)
+                                            Command.SINGLE_SUCCESS
                                         }
                                 )
                         )
@@ -60,12 +65,14 @@ object MSVCommand : Command<CommandSource> {
                             LiteralArgumentBuilder.literal<ServerCommandSource>("zombie")
                                 .executes { ctx ->
                                     InfectedZombie.spawn(ctx.source.player!!)
+                                    Command.SINGLE_SUCCESS
                                 }
                                 .then(
                                     RequiredArgumentBuilder.argument<ServerCommandSource, EntitySelector>("target", EntityArgumentType.player())
                                         .executes { ctx ->
                                             val player = EntityArgumentType.getPlayer(ctx, "target")
                                             InfectedZombie.spawn(player)
+                                            Command.SINGLE_SUCCESS
                                         }
                                 )
                         )
@@ -73,34 +80,92 @@ object MSVCommand : Command<CommandSource> {
                 .then(
                     LiteralArgumentBuilder.literal<ServerCommandSource>("edit")
                         .then(
-                            RequiredArgumentBuilder.argument<ServerCommandSource, EntitySelector>("player", EntityArgumentType.player())
+                            LiteralArgumentBuilder.literal<ServerCommandSource>("players")
                                 .then(
-                                    LiteralArgumentBuilder.literal<ServerCommandSource>("stage")
+                                    RequiredArgumentBuilder.argument<ServerCommandSource, EntitySelector>("player", EntityArgumentType.player())
                                         .then(
-                                            RequiredArgumentBuilder.argument<ServerCommandSource, Int>("value", IntegerArgumentType.integer())
-                                                .suggests { _, builder ->
-                                                    listOf("0", "1", "2", "3", "4", "5").forEach { builder.suggest(it) }
-                                                    builder.buildFuture()
-                                                }
+                                            LiteralArgumentBuilder.literal<ServerCommandSource>("stage")
+                                                .then(
+                                                    RequiredArgumentBuilder.argument<ServerCommandSource, Int>("stage", IntegerArgumentType.integer())
+                                                        .suggests { _, builder ->
+                                                            listOf(0, 1, 2, 3, 4, 5).forEach { builder.suggest(it) }
+                                                            builder.buildFuture()
+                                                        }
+                                                        .executes { ctx ->
+                                                            val player = EntityArgumentType.getPlayer(ctx, "player")
+                                                            val stage = IntegerArgumentType.getInteger(ctx, "stage")
+                                                            if (MSVPlayerData.readInt(player, MSVPlayerData.STAGE) == stage) {
+                                                                ctx.source.sendMessage(Text.literal("The player is already at that stage!").withColor(11141120))
+                                                                Command.SINGLE_SUCCESS
+                                                            }
+                                                            ctx.source.sendMessage(Text.literal("Player stage set to $stage."))
+                                                            setStage(player, stage)
+                                                            Command.SINGLE_SUCCESS
+                                                        }
+                                                )
+                                        )
+                                        .then(
+                                            LiteralArgumentBuilder.literal<ServerCommandSource>("mutation")
+                                                .then(
+                                                    RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.word())
+                                                        .suggests { _, builder ->
+                                                            MSVFiles.mutationsData.plus("none").forEach { builder.suggest(it) }
+                                                            builder.buildFuture()
+                                                        }
+                                                        .executes { ctx ->
+                                                            val player = EntityArgumentType.getPlayer(ctx, "player")
+                                                            val mutation = ctx.getArgument("mutation", String::class.java)
+                                                            if (!MSVFiles.mutationsData.contains(mutation)) {
+                                                                ctx.source.sendMessage(Text.literal("This mutation does not exist!").withColor(11141120))
+                                                                Command.SINGLE_SUCCESS
+                                                            }
+                                                            if (MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == mutation) {
+                                                                ctx.source.sendMessage(Text.literal("The player already has this mutation!").withColor(11141120))
+                                                                Command.SINGLE_SUCCESS
+                                                            }
+                                                            ctx.source.sendMessage(Text.literal("Player mutation set to $mutation."))
+                                                            setMutation(player, mutation)
+                                                            Command.SINGLE_SUCCESS
+                                                        }
+                                                )
+                                        )
+                                )
+                        )
+                        .then(
+                            LiteralArgumentBuilder.literal<ServerCommandSource>("mutations")
+                                .then(
+                                    LiteralArgumentBuilder.literal<ServerCommandSource>("add")
+                                        .then(
+                                            RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.string())
                                                 .executes { ctx ->
-                                                    val player = EntityArgumentType.getPlayer(ctx, "player")
-                                                    val value = IntegerArgumentType.getInteger(ctx, "value")
-                                                    setStageTag(player, value)
+                                                    val mutation = StringArgumentType.getString(ctx, "mutation")
+                                                    if (MSVFiles.mutationsData.contains(mutation)) {
+                                                        ctx.source.sendMessage(Text.literal("This mutation already exists!").withColor(11141120))
+                                                        Command.SINGLE_SUCCESS
+                                                    }
+                                                    MSVFiles.writeMutation(mutation)
+                                                    ctx.source.sendMessage(Text.literal("Mutation added: $mutation"))
+                                                    Command.SINGLE_SUCCESS
                                                 }
                                         )
                                 )
                                 .then(
-                                    LiteralArgumentBuilder.literal<ServerCommandSource>("mutation")
+                                    LiteralArgumentBuilder.literal<ServerCommandSource>("remove")
                                         .then(
-                                            RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.word())
+                                            RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.string())
                                                 .suggests { _, builder ->
-                                                    listOf("none", "hydrophobic", "fallen", "vampire", "ghoul").forEach { builder.suggest(it) }
+                                                    MSVFiles.mutationsData.forEach { builder.suggest(it) }
                                                     builder.buildFuture()
                                                 }
                                                 .executes { ctx ->
-                                                    val player = EntityArgumentType.getPlayer(ctx, "player")
-                                                    val mutation = ctx.getArgument("mutation", String::class.java)
-                                                    setMutationTag(player, mutation)
+                                                    val mutation = StringArgumentType.getString(ctx, "mutation")
+                                                    if (!MSVFiles.mutationsData.contains(mutation)) {
+                                                        ctx.source.sendMessage(Text.literal("This mutation does not exists!").withColor(11141120))
+                                                        Command.SINGLE_SUCCESS
+                                                    }
+                                                    MSVFiles.removeMutation(mutation)
+                                                    ctx.source.sendMessage(Text.literal("Mutation removed: $mutation"))
+                                                    Command.SINGLE_SUCCESS
                                                 }
                                         )
                                 )
@@ -109,20 +174,18 @@ object MSVCommand : Command<CommandSource> {
         )
     }
 
-    private fun setStageTag(player: ServerPlayerEntity, value: Int): Int {
+    private fun setStage(player: ServerPlayerEntity, value: Int) {
         val nbt = player.writeNbt(NbtCompound())
         val msv = nbt.getCompound(MSV)
         msv.putInt(MSVPlayerData.STAGE, value)
         nbt.put(MSV, msv)
         player.readNbt(nbt)
-        return Command.SINGLE_SUCCESS
     }
-    private fun setMutationTag(player: ServerPlayerEntity, value: String?): Int {
+    private fun setMutation(player: ServerPlayerEntity, value: String?) {
         val nbt = player.writeNbt(NbtCompound())
         val msv = nbt.getCompound(MSV)
         msv.putString(MSVPlayerData.MUTATION, value)
         nbt.put(MSV, msv)
         player.readNbt(nbt)
-        return Command.SINGLE_SUCCESS
     }
 }

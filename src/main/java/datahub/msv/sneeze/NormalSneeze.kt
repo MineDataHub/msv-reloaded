@@ -36,7 +36,7 @@ object NormalSneeze {
         }
     }
 
-    fun spawn(player: PlayerEntity): Int {
+    fun spawn(player: PlayerEntity) {
         val timer = System.currentTimeMillis() + 5000L
         val playerTimer = PlayerTimer(player, timer)
         playerSneezing.add(playerTimer)
@@ -56,8 +56,6 @@ object NormalSneeze {
             0.0
         )
         world?.playSound(null, player.x, player.y, player.z, SoundEvents.ENTITY_PANDA_SNEEZE, SoundCategory.PLAYERS, 0.7f, world.random.nextFloat() * 0.2f + 0.5f)
-
-        return Command.SINGLE_SUCCESS
     }
 
     init {

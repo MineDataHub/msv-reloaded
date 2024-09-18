@@ -7,7 +7,9 @@ import datahub.msv.sneeze.BlackSneeze.Companion.BLACK_SNEEZE
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.command.CommandRegistryAccess
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Identifier
@@ -18,6 +20,9 @@ class Main : ModInitializer {
 
     override fun onInitialize() {
         registerModFeatures()
+        ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvents.ServerStarting { server: MinecraftServer ->
+            MSVFiles.register(server)
+        })
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher: CommandDispatcher<ServerCommandSource?>?, dedicated: CommandRegistryAccess?, environment: CommandManager.RegistrationEnvironment? ->
             command(
                 dispatcher!!

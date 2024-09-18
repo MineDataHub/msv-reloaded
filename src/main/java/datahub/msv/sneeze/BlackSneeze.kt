@@ -40,7 +40,7 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
                 .build()
         )
 
-        fun spawn(player: PlayerEntity): Int {
+        fun spawn(player: PlayerEntity) {
             val entity = ENTITY_TYPE.get(id("black_sneeze")).create(player.world)
             val offsetX = Random().nextInt(3) - 1
             val offsetZ = Random().nextInt(3) - 1
@@ -49,8 +49,6 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
             entity?.refreshPositionAndAngles(player.x + offsetX, player.y, player.z + offsetZ, entity.yaw, entity.pitch)
 
             player.world.playSound(null, player.x, player.y, player.z, SoundEvents.ENTITY_PANDA_SNEEZE, SoundCategory.PLAYERS, 0.7f, player.world.random.nextFloat() * 0.1f + 0.4f)
-
-            return Command.SINGLE_SUCCESS
         }
 
         private fun collect(entity: Entity, player: PlayerEntity, items: ItemStack) {

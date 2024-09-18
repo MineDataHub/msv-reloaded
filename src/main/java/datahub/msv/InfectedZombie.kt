@@ -12,7 +12,7 @@ import net.minecraft.world.biome.BiomeKeys
 import java.util.*
 
 object InfectedZombie {
-    fun spawn(player: PlayerEntity): Int {
+    fun spawn(player: PlayerEntity) {
         val zombieType: EntityType<*> = when (player.world.getBiome(player.blockPos)) {
             BiomeKeys.DESERT, BiomeKeys.BADLANDS, BiomeKeys.SAVANNA, BiomeKeys.SAVANNA_PLATEAU -> EntityType.HUSK
             BiomeKeys.OCEAN, BiomeKeys.RIVER, BiomeKeys.FROZEN_OCEAN, BiomeKeys.FROZEN_RIVER -> EntityType.DROWNED
@@ -30,7 +30,6 @@ object InfectedZombie {
         }
         zombie.refreshPositionAndAngles(targetPos, 0.0f, 0.0f)
         player.world.spawnEntity(zombie)
-        return Command.SINGLE_SUCCESS
     }
 
     private fun findDarkSpot(
