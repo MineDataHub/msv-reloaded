@@ -6,7 +6,6 @@ import datahub.msv.MSVPlayerData.STAGE
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
-import net.minecraft.component.DataComponentTypes
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -125,14 +124,6 @@ object Features {
             }
             ActionResult.PASS
         }
-    }
-
-    fun checkHazmat(player: PlayerEntity): Boolean {
-        for (i in 3 downTo 0) {
-            val nbt = player.inventory.armor[i].components
-            return !Objects.requireNonNull(nbt.get(DataComponentTypes.CUSTOM_DATA))?.contains("hazmat")!!
-        }
-        return true
     }
 
     private val itemDroppingCD = mutableMapOf<PlayerEntity, Long>()

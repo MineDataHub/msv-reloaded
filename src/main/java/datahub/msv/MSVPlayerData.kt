@@ -7,6 +7,7 @@ import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import kotlin.math.pow
@@ -76,6 +77,21 @@ object MSVPlayerData {
 
     fun readBool(entity: Entity, tagPath: String): Boolean {
         return entity.writeNbt(NbtCompound()).getCompound(MSV).getBoolean(tagPath)
+    }
+
+    fun setStage(player: ServerPlayerEntity, value: Int) {
+        val nbt = player.writeNbt(NbtCompound())
+        val msv = nbt.getCompound(MSV)
+        msv.putInt(STAGE, value)
+        nbt.put(MSV, msv)
+        player.readNbt(nbt)
+    }
+    fun setMutation(player: ServerPlayerEntity, value: String?) {
+        val nbt = player.writeNbt(NbtCompound())
+        val msv = nbt.getCompound(MSV)
+        msv.putString(MUTATION, value)
+        nbt.put(MSV, msv)
+        player.readNbt(nbt)
     }
 
     fun playerTimer(player: PlayerEntity) {

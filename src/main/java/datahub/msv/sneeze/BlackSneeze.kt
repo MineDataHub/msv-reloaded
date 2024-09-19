@@ -1,6 +1,5 @@
 package datahub.msv.sneeze
 
-import com.mojang.brigadier.Command
 import datahub.msv.MSVPlayerData
 import datahub.msv.MSVStatusEffects
 import datahub.msv.Main.Companion.id

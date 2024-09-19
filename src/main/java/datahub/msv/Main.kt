@@ -23,7 +23,7 @@ class Main : ModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvents.ServerStarting { server: MinecraftServer ->
             MSVFiles.register(server)
         })
-        CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher: CommandDispatcher<ServerCommandSource?>?, dedicated: CommandRegistryAccess?, environment: CommandManager.RegistrationEnvironment? ->
+        CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher: CommandDispatcher<ServerCommandSource?>?, _: CommandRegistryAccess?, _: CommandManager.RegistrationEnvironment? ->
             command(
                 dispatcher!!
             )

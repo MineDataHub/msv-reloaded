@@ -7,15 +7,14 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
-import datahub.msv.MSVPlayerData.MSV
+import datahub.msv.MSVPlayerData.setMutation
+import datahub.msv.MSVPlayerData.setStage
 import datahub.msv.sneeze.BlackSneeze
 import datahub.msv.sneeze.NormalSneeze
 import net.minecraft.command.CommandSource
 import net.minecraft.command.EntitySelector
 import net.minecraft.command.argument.EntityArgumentType
-import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 
 object MSVCommand : Command<CommandSource> {
@@ -68,6 +67,7 @@ object MSVCommand : Command<CommandSource> {
                             LiteralArgumentBuilder.literal<ServerCommandSource>("zombie")
                                 .executes { ctx ->
                                     InfectedZombie.spawn(ctx.source.player!!)
+                                    ctx.source.sendMessage(Text.literal("Tried to summon new Infected zombie"))
                                     Command.SINGLE_SUCCESS
                                 }
                                 .then(
@@ -75,6 +75,7 @@ object MSVCommand : Command<CommandSource> {
                                         .executes { ctx ->
                                             val player = EntityArgumentType.getPlayer(ctx, "target")
                                             InfectedZombie.spawn(player)
+                                            ctx.source.sendMessage(Text.literal("Tried to summon new Infected zombie for ${player.name.string}"))
                                             Command.SINGLE_SUCCESS
                                         }
                                 )
@@ -98,12 +99,13 @@ object MSVCommand : Command<CommandSource> {
                                                             val player = EntityArgumentType.getPlayer(ctx, "player")
                                                             val stage = IntegerArgumentType.getInteger(ctx, "stage")
                                                             if (MSVPlayerData.readInt(player, MSVPlayerData.STAGE) == stage) {
-                                                                ctx.source.sendMessage(Text.literal("The player is already at that stage!").withColor(16733525))
+                                                                ctx.source.sendMessage(Text.literal("${player.name.string} is already at that stage!").withColor(16733525))
+                                                                Command.SINGLE_SUCCESS
+                                                            } else {
+                                                                ctx.source.sendMessage(Text.literal("${player.name.string}`s stage is now set to $stage."))
+                                                                setStage(player, stage)
                                                                 Command.SINGLE_SUCCESS
                                                             }
-                                                            ctx.source.sendMessage(Text.literal("Player`s stage is now set to $stage."))
-                                                            setStage(player, stage)
-                                                            Command.SINGLE_SUCCESS
                                                         }
                                                 )
                                         )
@@ -121,14 +123,14 @@ object MSVCommand : Command<CommandSource> {
                                                             if (!MSVFiles.mutationsData.contains(mutation)) {
                                                                 ctx.source.sendMessage(Text.literal("This mutation does not exist!").withColor(16733525))
                                                                 Command.SINGLE_SUCCESS
-                                                            }
-                                                            if (MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == mutation) {
-                                                                ctx.source.sendMessage(Text.literal("The player already has this mutation!").withColor(16733525))
+                                                            } else if (MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == mutation) {
+                                                                ctx.source.sendMessage(Text.literal("${player.name.string} already has this mutation!").withColor(16733525))
+                                                                Command.SINGLE_SUCCESS
+                                                            } else {
+                                                                ctx.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $mutation."))
+                                                                setMutation(player, mutation)
                                                                 Command.SINGLE_SUCCESS
                                                             }
-                                                            ctx.source.sendMessage(Text.literal("Player`s mutation is now set to $mutation."))
-                                                            setMutation(player, mutation)
-                                                            Command.SINGLE_SUCCESS
                                                         }
                                                 )
                                         )
@@ -145,10 +147,11 @@ object MSVCommand : Command<CommandSource> {
                                                     if (MSVFiles.mutationsData.contains(mutation)) {
                                                         ctx.source.sendMessage(Text.literal("This mutation already exists!").withColor(16733525))
                                                         Command.SINGLE_SUCCESS
+                                                    } else {
+                                                        MSVFiles.writeMutation(mutation)
+                                                        ctx.source.sendMessage(Text.literal("Mutation added: $mutation"))
+                                                        Command.SINGLE_SUCCESS
                                                     }
-                                                    MSVFiles.writeMutation(mutation)
-                                                    ctx.source.sendMessage(Text.literal("Mutation added: $mutation"))
-                                                    Command.SINGLE_SUCCESS
                                                 }
                                         )
                                 )
@@ -165,30 +168,16 @@ object MSVCommand : Command<CommandSource> {
                                                     if (!MSVFiles.mutationsData.contains(mutation)) {
                                                         ctx.source.sendMessage(Text.literal("This mutation does not exists!").withColor(16733525))
                                                         Command.SINGLE_SUCCESS
+                                                    } else {
+                                                        MSVFiles.removeMutation(mutation)
+                                                        ctx.source.sendMessage(Text.literal("Mutation removed: $mutation"))
+                                                        Command.SINGLE_SUCCESS
                                                     }
-                                                    MSVFiles.removeMutation(mutation)
-                                                    ctx.source.sendMessage(Text.literal("Mutation removed: $mutation"))
-                                                    Command.SINGLE_SUCCESS
                                                 }
                                         )
                                 )
                         )
                 )
         )
-    }
-
-    private fun setStage(player: ServerPlayerEntity, value: Int) {
-        val nbt = player.writeNbt(NbtCompound())
-        val msv = nbt.getCompound(MSV)
-        msv.putInt(MSVPlayerData.STAGE, value)
-        nbt.put(MSV, msv)
-        player.readNbt(nbt)
-    }
-    private fun setMutation(player: ServerPlayerEntity, value: String?) {
-        val nbt = player.writeNbt(NbtCompound())
-        val msv = nbt.getCompound(MSV)
-        msv.putString(MSVPlayerData.MUTATION, value)
-        nbt.put(MSV, msv)
-        player.readNbt(nbt)
     }
 }

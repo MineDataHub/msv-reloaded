@@ -2,7 +2,6 @@ package datahub.msv.mixin;
 
 import datahub.msv.MSVPlayerData;
 import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,8 +14,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
-
-import static net.minecraft.component.DataComponentTypes.FOOD;
 
 @Mixin(PlayerEntity.class)
 public abstract class GhoulFoodMixin {

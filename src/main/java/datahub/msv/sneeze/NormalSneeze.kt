@@ -1,6 +1,5 @@
 package datahub.msv.sneeze
 
-import com.mojang.brigadier.Command
 import datahub.msv.MSVStatusEffects
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseItemCallback
