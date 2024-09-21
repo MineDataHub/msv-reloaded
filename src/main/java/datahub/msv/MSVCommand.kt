@@ -102,7 +102,7 @@ object MSVCommand : Command<CommandSource> {
                                                                 ctx.source.sendMessage(Text.literal("${player.name.string} is already at that stage!").withColor(16733525))
                                                                 Command.SINGLE_SUCCESS
                                                             } else {
-                                                                ctx.source.sendMessage(Text.literal("${player.name.string}`s stage is now set to $stage."))
+                                                                ctx.source.sendMessage(Text.literal("${player.name.string}`s stage is now set to $stage"))
                                                                 setStage(player, stage)
                                                                 Command.SINGLE_SUCCESS
                                                             }
@@ -114,20 +114,25 @@ object MSVCommand : Command<CommandSource> {
                                                 .then(
                                                     RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.word())
                                                         .suggests { _, builder ->
-                                                            MSVFiles.mutationsData.plus("none").forEach { builder.suggest(it) }
+                                                            MSVFiles.mutationsData.plus("none").plus("random").forEach { builder.suggest(it) }
                                                             builder.buildFuture()
                                                         }
                                                         .executes { ctx ->
                                                             val player = EntityArgumentType.getPlayer(ctx, "player")
                                                             val mutation = ctx.getArgument("mutation", String::class.java)
-                                                            if (!MSVFiles.mutationsData.contains(mutation)) {
+                                                            if (mutation == "random") {
+                                                                val randomMutation = MSVFiles.mutationsData.random()
+                                                                ctx.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $randomMutation"))
+                                                                setMutation(player, randomMutation)
+                                                                Command.SINGLE_SUCCESS
+                                                            } else if (!MSVFiles.mutationsData.contains(mutation) && !mutation.equals("none")) {
                                                                 ctx.source.sendMessage(Text.literal("This mutation does not exist!").withColor(16733525))
                                                                 Command.SINGLE_SUCCESS
                                                             } else if (MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == mutation) {
                                                                 ctx.source.sendMessage(Text.literal("${player.name.string} already has this mutation!").withColor(16733525))
                                                                 Command.SINGLE_SUCCESS
                                                             } else {
-                                                                ctx.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $mutation."))
+                                                                ctx.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $mutation"))
                                                                 setMutation(player, mutation)
                                                                 Command.SINGLE_SUCCESS
                                                             }

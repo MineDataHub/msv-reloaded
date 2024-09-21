@@ -22,8 +22,8 @@ object Features {
 
     fun registerModFeatures() {
         Main.LOGGER.info("Registering features for" + Main.MOD_ID)
-        playerEffects()
         elytraFlapping()
+        playerEffects()
         zombieEating()
     }
 

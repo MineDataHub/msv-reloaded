@@ -1,14 +1,14 @@
 package datahub.msv.mixin;
 
 import datahub.msv.MSVPlayerData;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(LivingEntity.class)
 public abstract class NbtTagsMixin {
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))

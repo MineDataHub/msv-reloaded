@@ -94,6 +94,14 @@ object MSVPlayerData {
         player.readNbt(nbt)
     }
 
+    fun setInfected(entity: Entity, boolean: Boolean) {
+        val nbt = entity.writeNbt(NbtCompound())
+        val msv = nbt.getCompound(MSV)
+        msv.putBoolean(INFECTED, boolean)
+        nbt.put(MSV, msv)
+        entity.readNbt(nbt)
+    }
+
     fun playerTimer(player: PlayerEntity) {
         val nbt = player.writeNbt(NbtCompound())
         val msv = nbt.getCompound(MSV)
