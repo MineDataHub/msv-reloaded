@@ -14,7 +14,7 @@ public abstract class IgnoringVampiresMixin {
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     private void ignoreVampires(LivingEntity target, CallbackInfo ci) {
         MobEntity mobEntity = (MobEntity) (Object) this;
-        if (target != null && MSVPlayerData.INSTANCE.readStr(target, MSVPlayerData.MUTATION).equals("vampire") && isUndead(mobEntity) ) {
+        if (target != null && MSVPlayerData.INSTANCE.getMutation(target).equals("vampire") && isUndead(mobEntity) ) {
             ci.cancel();
         }
     }

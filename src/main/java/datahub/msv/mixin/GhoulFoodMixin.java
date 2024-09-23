@@ -20,7 +20,7 @@ public abstract class GhoulFoodMixin {
     @Inject(method = "eatFood", at = @At("TAIL"))
     private void modifyRottenFleshEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
         PlayerEntity entity = (PlayerEntity) (Object) this;
-        if (Objects.equals(MSVPlayerData.INSTANCE.readStr(entity, MSVPlayerData.MUTATION),"ghoul")) {
+        if (Objects.equals(MSVPlayerData.INSTANCE.getMutation(entity),"ghoul")) {
             if (stack.getItem() == Items.ROTTEN_FLESH) {
                 entity.removeStatusEffect(StatusEffects.HUNGER);
             } else {

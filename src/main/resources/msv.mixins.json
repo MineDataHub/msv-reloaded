@@ -8,7 +8,8 @@
     "IgnoringVampiresMixin",
     "InfectedMobsMixin",
     "InfectedSheepMixin",
-    "NbtTagsMixin",
+    "MobNBTMixin",
+    "PlayerNBTMixin",
     "PotionDamageMixin"
   ],
   "injectors": {

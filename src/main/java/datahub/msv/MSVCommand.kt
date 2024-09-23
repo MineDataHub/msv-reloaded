@@ -98,7 +98,7 @@ object MSVCommand : Command<CommandSource> {
                                                         .executes { ctx ->
                                                             val player = EntityArgumentType.getPlayer(ctx, "player")
                                                             val stage = IntegerArgumentType.getInteger(ctx, "stage")
-                                                            if (MSVPlayerData.readInt(player, MSVPlayerData.STAGE) == stage) {
+                                                            if (MSVPlayerData.getStage(player) == stage) {
                                                                 ctx.source.sendMessage(Text.literal("${player.name.string} is already at that stage!").withColor(16733525))
                                                                 Command.SINGLE_SUCCESS
                                                             } else {
@@ -128,7 +128,7 @@ object MSVCommand : Command<CommandSource> {
                                                             } else if (!MSVFiles.mutationsData.contains(mutation) && !mutation.equals("none")) {
                                                                 ctx.source.sendMessage(Text.literal("This mutation does not exist!").withColor(16733525))
                                                                 Command.SINGLE_SUCCESS
-                                                            } else if (MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == mutation) {
+                                                            } else if (MSVPlayerData.getMutation(player) == mutation) {
                                                                 ctx.source.sendMessage(Text.literal("${player.name.string} already has this mutation!").withColor(16733525))
                                                                 Command.SINGLE_SUCCESS
                                                             } else {

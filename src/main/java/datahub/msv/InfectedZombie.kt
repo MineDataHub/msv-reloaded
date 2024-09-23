@@ -1,9 +1,8 @@
 package datahub.msv
 
-import datahub.msv.MSVPlayerData.MSV
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
@@ -21,11 +20,7 @@ object InfectedZombie {
         val targetPos = findDarkSpot(player.world, player.blockPos, player.pos, player.getRotationVec(1.0f), Random())
 
         val zombie = zombieType.create(player.world)!!.also {
-            val nbt = it.writeNbt(NbtCompound())
-            val msv = nbt.getCompound(MSV)
-            msv.putBoolean(MSVPlayerData.INFECTED, true)
-            nbt.put(MSV, msv)
-            player.readNbt(nbt)
+            MSVPlayerData.setInfected(it as LivingEntity, true)
         }
         zombie.refreshPositionAndAngles(targetPos, 0.0f, 0.0f)
         player.world.spawnEntity(zombie)

@@ -40,7 +40,9 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
         )
 
         fun spawn(player: PlayerEntity) {
-            val entity = ENTITY_TYPE.get(id("black_sneeze")).create(player.world)
+            val entity = ENTITY_TYPE.get(id("black_sneeze")).create(player.world).also {
+                MSVPlayerData.setInfected(it as LivingEntity, true)
+            }
             val offsetX = Random().nextInt(3) - 1
             val offsetZ = Random().nextInt(3) - 1
             entity?.setPos(player.x + offsetX, player.y, player.z + offsetZ)
@@ -79,7 +81,7 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
         val radius = 0.5
         for (entity in world.getOtherEntities(this, boundingBox.expand(radius))
             .filterIsInstance<LivingEntity>()) {
-            if (this.squaredDistanceTo(entity) <= radius * radius && MSVPlayerData.readInt(entity, "stage") != 0){
+            if (this.squaredDistanceTo(entity) <= radius * radius && MSVPlayerData.getStage(entity) != 0){
                 entity.addStatusEffect(StatusEffectInstance(MSVStatusEffects.CURSE, 100, 0))
             }
         }

@@ -12,7 +12,7 @@ public class InfectedSheepMixin {
     @Inject(method = "onEatingGrass", at = @At("HEAD"), cancellable = true)
     private void forbidEating(CallbackInfo ci) {
         SheepEntity entity = (SheepEntity) (Object) this;
-        if (MSVPlayerData.INSTANCE.readBool(entity, MSVPlayerData.INFECTED)) {
+        if (MSVPlayerData.INSTANCE.isInfected(entity)) {
             ci.cancel();
         }
     }

@@ -29,7 +29,7 @@ object Features {
 
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register { entity ->
-            MSVPlayerData.readStr(entity, MSVPlayerData.MUTATION) != "fallen"
+            MSVPlayerData.getMutation(entity) != "fallen"
         }
     }
 
@@ -47,7 +47,7 @@ object Features {
 
                 val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                if (MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "hydrophobic") {
+                if (MSVPlayerData.getMutation(player) == "hydrophobic") {
                     player.takeIf { it.isTouchingWater }?.apply {
                         damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
                     }
@@ -58,7 +58,7 @@ object Features {
                 }
 
                 player.takeIf {
-                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "vampire" && !MSVItems.UmbrellaItem.check(player)
+                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVPlayerData.getMutation(player) == "vampire" && !MSVItems.UmbrellaItem.check(player)
                 }?.apply {
                     fireTicks = 80
                 }
@@ -82,7 +82,7 @@ object Features {
     private val zombieEatingCD = mutableMapOf<PlayerEntity, Long>()
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
-            if (entity is ZombieEntity && MSVPlayerData.readStr(player, MSVPlayerData.MUTATION) == "ghoul") {
+            if (entity is ZombieEntity && MSVPlayerData.getMutation(player) == "ghoul") {
                 val lastUseTime = zombieEatingCD[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 
