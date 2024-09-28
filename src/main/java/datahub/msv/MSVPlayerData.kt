@@ -1,5 +1,6 @@
 package datahub.msv
 
+import datahub.msv.MSVFiles.mutationsData
 import datahub.msv.sneeze.BlackSneeze
 import datahub.msv.sneeze.NormalSneeze
 import net.minecraft.entity.LivingEntity
@@ -19,6 +20,19 @@ object MSVPlayerData {
     const val STAGE: String = "Stage"
     const val TIME_FOR_UP_STAGE: String = "TimeForUpStage"
     const val INFECTED: String = "Infected"
+
+    fun getRandomMutation(): String? {
+        val randomNum = Random.nextInt(0, mutationsData.values.sum())
+        var currentSum = 0
+
+        for ((key, chance) in mutationsData) {
+            currentSum += chance
+            if (randomNum < currentSum) {
+                return key
+            }
+        }
+        return null
+    }
 
     fun getMutation(entity: LivingEntity): String {
         return entity.writeNbt(NbtCompound()).getCompound(MSV).getString(MUTATION)
@@ -115,6 +129,9 @@ object MSVPlayerData {
             if (timeForUpStage <= 0) {
                 msv.putInt(STAGE, ++stage)
                 timeForUpStage = ((257 + Random.nextInt(27)) * (2).toDouble().pow((stage - 1))).toInt()
+                if (stage == 5) {
+                    setMutation(player, getRandomMutation())
+                }
             }
             msv.putInt(TIME_FOR_UP_STAGE, --timeForUpStage)
         }

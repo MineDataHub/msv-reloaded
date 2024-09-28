@@ -7,6 +7,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
+import datahub.msv.MSVPlayerData.getRandomMutation
 import datahub.msv.MSVPlayerData.setMutation
 import datahub.msv.MSVPlayerData.setStage
 import datahub.msv.sneeze.BlackSneeze
@@ -121,10 +122,16 @@ object MSVCommand : Command<CommandSource> {
                                                             val player = EntityArgumentType.getPlayer(ctx, "player")
                                                             val mutation = ctx.getArgument("mutation", String::class.java)
                                                             if (mutation == "random") {
-                                                                val randomMutation = MSVFiles.mutationsList.random()
-                                                                ctx.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $randomMutation"))
-                                                                setMutation(player, randomMutation)
-                                                                Command.SINGLE_SUCCESS
+                                                                val randomMutation = getRandomMutation()
+                                                                if (randomMutation != null) {
+                                                                    ctx.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $randomMutation"))
+                                                                    setMutation(player, randomMutation)
+                                                                    Command.SINGLE_SUCCESS
+                                                                }
+                                                                else {
+                                                                    ctx.source.sendMessage(Text.literal("There is no available mutations!").withColor(16733525))
+                                                                    Command.SINGLE_SUCCESS
+                                                                }
                                                             } else if (!MSVFiles.mutationsData.contains(mutation) && !mutation.equals("none")) {
                                                                 ctx.source.sendMessage(Text.literal("This mutation does not exist!").withColor(16733525))
                                                                 Command.SINGLE_SUCCESS
@@ -147,20 +154,31 @@ object MSVCommand : Command<CommandSource> {
                                     LiteralArgumentBuilder.literal<ServerCommandSource>("add")
                                         .then(
                                             RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.string())
-                                                .then(
-                                                    RequiredArgumentBuilder.argument<ServerCommandSource, Int>("value", IntegerArgumentType.integer())
                                                 .executes { ctx ->
                                                     val mutation = StringArgumentType.getString(ctx, "mutation")
-                                                    val value = IntegerArgumentType.getInteger(ctx, "value")
                                                     if (MSVFiles.mutationsList.contains(mutation)) {
                                                         ctx.source.sendMessage(Text.literal("This mutation already exists!").withColor(16733525))
                                                         Command.SINGLE_SUCCESS
                                                     } else {
-                                                        MSVFiles.writeMutation(mutation, value)
+                                                        MSVFiles.writeMutation(mutation, 50)
                                                         ctx.source.sendMessage(Text.literal("Mutation added: $mutation"))
                                                         Command.SINGLE_SUCCESS
                                                     }
                                                 }
+                                                .then(
+                                                    RequiredArgumentBuilder.argument<ServerCommandSource, Int>("value", IntegerArgumentType.integer())
+                                                        .executes { ctx ->
+                                                            val mutation = StringArgumentType.getString(ctx, "mutation")
+                                                            val value = IntegerArgumentType.getInteger(ctx, "value")
+                                                            if (MSVFiles.mutationsList.contains(mutation)) {
+                                                                ctx.source.sendMessage(Text.literal("This mutation already exists!").withColor(16733525))
+                                                                Command.SINGLE_SUCCESS
+                                                            } else {
+                                                                MSVFiles.writeMutation(mutation, value)
+                                                                ctx.source.sendMessage(Text.literal("Mutation added: $mutation"))
+                                                                Command.SINGLE_SUCCESS
+                                                            }
+                                                        }
                                                 )
                                         )
                                 )
