@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.mob.ZombieEntity
+import net.minecraft.entity.mob.ZombieHorseEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
@@ -81,29 +82,28 @@ object Features {
 
     private val zombieEatingCD = mutableMapOf<PlayerEntity, Long>()
     private fun zombieEating() {
-        UseEntityCallback.EVENT.register { player, world, _, entity, _ ->
-            if (entity is ZombieEntity && MSVPlayerData.getMutation(player) == "ghoul") {
-                val lastUseTime = zombieEatingCD[player] ?: 0L
-                val currentTime = System.currentTimeMillis()
+        UseEntityCallback.EVENT.register { player, world, hand, entity, _ ->
+            if (MSVPlayerData.getMutation(player) == "ghoul" && world is ServerWorld && player.hungerManager.isNotFull) {
+                if (entity is ZombieEntity || entity is ZombieHorseEntity) {
+                    val lastUseTime = zombieEatingCD[player] ?: 0L
+                    val currentTime = System.currentTimeMillis()
 
-                if (currentTime - lastUseTime < 1000L) {
-                    return@register ActionResult.PASS
-                }
-
-                if (player.hungerManager.isNotFull) {
-                    if (world is ServerWorld) {
-                        world.spawnParticles(
-                            ParticleTypes.CRIMSON_SPORE,
-                            entity.x,
-                            entity.y,
-                            entity.z,
-                            5,
-                            0.25,
-                            0.5,
-                            0.25,
-                            0.001
-                        )
+                    if (currentTime - lastUseTime < 1250L) {
+                        return@register ActionResult.PASS
                     }
+
+                    player.swingHand(hand, true)
+                    world.spawnParticles(
+                        ParticleTypes.CRIMSON_SPORE,
+                        entity.x,
+                        entity.y,
+                        entity.z,
+                        5,
+                        0.25,
+                        0.5,
+                        0.25,
+                        0.001
+                    )
                     world.playSound(
                         null,
                         player.x,
@@ -122,7 +122,7 @@ object Features {
                     return@register ActionResult.SUCCESS
                 }
             }
-            ActionResult.PASS
+            return@register ActionResult.PASS
         }
     }
 

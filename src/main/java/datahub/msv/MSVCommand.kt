@@ -114,14 +114,14 @@ object MSVCommand : Command<CommandSource> {
                                                 .then(
                                                     RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.word())
                                                         .suggests { _, builder ->
-                                                            MSVFiles.mutationsData.plus("none").plus("random").forEach { builder.suggest(it) }
+                                                            MSVFiles.mutationsList.plus("none").plus("random").forEach { builder.suggest(it) }
                                                             builder.buildFuture()
                                                         }
                                                         .executes { ctx ->
                                                             val player = EntityArgumentType.getPlayer(ctx, "player")
                                                             val mutation = ctx.getArgument("mutation", String::class.java)
                                                             if (mutation == "random") {
-                                                                val randomMutation = MSVFiles.mutationsData.random()
+                                                                val randomMutation = MSVFiles.mutationsList.random()
                                                                 ctx.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $randomMutation"))
                                                                 setMutation(player, randomMutation)
                                                                 Command.SINGLE_SUCCESS
@@ -147,17 +147,21 @@ object MSVCommand : Command<CommandSource> {
                                     LiteralArgumentBuilder.literal<ServerCommandSource>("add")
                                         .then(
                                             RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.string())
+                                                .then(
+                                                    RequiredArgumentBuilder.argument<ServerCommandSource, Int>("value", IntegerArgumentType.integer())
                                                 .executes { ctx ->
                                                     val mutation = StringArgumentType.getString(ctx, "mutation")
-                                                    if (MSVFiles.mutationsData.contains(mutation)) {
+                                                    val value = IntegerArgumentType.getInteger(ctx, "value")
+                                                    if (MSVFiles.mutationsList.contains(mutation)) {
                                                         ctx.source.sendMessage(Text.literal("This mutation already exists!").withColor(16733525))
                                                         Command.SINGLE_SUCCESS
                                                     } else {
-                                                        MSVFiles.writeMutation(mutation)
+                                                        MSVFiles.writeMutation(mutation, value)
                                                         ctx.source.sendMessage(Text.literal("Mutation added: $mutation"))
                                                         Command.SINGLE_SUCCESS
                                                     }
                                                 }
+                                                )
                                         )
                                 )
                                 .then(
@@ -165,7 +169,7 @@ object MSVCommand : Command<CommandSource> {
                                         .then(
                                             RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.string())
                                                 .suggests { _, builder ->
-                                                    MSVFiles.mutationsData.forEach { builder.suggest(it) }
+                                                    MSVFiles.mutationsList.forEach { builder.suggest(it) }
                                                     builder.buildFuture()
                                                 }
                                                 .executes { ctx ->

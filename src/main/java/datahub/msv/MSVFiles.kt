@@ -1,6 +1,7 @@
 package datahub.msv
 
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.WorldSavePath
 import java.io.File
@@ -19,35 +20,43 @@ object MSVFiles {
         // Инициализация worldDir на основе пути сохранения мира
         worldDir = server.getSavePath(WorldSavePath.ROOT)
 
-
         // Проверяем, существует ли папка, если нет — создаем
         if (!Files.exists(msvDir)) {
             Files.createDirectories(msvDir)
         }
 
-        // Проверяем, существует ли файл, если нет — создаем и записываем массив строк
+        // Проверяем, существует ли файл, если нет — создаем и записываем начальные данные
         if (!mutationsFile.exists()) {
-            val initialMutations = listOf("hydrophobic", "ghoul", "fallen", "vampire")
+            val initialMutations = mapOf(
+                "hydrophobic" to 50,
+                "ghoul" to 20,
+                "fallen" to 30,
+                "vampire" to 40
+            )
             mutationsFile.writeText(Gson().toJson(initialMutations))
         }
     }
 
-    val mutationsData: List<String>
+    val mutationsData: Map<String, Int>
         get() = if (mutationsFile.exists()) {
-                Gson().fromJson(mutationsFile.readText(), Array<String>::class.java).toList()
-            } else {
-                emptyList()
-            }
+            val type = object : TypeToken<Map<String, Int>>() {}.type
+            Gson().fromJson(mutationsFile.readText(), type)
+        } else {
+            emptyMap()
+        }
 
-    fun writeMutation(mutation: String) {
-        if (!mutationsData.contains(mutation)) {
-            val newData = mutationsData + mutation
+    val mutationsList: List<String>
+        get() = mutationsData.keys.toList()
+
+    fun writeMutation(mutation: String, value: Int) {
+        if (!mutationsData.containsKey(mutation)) {
+            val newData = mutationsData + (mutation to value)
             mutationsFile.writeText(Gson().toJson(newData))
         }
     }
 
     fun removeMutation(mutation: String) {
-        if (mutationsData.contains(mutation)) {
+        if (mutationsData.containsKey(mutation)) {
             val newData = mutationsData - mutation
             mutationsFile.writeText(Gson().toJson(newData))
         }

@@ -3,6 +3,7 @@ package datahub.msv.mixin;
 import datahub.msv.MSVPlayerData;
 import kotlin.random.Random;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.MobEntity;
@@ -47,8 +48,7 @@ public abstract class InfectedMobsMixin extends MobEntity {
             if (CDPlayer > 0) CDPlayer--;
             if (CDAnimal > 0) CDAnimal--;
 
-
-            PlayerEntity player = this.getWorld().getClosestPlayer(this.getX(), this.getY(), this.getZ(), 15.0, true);
+            PlayerEntity player = this.getWorld().getClosestPlayer(this.getX(), this.getY(), this.getZ(), 15.0, p -> this.canSee(p) && MSVPlayerData.INSTANCE.getStage((LivingEntity) p) == 0 && !((PlayerEntity) p).isCreative());
             if (player != null) {
 
                 if (tickCounter == 400) {
@@ -74,15 +74,9 @@ public abstract class InfectedMobsMixin extends MobEntity {
 
                 if (this.targetPlayer != null && this.targetPlayer.isAlive()) {
                     this.getLookControl().lookAt(this.targetPlayer, 30.0F, 30.0F);
+                    this.getNavigation().startMovingTo(this.targetPlayer, 1.4);
 
-                    if (this.distanceTo(this.targetPlayer) < 10){
-                        this.getNavigation().startMovingTo(this.targetPlayer, 1.4);
-                    }
-                    if (this.distanceTo(this.targetPlayer) < 1.5 || this.distanceTo(this.targetPlayer) > 10) {
-                        this.targetPlayer = null;
-                        this.navigation.stop();
-                    }
-                    if (this.getAttacker() != null) {
+                    if (this.distanceTo(this.targetPlayer) < 1.5 || this.distanceTo(this.targetPlayer) > 10 || this.getAttacker() != null || !this.canSee(this.targetPlayer)) {
                         this.targetPlayer = null;
                         this.navigation.stop();
                     }
