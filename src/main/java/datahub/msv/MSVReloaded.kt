@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class Main : ModInitializer {
+class MSVReloaded : ModInitializer {
 
     override fun onInitialize() {
         registerModFeatures()

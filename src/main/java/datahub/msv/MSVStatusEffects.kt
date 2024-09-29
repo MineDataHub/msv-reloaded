@@ -1,6 +1,6 @@
 package datahub.msv
 
-import datahub.msv.Main.Companion.id
+import datahub.msv.MSVReloaded.Companion.id
 import eu.pb4.polymer.core.api.other.PolymerPotion
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect
 import net.minecraft.entity.effect.StatusEffect
@@ -30,7 +30,7 @@ object MSVStatusEffects {
         Registry.registerReference(Registries.POTION, id("curse"), CursePotion)
 
     fun register() {
-        Main.LOGGER.info("Registering Status-effects & Potions for" + Main.MOD_ID)
+        MSVReloaded.LOGGER.info("Registering Status-effects & Potions for" + MSVReloaded.MOD_ID)
         INFECTION
         INFECTION_POTION
 

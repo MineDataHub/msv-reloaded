@@ -22,7 +22,7 @@ import java.util.*
 object Features {
 
     fun registerModFeatures() {
-        Main.LOGGER.info("Registering features for" + Main.MOD_ID)
+        MSVReloaded.LOGGER.info("Registering features for" + MSVReloaded.MOD_ID)
         elytraFlapping()
         playerEffects()
         zombieEating()

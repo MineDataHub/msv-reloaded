@@ -1,7 +1,7 @@
 package datahub.msv
 
 import com.mojang.serialization.Codec
-import datahub.msv.Main.Companion.id
+import datahub.msv.MSVReloaded.Companion.id
 import eu.pb4.polymer.core.api.item.PolymerItem
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils
 import net.fabricmc.fabric.api.item.v1.EnchantingContext

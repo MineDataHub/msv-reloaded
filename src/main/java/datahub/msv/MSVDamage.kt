@@ -1,6 +1,6 @@
 package datahub.msv
 
-import datahub.msv.Main.Companion.id
+import datahub.msv.MSVReloaded.Companion.id
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.damage.DamageType
 import net.minecraft.registry.RegistryKey
