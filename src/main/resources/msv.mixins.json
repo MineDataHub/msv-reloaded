@@ -10,7 +10,8 @@
     "InfectedSheepMixin",
     "MobNBTMixin",
     "PlayerNBTMixin",
-    "PotionDamageMixin"
+    "PotionDamageMixin",
+    "ReduceHealingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

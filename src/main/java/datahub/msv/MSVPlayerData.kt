@@ -21,7 +21,7 @@ object MSVPlayerData {
     const val TIME_FOR_UP_STAGE: String = "TimeForUpStage"
     const val INFECTED: String = "Infected"
 
-    fun getRandomMutation(): String? {
+    fun getRandomMutation(): String {
         val randomNum = Random.nextInt(0, mutationsData.values.sum())
         var currentSum = 0
 
@@ -31,7 +31,7 @@ object MSVPlayerData {
                 return key
             }
         }
-        return null
+        return "none"
     }
 
     fun getMutation(entity: LivingEntity): String {
