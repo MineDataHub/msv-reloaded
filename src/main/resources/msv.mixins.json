@@ -3,13 +3,10 @@
   "package": "datahub.msv.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "DamageMixin",
-    "GhoulFoodMixin",
-    "IgnoringVampiresMixin",
-    "InfectedMobsMixin",
+    "PlayerEntityMixin",
+    "InfectedAnimalsMixin",
     "InfectedSheepMixin",
-    "MobNBTMixin",
-    "PlayerNBTMixin",
+    "MobEntityMixin",
     "PotionDamageMixin",
     "ReduceHealingMixin"
   ],
