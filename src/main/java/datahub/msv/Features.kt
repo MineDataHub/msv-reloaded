@@ -4,6 +4,7 @@ import datahub.msv.MSVPlayerData.FREEZE_COOLDOWN
 import datahub.msv.MSVPlayerData.MSV
 import datahub.msv.MSVPlayerData.STAGE
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.mob.ZombieEntity
@@ -12,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.particle.ParticleTypes
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
@@ -26,11 +28,17 @@ object Features {
         elytraFlapping()
         playerEffects()
         zombieEating()
+        settingAttributes()
     }
 
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register { entity ->
             MSVPlayerData.getMutation(entity) != "fallen"
+        }
+    }
+    private fun settingAttributes() {
+        ServerPlayerEvents.AFTER_RESPAWN.register { oldPlayer: ServerPlayerEntity, player: ServerPlayerEntity, isAlive: Boolean ->
+
         }
     }
 
