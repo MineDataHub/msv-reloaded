@@ -1,10 +1,8 @@
 package datahub.msv.mixin;
 
 import datahub.msv.MSVPlayerData;
-import kotlin.random.Random;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,19 +35,18 @@ public class ReduceHealingMixin {
         }
 
         boolean bl = player.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
-        boolean check = MSVPlayerData.INSTANCE.getStage(player) > 0 && Random.Default.nextBoolean() || MSVPlayerData.INSTANCE.getStage(player) == 0;
         if (bl && saturationLevel > 0.0F && player.canFoodHeal() && foodLevel >= 20) {
             foodTickTimer++;
             if (foodTickTimer >= 10) {
                 float f = Math.min(saturationLevel, 6.0F);
-                if (check) player.heal(f / 6.0F);
+                player.heal(f / 6 * (1 - ((float) MSVPlayerData.INSTANCE.getStage(player) % 7) / 12));
                 player.addExhaustion(f);
                 foodTickTimer = 0;
             }
         } else if (bl && foodLevel >= 18 && player.canFoodHeal()) {
             foodTickTimer++;
             if (foodTickTimer >= 80) {
-                if (check) player.heal(1.0F);
+                player.heal(1 - ((float) MSVPlayerData.INSTANCE.getStage(player) % 7) / 12);
                 player.addExhaustion(6.0F);
                 foodTickTimer = 0;
             }
@@ -65,13 +62,6 @@ public class ReduceHealingMixin {
         } else {
             foodTickTimer = 0;
         }
-        NbtCompound nbt = player.writeNbt(new NbtCompound());
-        nbt.putInt("foodLevel", foodLevel);
-        nbt.putInt("foodTickTimer", foodTickTimer);
-        nbt.putFloat("foodSaturationLevel", saturationLevel);
-        nbt.putFloat("foodExhaustionLevel", exhaustion);
-        player.readNbt(nbt);
-
         ci.cancel();
     }
 }
