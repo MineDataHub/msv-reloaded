@@ -97,16 +97,22 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     private void noFireDamage(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(INSTANCE.getMutation(player).equals("hydrophobic") && damageSource.getType().effects().equals(DamageEffects.BURNING));
+        if (INSTANCE.getMutation(player).equals("hydrophobic") && damageSource.getType().effects().equals(DamageEffects.BURNING)) {
+            cir.setReturnValue(true);
+        }
     }
+
     @Inject(method = "setFireTicks", at = @At("HEAD"), cancellable = true)
     private void noFireTicks(int ticks, CallbackInfo ci) {
-        if (INSTANCE.getMutation(player).equals("hydrophobic"))
+        if (INSTANCE.getMutation(player).equals("hydrophobic")) {
             ci.cancel();
+        }
     }
 
     @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
     private void noFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(!INSTANCE.getMutation(player).equals("fallen"));
+        if (INSTANCE.getMutation(player).equals("fallen")) {
+            cir.setReturnValue(false);
+        }
     }
 }

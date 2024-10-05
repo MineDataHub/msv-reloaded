@@ -3,10 +3,13 @@ package datahub.msv
 import datahub.msv.MSVPlayerData.FREEZE_COOLDOWN
 import datahub.msv.MSVPlayerData.MSV
 import datahub.msv.MSVPlayerData.STAGE
+import datahub.msv.MSVPlayerData.getStage
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
+import net.minecraft.entity.attribute.EntityAttributeModifier
+import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.mob.ZombieHorseEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -20,6 +23,7 @@ import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.BlockPos
 import java.util.*
+import kotlin.math.floor
 
 object Features {
     fun register() {
@@ -27,17 +31,11 @@ object Features {
         elytraFlapping()
         playerEffects()
         zombieEating()
-        settingUpAttributes()
     }
 
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register {
             it is PlayerEntity && MSVPlayerData.getMutation(it) == "fallen"
-        }
-    }
-    private fun settingUpAttributes() {
-        ServerPlayerEvents.AFTER_RESPAWN.register { oldPlayer: ServerPlayerEntity, player: ServerPlayerEntity, isAlive: Boolean ->
-
         }
     }
 
@@ -51,6 +49,16 @@ object Features {
                         tickCounter = 0
                         MSVPlayerData.playerTimer(player)
                     }
+                    player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.updateModifier(
+                        EntityAttributeModifier(
+                            MSVReloaded.id("health"),
+                            when (getStage(player)) {
+                                in 5..6 -> -4.0
+                                in 2..7 -> -2.0
+                                else -> 0.0 },
+                            EntityAttributeModifier.Operation.ADD_VALUE
+                        )
+                    )
                 }
 
                 val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
