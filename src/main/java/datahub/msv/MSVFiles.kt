@@ -21,14 +21,14 @@ object MSVFiles {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     val initialMutations = mapOf(
-        "hydrophobic" to Mutation(listOf("hydrophobic1", "hydrophobic2"), 50),
-        "ghoul" to Mutation(listOf("ghoul1", "ghoul2"), 50),
-        "fallen" to Mutation(listOf("fallen1", "fallen2"), 50),
-        "vampire" to Mutation(listOf("vampire1", "vampire2"), 50)
+        "hydrophobic" to Mutation(listOf("noFireDamage", "hydrophobic2"), 50),
+        "ghoul" to Mutation(listOf("zombieEater", "ghoul2"), 50),
+        "fallen" to Mutation(listOf("noFallDamage", "fallen2"), 50),
+        "vampire" to Mutation(listOf("unDead", "vampire2"), 50)
     )
 
     fun register(server: MinecraftServer) {
-        // Инициализация worldDir на основе пути сохранения мира
+        MSVReloaded.LOGGER.info("Initializing configs...")
         worldDir = server.getSavePath(WorldSavePath.ROOT)
 
         // Проверяем, существует ли папка, если нет — создаем
@@ -57,8 +57,17 @@ object MSVFiles {
         if (!Files.exists(msvDir)) {
             Files.createDirectories(msvDir)
         }
-        if (!mutationsData.containsKey(mutation)) {
+        if (mutationsData.containsKey(mutation)) {
+            updateMutation(mutation, gifts, weight)
+        } else {
             val newData = mutationsData + (mutation to Mutation(gifts, weight))
+            mutationsFile.writeText(gson.toJson(newData))
+        }
+    }
+
+    private fun updateMutation(mutation: String, gifts: List<String>, weight: Int) {
+        if (mutationsData.containsKey(mutation)) {
+            val newData = (mutationsData - mutation) + (mutation to Mutation(gifts, weight))
             mutationsFile.writeText(gson.toJson(newData))
         }
     }

@@ -19,6 +19,7 @@ import net.minecraft.text.Text
 
 object MSVCommand {
     fun register() {
+        MSVReloaded.LOGGER.info("Initializing commands...")
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher: CommandDispatcher<ServerCommandSource?>?, _: CommandRegistryAccess?, _: CommandManager.RegistrationEnvironment? ->
             dispatcher?.register(
                 LiteralArgumentBuilder.literal<ServerCommandSource>("msvcontrol")
@@ -247,6 +248,10 @@ object MSVCommand {
                                         LiteralArgumentBuilder.literal<ServerCommandSource>("add")
                                             .then(
                                                 RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.string())
+                                                    .suggests { _, builder ->
+                                                        MSVFiles.mutationsList.forEach { builder.suggest(it) }
+                                                        builder.buildFuture()
+                                                    }
                                                     .then(
                                                         RequiredArgumentBuilder.argument<ServerCommandSource, String>("gift", StringArgumentType.string())
                                                             .executes {
@@ -258,11 +263,11 @@ object MSVCommand {
                                                                 } else {
                                                                     val currentGifts = MSVFiles.mutationsData[mutation]?.gifts ?: listOf()
                                                                     if (currentGifts.contains(gift)) {
-                                                                        it.source.sendMessage(Text.literal("This gift is already added to this mutation!").withColor(16733525))
+                                                                        it.source.sendMessage(Text.literal("This gift is already exist`s!").withColor(16733525))
                                                                         Command.SINGLE_SUCCESS
                                                                     } else {
                                                                         MSVFiles.writeMutation(mutation, currentGifts + gift, MSVFiles.mutationsData[mutation]?.weight!!)
-                                                                        it.source.sendMessage(Text.literal("Gift added to mutation: $mutation"))
+                                                                        it.source.sendMessage(Text.literal("Gift $gift added to mutation: $mutation"))
                                                                         Command.SINGLE_SUCCESS
                                                                     }
                                                                 }
@@ -274,8 +279,16 @@ object MSVCommand {
                                         LiteralArgumentBuilder.literal<ServerCommandSource>("remove")
                                             .then(
                                                 RequiredArgumentBuilder.argument<ServerCommandSource, String>("mutation", StringArgumentType.string())
+                                                    .suggests { _, builder ->
+                                                        MSVFiles.mutationsList.forEach { builder.suggest(it) }
+                                                        builder.buildFuture()
+                                                    }
                                                     .then(
                                                         RequiredArgumentBuilder.argument<ServerCommandSource, String>("gift", StringArgumentType.string())
+                                                            .suggests { source, builder ->
+                                                                MSVFiles.mutationsData[StringArgumentType.getString(source, "mutation")]?.gifts?.forEach { builder.suggest(it) }
+                                                                builder.buildFuture()
+                                                            }
                                                             .executes {
                                                                 val mutation = StringArgumentType.getString(it, "mutation")
                                                                 val gift = StringArgumentType.getString(it, "gift")
@@ -288,7 +301,7 @@ object MSVCommand {
                                                                         it.source.sendMessage(Text.literal("This gift is not added to this mutation!").withColor(16733525))
                                                                         Command.SINGLE_SUCCESS
                                                                     } else {
-                                                                        MSVFiles.writeMutation(mutation, currentGifts - gift, MSVFiles.mutationsData[mutation]?.weight ?: 0)
+                                                                        MSVFiles.writeMutation(mutation, currentGifts - gift, MSVFiles.mutationsData[mutation]?.weight ?: 50)
                                                                         it.source.sendMessage(Text.literal("Gift removed from mutation: $mutation"))
                                                                         Command.SINGLE_SUCCESS
                                                                     }

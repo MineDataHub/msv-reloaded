@@ -128,6 +128,8 @@ object MSVItems {
         Registry.registerReference(Registries.ITEM, id("umbrella"), UmbrellaItem)
 
     fun register() {
+        MSVReloaded.LOGGER.info("Initializing items...")
+
         UMBRELLA
 
         PolymerItemGroupUtils.registerPolymerItemGroup(RegistryKey.of(Registries.ITEM_GROUP.key, id("msv_tab")), MSV_TAB)

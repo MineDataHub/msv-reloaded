@@ -33,7 +33,7 @@ object MSVStatusEffects {
         Registry.registerReference(Registries.POTION, id("curse"), CursePotion)
 
     fun register() {
-        MSVReloaded.LOGGER.info("Registering Status-effects & Potions for" + MSVReloaded.MOD_ID)
+        MSVReloaded.LOGGER.info("Initializing status-effects...")
         INFECTION
         INFECTION_POTION
 

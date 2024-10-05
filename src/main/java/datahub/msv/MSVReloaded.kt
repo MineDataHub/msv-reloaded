@@ -20,12 +20,12 @@ class MSVReloaded : ModInitializer {
         PolymerEntityUtils.registerType(BLACK_SNEEZE)
         MSVStatusEffects.register()
         MSVItems.register()
-        LOGGER.info("Successfully initialised MSV: Reloaded!")
+        LOGGER.info("Successfully initialised MSV:Reloaded!")
     }
 
     companion object {
-        const val MOD_ID: String = "msv"
-        val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
+        private const val MOD_ID: String = "msv"
+        val LOGGER: Logger = LoggerFactory.getLogger("MSV:Reloaded")
 
         @JvmStatic
 		fun id(id: String?): Identifier? {

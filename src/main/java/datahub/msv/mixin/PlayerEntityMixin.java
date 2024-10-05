@@ -20,8 +20,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Objects;
-
 import static datahub.msv.MSVPlayerData.*;
 
 @Mixin(PlayerEntity.class)
@@ -72,7 +70,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "eatFood", at = @At("TAIL"))
     private void modifyGhoulsFoodEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
-        if (Objects.equals(INSTANCE.getMutation(player),"ghoul")) {
+        if (mutation.equals("ghoul")) {
             if (stack.getItem() == Items.ROTTEN_FLESH) {
                 player.removeStatusEffect(StatusEffects.HUNGER);
             } else {
@@ -89,7 +87,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "damage", at = @At("TAIL"))
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (INSTANCE.getStage(player) > 1) {
+        if (stage > 1) {
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false));
             Features.INSTANCE.dropItem(player);
         }
@@ -97,21 +95,21 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     private void noFireDamage(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        if (INSTANCE.getMutation(player).equals("hydrophobic") && damageSource.getType().effects().equals(DamageEffects.BURNING)) {
+        if (gift.equals("noFireDamage") && damageSource.getType().effects().equals(DamageEffects.BURNING)) {
             cir.setReturnValue(true);
         }
     }
 
     @Inject(method = "setFireTicks", at = @At("HEAD"), cancellable = true)
     private void noFireTicks(int ticks, CallbackInfo ci) {
-        if (INSTANCE.getMutation(player).equals("hydrophobic")) {
+        if (gift.equals("noFireDamage")) {
             ci.cancel();
         }
     }
 
     @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
     private void noFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        if (INSTANCE.getMutation(player).equals("fallen")) {
+        if (gift.equals("noFallDamage")) {
             cir.setReturnValue(false);
         }
     }

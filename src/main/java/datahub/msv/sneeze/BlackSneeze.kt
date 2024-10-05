@@ -1,8 +1,7 @@
 package datahub.msv.sneeze
 
-import datahub.msv.MSVPlayerData
-import datahub.msv.MSVStatusEffects
 import datahub.msv.MSVReloaded.Companion.id
+import datahub.msv.MSVStatusEffects
 import eu.pb4.polymer.core.api.entity.PolymerEntity
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent

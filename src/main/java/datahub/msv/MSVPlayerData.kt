@@ -1,29 +1,15 @@
 package datahub.msv
 
-import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.Multimap
 import datahub.msv.MSVFiles.mutationsData
 import datahub.msv.sneeze.BlackSneeze
 import datahub.msv.sneeze.NormalSneeze
-import net.minecraft.entity.attribute.EntityAttribute
-import net.minecraft.entity.attribute.EntityAttributeModifier
-import net.minecraft.entity.attribute.EntityAttributes
-import net.minecraft.entity.attribute.EntityAttributes.GENERIC_MAX_HEALTH
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.registry.Registries
-import net.minecraft.registry.RegistryKey
-import net.minecraft.registry.RegistryKeys
-import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.util.Identifier
-import java.rmi.registry.Registry
-import java.util.*
 import kotlin.math.pow
 import kotlin.random.Random
-
 
 object MSVPlayerData {
     const val MSV: String = "MSV"
@@ -84,10 +70,12 @@ object MSVPlayerData {
         entity.readNbt(nbt)
     }
 
+    @Suppress("unused")
     fun getFreezeCooldown(player: PlayerEntity): Int {
         return player.writeNbt(NbtCompound()).getCompound(MSV).getInt(FREEZE_COOLDOWN)
     }
 
+    @Suppress("unused")
     fun setFreezeCooldown(player: PlayerEntity, value: Int) {
         val nbt = player.writeNbt(NbtCompound())
         val msv = nbt.getCompound(MSV)
@@ -96,10 +84,12 @@ object MSVPlayerData {
         player.readNbt(nbt)
     }
 
+    @Suppress("unused")
     fun getSneezeCooldown(player: PlayerEntity): Int {
         return player.writeNbt(NbtCompound()).getCompound(MSV).getInt(SNEEZE_COOLDOWN)
     }
 
+    @Suppress("unused")
     fun setSneezeCooldown(player: PlayerEntity, value: Int) {
         val nbt = player.writeNbt(NbtCompound())
         val msv = nbt.getCompound(MSV)
@@ -108,10 +98,12 @@ object MSVPlayerData {
         player.readNbt(nbt)
     }
 
+    @Suppress("unused")
     fun getCreeperSoundCooldown(player: PlayerEntity): Int {
         return player.writeNbt(NbtCompound()).getCompound(MSV).getInt(CREEPER_SOUND_COOLDOWN)
     }
 
+    @Suppress("unused")
     fun setCreeperSoundCooldown(player: PlayerEntity, value: Int) {
         val nbt = player.writeNbt(NbtCompound())
         val msv = nbt.getCompound(MSV)
@@ -132,10 +124,12 @@ object MSVPlayerData {
         player.readNbt(nbt)
     }
 
+    @Suppress("unused")
     fun getTimeForUpStage(player: PlayerEntity): Int {
         return player.writeNbt(NbtCompound()).getCompound(MSV).getInt(TIME_FOR_UP_STAGE)
     }
 
+    @Suppress("unused")
     fun setTimeForUpStage(player: PlayerEntity, value: Int) {
         val nbt = player.writeNbt(NbtCompound())
         val msv = nbt.getCompound(MSV)
@@ -157,6 +151,9 @@ object MSVPlayerData {
                 timeForUpStage = ((257 + Random.nextInt(27)) * (2).toDouble().pow((stage - 1))).toInt()
                 if (stage == 6) {
                     setMutation(player, getRandomMutation())
+                }
+                if (stage == 7) {
+                    mutationsData[getMutation(player)]?.gifts?.let { setGift(player, it.random()) }
                 }
             }
             msv.putInt(TIME_FOR_UP_STAGE, --timeForUpStage)

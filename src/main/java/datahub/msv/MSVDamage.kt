@@ -17,6 +17,7 @@ object MSVDamage {
     }
 
     private fun register(id: String): RegistryKey<DamageType> {
+        MSVReloaded.LOGGER.info("Initializing custom-damage...")
         return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id(id))
     }
 }
