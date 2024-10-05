@@ -1,17 +1,10 @@
 package datahub.msv
 
-import com.mojang.brigadier.CommandDispatcher
-import datahub.msv.Features.registerModFeatures
-import datahub.msv.MSVCommand.command
 import datahub.msv.sneeze.BlackSneeze.Companion.BLACK_SNEEZE
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.command.CommandManager
-import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Identifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,15 +12,11 @@ import org.slf4j.LoggerFactory
 class MSVReloaded : ModInitializer {
 
     override fun onInitialize() {
-        registerModFeatures()
+        Features.register()
         ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvents.ServerStarting { server: MinecraftServer ->
             MSVFiles.register(server)
         })
-        CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher: CommandDispatcher<ServerCommandSource?>?, _: CommandRegistryAccess?, _: CommandManager.RegistrationEnvironment? ->
-            command(
-                dispatcher!!
-            )
-        })
+        MSVCommand.register()
         PolymerEntityUtils.registerType(BLACK_SNEEZE)
         MSVStatusEffects.register()
         MSVItems.register()

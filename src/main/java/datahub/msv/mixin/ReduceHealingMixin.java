@@ -33,9 +33,8 @@ public class ReduceHealingMixin {
             exhaustion -= 4.0F;
             if (saturationLevel > 0.0F) {
                 saturationLevel = Math.max(saturationLevel - 1.0F, 0.0F);
-            } else if (difficulty != Difficulty.PEACEFUL) {
+            } else if (difficulty != Difficulty.PEACEFUL)
                 foodLevel = Math.max(foodLevel - 1, 0);
-            }
         }
 
         boolean bl = player.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
@@ -60,7 +59,6 @@ public class ReduceHealingMixin {
                 if (player.getHealth() > 10.0F || difficulty == Difficulty.HARD || player.getHealth() > 1.0F && difficulty == Difficulty.NORMAL) {
                     player.damage(player.getDamageSources().starve(), 1.0F);
                 }
-
                 foodTickTimer = 0;
             }
         } else {

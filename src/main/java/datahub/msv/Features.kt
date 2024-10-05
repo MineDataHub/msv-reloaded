@@ -22,21 +22,20 @@ import net.minecraft.util.math.BlockPos
 import java.util.*
 
 object Features {
-
-    fun registerModFeatures() {
+    fun register() {
         MSVReloaded.LOGGER.info("Registering features for" + MSVReloaded.MOD_ID)
         elytraFlapping()
         playerEffects()
         zombieEating()
-        settingAttributes()
+        settingUpAttributes()
     }
 
     private fun elytraFlapping() {
-        EntityElytraEvents.ALLOW.register { entity ->
-            MSVPlayerData.getMutation(entity) != "fallen"
+        EntityElytraEvents.ALLOW.register {
+            it is PlayerEntity && MSVPlayerData.getMutation(it) == "fallen"
         }
     }
-    private fun settingAttributes() {
+    private fun settingUpAttributes() {
         ServerPlayerEvents.AFTER_RESPAWN.register { oldPlayer: ServerPlayerEntity, player: ServerPlayerEntity, isAlive: Boolean ->
 
         }

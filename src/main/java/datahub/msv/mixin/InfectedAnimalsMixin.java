@@ -3,7 +3,6 @@ package datahub.msv.mixin;
 import datahub.msv.MSVPlayerData;
 import kotlin.random.Random;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.MobEntity;
@@ -27,9 +26,7 @@ public class InfectedAnimalsMixin extends MobEntity {
 
     @Inject(method = "canEat", at = @At("HEAD"), cancellable = true)
     private void forbidEating(CallbackInfoReturnable<Boolean> cir) {
-        if (MSVPlayerData.INSTANCE.isInfected(this)) {
-            cir.setReturnValue(false);
-        }
+        cir.setReturnValue(!MSVPlayerData.INSTANCE.isInfected(this));
     }
 
     @Unique
@@ -48,7 +45,7 @@ public class InfectedAnimalsMixin extends MobEntity {
             if (CDHitPlayer > 0) CDHitPlayer--;
             if (CDHitAnimal > 0) CDHitAnimal--;
 
-            PlayerEntity player = this.getWorld().getClosestPlayer(this.getX(), this.getY(), this.getZ(), 15.0, p -> this.canSee(p) && MSVPlayerData.INSTANCE.getStage((LivingEntity) p) == 0 && !((PlayerEntity) p).isCreative());
+            PlayerEntity player = this.getWorld().getClosestPlayer(this.getX(), this.getY(), this.getZ(), 15.0, p -> this.canSee(p) && MSVPlayerData.INSTANCE.getStage((PlayerEntity) p) == 0 && !((PlayerEntity) p).isCreative());
             if (player != null) {
                 if (this.distanceTo(player) <= 1.5F && CDHitPlayer == 0) {
                     this.lookControl.lookAt(player, 180, 180);
@@ -63,7 +60,7 @@ public class InfectedAnimalsMixin extends MobEntity {
                     CDTarget = Random.Default.nextInt(700, 900);
                 }
                 if (CDTarget == 400) {
-                    if (MSVPlayerData.INSTANCE.getStage(this) == 0 && Random.Default.nextBoolean())
+                    if (Random.Default.nextBoolean())
                         this.lookControl.lookAt(player, 180, 180);
                 }
 

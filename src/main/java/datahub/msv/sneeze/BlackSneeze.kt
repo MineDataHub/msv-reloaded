@@ -76,12 +76,9 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
             kill()
         }
 
-        val radius = 0.5
-        for (entity in world.getOtherEntities(this, boundingBox.expand(radius))
+        for (entity in world.getOtherEntities(this, boundingBox.expand(0.5))
             .filterIsInstance<LivingEntity>()) {
-            if (this.squaredDistanceTo(entity) <= radius * radius && MSVPlayerData.getStage(entity) != 0){
-                entity.addStatusEffect(StatusEffectInstance(MSVStatusEffects.CURSE, 100, 0))
-            }
+            entity.addStatusEffect(StatusEffectInstance(MSVStatusEffects.CURSE, 100, 1))
         }
     }
 

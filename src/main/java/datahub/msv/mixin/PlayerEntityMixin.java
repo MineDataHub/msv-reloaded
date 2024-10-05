@@ -35,6 +35,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Unique
     private String mutation = "none";
     @Unique
+    private String gift = "none";
+    @Unique
     private Integer stage = 0;
     @Unique
     private Integer sneezeCooldown = 0;
@@ -49,6 +51,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
         nbt.put(MSV, msv);
         msv.putString(MUTATION, mutation);
+        msv.putString(GIFT, gift);
         msv.putInt(STAGE, stage);
         msv.putInt(SNEEZE_COOLDOWN, sneezeCooldown);
         msv.putInt(CREEPER_SOUND_COOLDOWN, creeperSoundCooldown);
@@ -60,6 +63,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         NbtCompound msv = nbt.getCompound(MSV);
 
         mutation = msv.getString(MUTATION);
+        gift = msv.getString(GIFT);
         stage = msv.getInt(STAGE);
         sneezeCooldown = msv.getInt(SNEEZE_COOLDOWN);
         creeperSoundCooldown = msv.getInt(CREEPER_SOUND_COOLDOWN);
@@ -68,43 +72,41 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "eatFood", at = @At("TAIL"))
     private void modifyGhoulsFoodEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
-        PlayerEntity entity = (PlayerEntity) (Object) this;
-        if (Objects.equals(INSTANCE.getMutation(entity),"ghoul")) {
+        if (Objects.equals(INSTANCE.getMutation(player),"ghoul")) {
             if (stack.getItem() == Items.ROTTEN_FLESH) {
-                entity.removeStatusEffect(StatusEffects.HUNGER);
+                player.removeStatusEffect(StatusEffects.HUNGER);
             } else {
-                StatusEffectInstance currentEffect = entity.getStatusEffect(StatusEffects.HUNGER);
+                StatusEffectInstance currentEffect = player.getStatusEffect(StatusEffects.HUNGER);
                 int newDuration = (currentEffect != null) ? currentEffect.getDuration() + 300 : 300;
                 int newAmplifier = (currentEffect != null) ? currentEffect.getAmplifier() + 1 : 0;
-                entity.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, newDuration, newAmplifier));
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, newDuration, newAmplifier));
 
-                if (currentEffect != null && currentEffect.getAmplifier() >= 2) {
-                    entity.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 200, 0));
-                }
+                if (currentEffect != null && currentEffect.getAmplifier() >= 2)
+                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 200, 0));
             }
         }
     }
 
     @Inject(method = "damage", at = @At("TAIL"))
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (INSTANCE.getStage(this) > 1) {
-            this.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false));
+        if (INSTANCE.getStage(player) > 1) {
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false));
             Features.INSTANCE.dropItem(player);
         }
     }
 
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     private void noFireDamage(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(INSTANCE.getMutation(this).equals("hydrophobic") && damageSource.getType().effects().equals(DamageEffects.BURNING));
+        cir.setReturnValue(INSTANCE.getMutation(player).equals("hydrophobic") && damageSource.getType().effects().equals(DamageEffects.BURNING));
     }
     @Inject(method = "setFireTicks", at = @At("HEAD"), cancellable = true)
     private void noFireTicks(int ticks, CallbackInfo ci) {
-        if (INSTANCE.getMutation(this).equals("hydrophobic"))
+        if (INSTANCE.getMutation(player).equals("hydrophobic"))
             ci.cancel();
     }
 
     @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
     private void noFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(!INSTANCE.getMutation(this).equals("fallen"));
+        cir.setReturnValue(!INSTANCE.getMutation(player).equals("fallen"));
     }
 }

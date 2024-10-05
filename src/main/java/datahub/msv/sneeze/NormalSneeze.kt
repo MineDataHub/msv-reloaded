@@ -62,9 +62,8 @@ object NormalSneeze {
             checkSneezedPlayers()
         }
         UseItemCallback.EVENT.register { player, world, hand ->
-            if (world.isClient) {
+            if (world.isClient)
                 return@register TypedActionResult.pass(player.getStackInHand(hand))
-            }
 
             val serverPlayer = player as ServerPlayerEntity
             val itemStack = serverPlayer.getStackInHand(hand)
@@ -72,9 +71,8 @@ object NormalSneeze {
             if (itemStack.item == Items.GLASS_BOTTLE) {
                 collect(serverPlayer, itemStack)
                 TypedActionResult.success(itemStack, world.isClient)
-            } else {
+            } else
                 TypedActionResult.pass(itemStack)
-            }
         }
     }
 
@@ -84,9 +82,8 @@ object NormalSneeze {
             if (System.currentTimeMillis() > playerTimer.timer) {
                 results.add(0)
                 true
-            } else {
+            } else
                 false
-            }
         }
         return results
     }

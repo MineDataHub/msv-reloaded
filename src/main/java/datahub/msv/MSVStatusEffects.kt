@@ -3,9 +3,12 @@ package datahub.msv
 import datahub.msv.MSVReloaded.Companion.id
 import eu.pb4.polymer.core.api.other.PolymerPotion
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectCategory
 import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.mob.MobEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.potion.Potion
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
@@ -66,6 +69,15 @@ object MSVStatusEffects {
     object CurseStatusEffect : StatusEffect(StatusEffectCategory.HARMFUL, 0), PolymerStatusEffect {
         override fun getPolymerReplacement(player: ServerPlayerEntity?): StatusEffect {
             return this
+        }
+
+        override fun onApplied(entity: LivingEntity?, amplifier: Int) {
+            if (amplifier == 1) {
+                if (entity is MobEntity && !MSVPlayerData.isInfected(entity))
+                    MSVPlayerData.setInfected(entity, true)
+                if (entity is PlayerEntity && MSVPlayerData.getStage(entity) == 0)
+                    MSVPlayerData.setStage(entity, 5)
+            }
         }
     }
     object CursePotion : Potion(StatusEffectInstance(CURSE, 300)), PolymerPotion {

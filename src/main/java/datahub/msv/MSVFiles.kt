@@ -10,6 +10,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object MSVFiles {
+    data class Mutation(val gifts: List<String>, val weight: Int)
 
     private lateinit var worldDir: Path
     private val msvDir: Path
@@ -20,10 +21,10 @@ object MSVFiles {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     val initialMutations = mapOf(
-        "hydrophobic" to 50,
-        "ghoul" to 50,
-        "fallen" to 50,
-        "vampire" to 50
+        "hydrophobic" to Mutation(listOf("hydrophobic1", "hydrophobic2"), 50),
+        "ghoul" to Mutation(listOf("ghoul1", "ghoul2"), 50),
+        "fallen" to Mutation(listOf("fallen1", "fallen2"), 50),
+        "vampire" to Mutation(listOf("vampire1", "vampire2"), 50)
     )
 
     fun register(server: MinecraftServer) {
@@ -41,9 +42,9 @@ object MSVFiles {
         }
     }
 
-    val mutationsData: Map<String, Int>
+    val mutationsData: Map<String, Mutation>
         get() = if (mutationsFile.exists()) {
-            val type = object : TypeToken<Map<String, Int>>() {}.type
+            val type = object : TypeToken<Map<String, Mutation>>() {}.type
             Gson().fromJson(mutationsFile.readText(), type)
         } else {
             emptyMap()
@@ -52,12 +53,12 @@ object MSVFiles {
     val mutationsList: List<String>
         get() = mutationsData.keys.toList()
 
-    fun writeMutation(mutation: String, value: Int) {
+    fun writeMutation(mutation: String, gifts: List<String>, weight: Int) {
         if (!Files.exists(msvDir)) {
             Files.createDirectories(msvDir)
         }
         if (!mutationsData.containsKey(mutation)) {
-            val newData = mutationsData + (mutation to value)
+            val newData = mutationsData + (mutation to Mutation(gifts, weight))
             mutationsFile.writeText(gson.toJson(newData))
         }
     }

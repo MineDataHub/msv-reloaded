@@ -18,8 +18,7 @@ public class InfectedSheepMixin extends MobEntity {
 
     @Inject(method = "onEatingGrass", at = @At("HEAD"), cancellable = true)
     private void forbidEating(CallbackInfo ci) {
-        if (MSVPlayerData.INSTANCE.isInfected(this)) {
+        if (MSVPlayerData.INSTANCE.isInfected(this))
             ci.cancel();
-        }
     }
 }

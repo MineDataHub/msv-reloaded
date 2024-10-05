@@ -6,6 +6,7 @@ import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,7 +29,7 @@ public class MobEntityMixin {
 
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     private void ignoreVampires(LivingEntity target, CallbackInfo ci) {
-        if (target != null && MSVPlayerData.INSTANCE.getMutation(target).equals("vampire") && isUndead)
+        if (target instanceof PlayerEntity && MSVPlayerData.INSTANCE.getMutation((PlayerEntity) target).equals("vampire") && isUndead)
             ci.cancel();
     }
 
