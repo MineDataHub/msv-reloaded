@@ -20,7 +20,7 @@ object InfectedZombie {
         val targetPos = findDarkSpot(player.world, player.blockPos, player.pos, player.getRotationVec(1.0f), Random())
 
         val zombie = zombieType.create(player.world)!!.also {
-            MSVPlayerData.setInfected(it as MobEntity, true)
+            MSVNBTData.setInfected(it as MobEntity, true)
         }
         zombie.refreshPositionAndAngles(targetPos, 0.0f, 0.0f)
         player.world.spawnEntity(zombie)

@@ -3,6 +3,7 @@ package datahub.msv
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.WorldSavePath
 import java.io.File
@@ -27,18 +28,27 @@ object MSVFiles {
         "vampire" to Mutation(listOf("unDead", "vampire2"), 50)
     )
 
-    fun register(server: MinecraftServer) {
+    fun register() {
+        ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvents.ServerStarting { server: MinecraftServer ->
+            init(server)
+        })
         MSVReloaded.LOGGER.info("Initializing configs...")
+
+    }
+
+    private fun init(server: MinecraftServer) {
         worldDir = server.getSavePath(WorldSavePath.ROOT)
 
         // Проверяем, существует ли папка, если нет — создаем
         if (!Files.exists(msvDir)) {
             Files.createDirectories(msvDir)
+            MSVReloaded.LOGGER.info("Created MSV directory for the world!")
         }
 
         // Проверяем, существует ли файл, если нет — создаем и записываем начальные данные
         if (!mutationsFile.exists()) {
             mutationsFile.writeText(gson.toJson(initialMutations))
+            MSVReloaded.LOGGER.info("Created mutations.json for the world!")
         }
     }
 

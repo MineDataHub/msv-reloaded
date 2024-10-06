@@ -1,9 +1,9 @@
 package datahub.msv
 
-import datahub.msv.MSVPlayerData.FREEZE_COOLDOWN
-import datahub.msv.MSVPlayerData.MSV
-import datahub.msv.MSVPlayerData.STAGE
-import datahub.msv.MSVPlayerData.getStage
+import datahub.msv.MSVNBTData.FREEZE_COOLDOWN
+import datahub.msv.MSVNBTData.MSV
+import datahub.msv.MSVNBTData.STAGE
+import datahub.msv.MSVNBTData.getStage
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
@@ -33,7 +33,7 @@ object Features {
 
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register {
-            it is PlayerEntity && MSVPlayerData.getMutation(it) == "fallen"
+            it is PlayerEntity && MSVNBTData.getMutation(it) == "fallen"
         }
     }
 
@@ -45,7 +45,7 @@ object Features {
                 if (tickCounter % 10 == 0) {
                     if (tickCounter >= 200) {
                         tickCounter = 0
-                        MSVPlayerData.playerTimer(player)
+                        MSVNBTData.playerTimer(player)
                     }
                     player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.updateModifier(
                         EntityAttributeModifier(
@@ -61,7 +61,7 @@ object Features {
 
                 val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                if (MSVPlayerData.getMutation(player) == "hydrophobic") {
+                if (MSVNBTData.getMutation(player) == "hydrophobic") {
                     player.takeIf { it.isTouchingWater }?.apply {
                         damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
                     }
@@ -72,7 +72,7 @@ object Features {
                 }
 
                 player.takeIf {
-                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVPlayerData.getMutation(player) == "vampire" && !MSVItems.UmbrellaItem.check(player)
+                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVNBTData.getMutation(player) == "vampire" && !MSVItems.UmbrellaItem.check(player)
                 }?.apply {
                     fireTicks = 80
                 }
@@ -97,13 +97,12 @@ object Features {
     private fun isZombie(entity: Entity): Boolean {return entity is ZombieEntity || entity is ZombieHorseEntity}
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, hand, entity, _ ->
-            if (MSVPlayerData.getGift(player) == "zombieEater" && world is ServerWorld && player.hungerManager.isNotFull && isZombie(entity)) {
+            if (MSVNBTData.getGift(player) == "zombieEater" && world is ServerWorld && player.hungerManager.isNotFull && isZombie(entity)) {
                 val lastUseTime = zombieEatingCD[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 
-                if (currentTime - lastUseTime < 1250L) {
+                if (currentTime - lastUseTime < 1250L)
                     return@register ActionResult.PASS
-                }
 
                 player.swingHand(hand, true)
                 world.spawnParticles(
@@ -143,9 +142,8 @@ object Features {
         val lastUseTime = itemDroppingCD[player] ?: 0L
         val currentTime = System.currentTimeMillis()
 
-        if (currentTime - lastUseTime < 500L) {
+        if (currentTime - lastUseTime < 500L)
             return ActionResult.PASS
-        }
         
         val stackToDrop: ItemStack = if (Random().nextBoolean()) {
             player.offHandStack
@@ -154,9 +152,8 @@ object Features {
         }
         if (!stackToDrop.isEmpty) {
             player.dropItem(stackToDrop.split(1), false)
+            itemDroppingCD[player] = currentTime
         }
-        itemDroppingCD[player] = currentTime
-
         return ActionResult.SUCCESS
     }
 }

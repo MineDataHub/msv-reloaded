@@ -1,6 +1,6 @@
 package datahub.msv.mixin;
 
-import datahub.msv.MSVPlayerData;
+import datahub.msv.MSVNBTData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.SheepEntity;
@@ -18,7 +18,7 @@ public class InfectedSheepMixin extends MobEntity {
 
     @Inject(method = "onEatingGrass", at = @At("HEAD"), cancellable = true)
     private void forbidEating(CallbackInfo ci) {
-        if (MSVPlayerData.INSTANCE.isInfected(this))
+        if (MSVNBTData.INSTANCE.isInfected(this))
             ci.cancel();
     }
 }

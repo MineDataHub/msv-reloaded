@@ -1,6 +1,5 @@
 package datahub.msv.mixin;
 
-import datahub.msv.MSVPlayerData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -14,29 +13,31 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static datahub.msv.MSVNBTData.*;
+
 @Mixin(MobEntity.class)
 public class MobEntityMixin {
     @Unique
     private Boolean infected = false;
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
     public void writeNbt(NbtCompound nbt, CallbackInfo ci) {
-        nbt.putBoolean(MSVPlayerData.INFECTED, infected);
+        nbt.putBoolean(INFECTED, infected);
     }
     @Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
     public void readNbt(NbtCompound nbt, CallbackInfo ci) {
-        infected = nbt.getBoolean(MSVPlayerData.INFECTED);
+        infected = nbt.getBoolean(INFECTED);
     }
 
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     private void ignoreVampires(LivingEntity target, CallbackInfo ci) {
-        if (target instanceof PlayerEntity && MSVPlayerData.INSTANCE.getMutation((PlayerEntity) target).equals("vampire") && isUndead)
+        if (isUndead((MobEntity) (Object) this) && INSTANCE.getGift((PlayerEntity) target).equals("unDead")) {
             ci.cancel();
+        }
     }
-
     @Unique
-    MobEntity mob = (MobEntity) (Object) this;
-    @Unique
-    private boolean isUndead = mob instanceof ZombieEntity
-            || mob instanceof AbstractSkeletonEntity
-            || mob instanceof PhantomEntity;
+    private boolean isUndead(MobEntity mob) {
+        return mob instanceof ZombieEntity
+                || mob instanceof AbstractSkeletonEntity
+                || mob instanceof PhantomEntity;
+    }
 }

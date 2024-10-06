@@ -11,7 +11,7 @@ import net.minecraft.sound.SoundEvents
 import kotlin.math.pow
 import kotlin.random.Random
 
-object MSVPlayerData {
+object MSVNBTData {
     const val MSV: String = "MSV"
     const val MUTATION: String = "Mutation"
     const val GIFT: String = "Gift"
@@ -20,6 +20,7 @@ object MSVPlayerData {
     const val CREEPER_SOUND_COOLDOWN: String = "CreeperSoundCooldown"
     const val STAGE: String = "Stage"
     const val TIME_FOR_UP_STAGE: String = "TimeForUpStage"
+
     const val INFECTED: String = "Infected"
 
     fun getRandomMutation(): String {

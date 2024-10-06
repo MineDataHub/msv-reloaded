@@ -13,9 +13,7 @@ class MSVReloaded : ModInitializer {
 
     override fun onInitialize() {
         Features.register()
-        ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvents.ServerStarting { server: MinecraftServer ->
-            MSVFiles.register(server)
-        })
+        MSVFiles.register()
         MSVCommand.register()
         PolymerEntityUtils.registerType(BLACK_SNEEZE)
         MSVStatusEffects.register()

@@ -73,10 +73,10 @@ object MSVStatusEffects {
 
         override fun onApplied(entity: LivingEntity?, amplifier: Int) {
             if (amplifier == 1) {
-                if (entity is MobEntity && !MSVPlayerData.isInfected(entity))
-                    MSVPlayerData.setInfected(entity, true)
-                if (entity is PlayerEntity && MSVPlayerData.getStage(entity) == 0)
-                    MSVPlayerData.setStage(entity, 5)
+                if (entity is MobEntity && !MSVNBTData.isInfected(entity))
+                    MSVNBTData.setInfected(entity, true)
+                if (entity is PlayerEntity && MSVNBTData.getStage(entity) == 0)
+                    MSVNBTData.setStage(entity, 5)
             }
         }
     }

@@ -96,12 +96,12 @@ object MSVCommand {
                                                             .executes {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
                                                                 val stage = IntegerArgumentType.getInteger(it, "stage")
-                                                                if (MSVPlayerData.getStage(player) == stage) {
+                                                                if (MSVNBTData.getStage(player) == stage) {
                                                                     it.source.sendMessage(Text.literal("${player.name.string} is already at that stage!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
                                                                 } else {
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s stage is now set to $stage"))
-                                                                    MSVPlayerData.setStage(player, stage)
+                                                                    MSVNBTData.setStage(player, stage)
                                                                     Command.SINGLE_SUCCESS
                                                                 }
                                                             }
@@ -119,19 +119,19 @@ object MSVCommand {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
                                                                 val mutation = it.getArgument("mutation", String::class.java)
                                                                 if (mutation == "random") {
-                                                                    val randomMutation = MSVPlayerData.getRandomMutation()
+                                                                    val randomMutation = MSVNBTData.getRandomMutation()
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $randomMutation"))
-                                                                    MSVPlayerData.setMutation(player, randomMutation)
+                                                                    MSVNBTData.setMutation(player, randomMutation)
                                                                     Command.SINGLE_SUCCESS
                                                                 } else if (!MSVFiles.mutationsData.contains(mutation) && !mutation.equals("none")) {
                                                                     it.source.sendMessage(Text.literal("This mutation does not exist!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
-                                                                } else if (MSVPlayerData.getMutation(player) == mutation) {
+                                                                } else if (MSVNBTData.getMutation(player) == mutation) {
                                                                     it.source.sendMessage(Text.literal("${player.name.string} already has this mutation!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
                                                                 } else {
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $mutation"))
-                                                                    MSVPlayerData.setMutation(player, mutation)
+                                                                    MSVNBTData.setMutation(player, mutation)
                                                                     Command.SINGLE_SUCCESS
                                                                 }
                                                             }
@@ -142,31 +142,31 @@ object MSVCommand {
                                                     .then(
                                                         RequiredArgumentBuilder.argument<ServerCommandSource, String>("gift", StringArgumentType.word())
                                                             .suggests { source, builder ->
-                                                                MSVFiles.mutationsData[MSVPlayerData.getMutation(source.source.player as PlayerEntity)]?.gifts?.plus("none")?.plus("random")?.forEach {builder.suggest(it)}
+                                                                MSVFiles.mutationsData[MSVNBTData.getMutation(source.source.player as PlayerEntity)]?.gifts?.plus("none")?.plus("random")?.forEach {builder.suggest(it)}
                                                                 builder.buildFuture()
                                                             }
                                                             .executes {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
                                                                 val gift = it.getArgument("gift", String::class.java)
                                                                 if (gift == "random") {
-                                                                    val randomGift = MSVFiles.mutationsData[MSVPlayerData.getMutation(player)]?.gifts?.random()
+                                                                    val randomGift = MSVFiles.mutationsData[MSVNBTData.getMutation(player)]?.gifts?.random()
                                                                     if (randomGift == null) {
                                                                         it.source.sendMessage(Text.literal("There is no gifts for this mutation!").withColor(16733525))
                                                                         Command.SINGLE_SUCCESS
                                                                     } else {
                                                                         it.source.sendMessage(Text.literal("${player.name.string}`s gift is now set to $randomGift"))
-                                                                        MSVPlayerData.setGift(player, randomGift)
+                                                                        MSVNBTData.setGift(player, randomGift)
                                                                         Command.SINGLE_SUCCESS
                                                                     }
-                                                                } else if (!MSVFiles.mutationsData[MSVPlayerData.getMutation(player)]?.gifts?.contains(gift)!! && !gift.equals("none")) {
+                                                                } else if (!MSVFiles.mutationsData[MSVNBTData.getMutation(player)]?.gifts?.contains(gift)!! && !gift.equals("none")) {
                                                                     it.source.sendMessage(Text.literal("This gift does not exist!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
-                                                                } else if (MSVPlayerData.getGift(player) == gift) {
+                                                                } else if (MSVNBTData.getGift(player) == gift) {
                                                                     it.source.sendMessage(Text.literal("${player.name.string} already has this gift!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
                                                                 } else {
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s gift is now set to $gift"))
-                                                                    MSVPlayerData.setGift(player, gift)
+                                                                    MSVNBTData.setGift(player, gift)
                                                                     Command.SINGLE_SUCCESS
                                                                 }
                                                             }

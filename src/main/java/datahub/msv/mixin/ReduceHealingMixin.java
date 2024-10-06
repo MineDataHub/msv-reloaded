@@ -1,6 +1,6 @@
 package datahub.msv.mixin;
 
-import datahub.msv.MSVPlayerData;
+import datahub.msv.MSVNBTData;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.Difficulty;
@@ -42,14 +42,14 @@ public class ReduceHealingMixin {
             foodTickTimer++;
             if (foodTickTimer >= 10) {
                 float f = Math.min(saturationLevel, 6.0F);
-                player.heal(f / 6 * (1 - ((float) MSVPlayerData.INSTANCE.getStage(player) % 7) / 12));
+                player.heal(f / 6 * (1 - ((float) MSVNBTData.INSTANCE.getStage(player) % 7) / 12));
                 player.addExhaustion(f);
                 foodTickTimer = 0;
             }
         } else if (bl && foodLevel >= 18 && player.canFoodHeal()) {
             foodTickTimer++;
             if (foodTickTimer >= 80) {
-                player.heal(1 - ((float) MSVPlayerData.INSTANCE.getStage(player) % 7) / 12);
+                player.heal(1 - ((float) MSVNBTData.INSTANCE.getStage(player) % 7) / 12);
                 player.addExhaustion(6.0F);
                 foodTickTimer = 0;
             }
