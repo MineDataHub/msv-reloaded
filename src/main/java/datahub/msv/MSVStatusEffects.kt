@@ -1,6 +1,7 @@
 package datahub.msv
 
 import datahub.msv.MSVReloaded.Companion.id
+import datahub.msv.nbt.NBTData
 import eu.pb4.polymer.core.api.other.PolymerPotion
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect
 import net.minecraft.entity.LivingEntity
@@ -73,10 +74,10 @@ object MSVStatusEffects {
 
         override fun onApplied(entity: LivingEntity?, amplifier: Int) {
             if (amplifier == 1) {
-                if (entity is MobEntity && !MSVNBTData.isInfected(entity))
-                    MSVNBTData.setInfected(entity, true)
-                if (entity is PlayerEntity && MSVNBTData.getStage(entity) == 0)
-                    MSVNBTData.setStage(entity, 5)
+                if (entity is MobEntity && !NBTData.isInfected(entity))
+                    NBTData.setInfected(entity, true)
+                if (entity is PlayerEntity && NBTData.getStage(entity) == 0)
+                    NBTData.setStage(entity, 5)
             }
         }
     }

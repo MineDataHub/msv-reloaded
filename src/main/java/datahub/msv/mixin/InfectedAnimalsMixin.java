@@ -1,5 +1,6 @@
 package datahub.msv.mixin;
 
+import datahub.msv.nbt.Access;
 import kotlin.random.Random;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
@@ -17,10 +18,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static datahub.msv.MSVNBTData.*;
-
 @Mixin(AnimalEntity.class)
-public class InfectedAnimalsMixin extends MobEntity {
+public abstract class InfectedAnimalsMixin extends MobEntity implements Access {
     protected InfectedAnimalsMixin(EntityType<? extends MobEntity> entityType, World world, PlayerEntity targetPlayer) {
         super(entityType, world);
         this.targetPlayer = targetPlayer;
@@ -28,7 +27,9 @@ public class InfectedAnimalsMixin extends MobEntity {
 
     @Inject(method = "canEat", at = @At("HEAD"), cancellable = true)
     private void forbidEating(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(!INSTANCE.isInfected(this));
+        if (this.isInfected()) {
+            cir.setReturnValue(false);
+        }
     }
 
     @Unique
@@ -55,12 +56,12 @@ public class InfectedAnimalsMixin extends MobEntity {
 
     @Inject(method = "mobTick", at = @At("TAIL"))
     public void enhancedAI(CallbackInfo ci) {
-        if (INSTANCE.isInfected(this)) {
+        if (this.isInfected()) {
             if (CDTarget > 0) CDTarget--;
             if (CDHitPlayer > 0) CDHitPlayer--;
             if (CDHitAnimal > 0) CDHitAnimal--;
 
-            PlayerEntity player = this.getWorld().getClosestPlayer(this.getX(), this.getY(), this.getZ(), 15.0, p -> this.canSee(p) && INSTANCE.getStage((PlayerEntity) p) == 0 && !((PlayerEntity) p).isCreative());
+            PlayerEntity player = this.getWorld().getClosestPlayer(this.getX(), this.getY(), this.getZ(), 15.0, p -> this.canSee(p) && ((Access)p).getStage() == 0 && !((PlayerEntity) p).isCreative());
             if (player != null) {
                 if (this.distanceTo(player) <= 1.5F && CDHitPlayer == 0) {
                     this.lookControl.lookAt(player, 180, 180);
@@ -92,10 +93,10 @@ public class InfectedAnimalsMixin extends MobEntity {
 
             if (CDHitAnimal == 0) {
                 for (AnimalEntity animalEntity : this.getWorld().getEntitiesByClass(AnimalEntity.class, this.getBoundingBox().expand(2.0), animalEntity -> true)) {
-                    if (!INSTANCE.isInfected(animalEntity)) {
+                    if (!((Access)animalEntity).isInfected()) {
                         if (Random.Default.nextBoolean()) {
                             animalEntity.damage(new DamageSource(this.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MOB_ATTACK), this), 2.0F);
-                            INSTANCE.setInfected(animalEntity, true);
+                            ((Access)animalEntity).setInfected(true);
                         }
                         CDHitAnimal = Random.Default.nextInt(2200, 2600);
                         break;

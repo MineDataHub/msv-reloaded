@@ -48,16 +48,16 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
 
             player.world.playSound(null, player.x, player.y, player.z, SoundEvents.ENTITY_PANDA_SNEEZE, SoundCategory.PLAYERS, 0.7f, player.world.random.nextFloat() * 0.1f + 0.4f)
         }
+    }
 
-        private fun collect(entity: Entity, player: PlayerEntity, items: ItemStack) {
-            items.decrement(1)
-            val item = ItemStack(Items.POTION)
-            item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(MSVStatusEffects.CURSE_POTION))
-            player.giveItemStack(item)
-            player.world.playSound(null, player.x, player.y, player.z, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.PLAYERS, 0.5f, 1f)
-            player.world.playSound(null, entity.x, entity.y, entity.z, SoundEvents.BLOCK_MUD_FALL, SoundCategory.PLAYERS, 0.5f, 1f)
-            entity.kill()
-        }
+    private fun collect(entity: Entity, player: PlayerEntity, items: ItemStack) {
+        items.decrement(1)
+        val item = ItemStack(Items.POTION)
+        item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(MSVStatusEffects.CURSE_POTION))
+        player.giveItemStack(item)
+        player.world.playSound(null, player.x, player.y, player.z, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.PLAYERS, 0.5f, 1f)
+        player.world.playSound(null, entity.x, entity.y, entity.z, SoundEvents.BLOCK_MUD_FALL, SoundCategory.PLAYERS, 0.5f, 1f)
+        entity.kill()
     }
 
     object BlackSneezeEntityFactory : EntityType.EntityFactory<BlackSneeze> {

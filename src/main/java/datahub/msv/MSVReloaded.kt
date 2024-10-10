@@ -29,5 +29,16 @@ class MSVReloaded : ModInitializer {
 		fun id(id: String?): Identifier? {
             return Identifier.of(MOD_ID, id)
         }
+
+        const val MSV: String = "MSV"
+        const val MUTATION: String = "Mutation"
+        const val GIFT: String = "Gift"
+        const val FREEZE_COOLDOWN: String = "FreezeCooldown"
+        const val SNEEZE_COOLDOWN: String = "SneezeCooldown"
+        const val HALLUCINATION_COOLDOWN: String = "HallucinationCooldown"
+        const val STAGE: String = "Stage"
+        const val INFECTION: String = "Infection"
+
+        const val INFECTED: String = "Infected"
     }
 }

@@ -1,10 +1,10 @@
 package datahub.msv.mixin;
 
 import datahub.msv.MSVDamage;
-import datahub.msv.MSVNBTData;
+import datahub.msv.nbt.Access;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.HitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,8 +19,8 @@ public abstract class PotionDamageMixin {
 
         potion.getWorld().getEntitiesByClass(LivingEntity.class, potion.getBoundingBox().expand(4.0), entity -> true)
                 .forEach(entity -> {
-                    if (entity instanceof ServerPlayerEntity player
-                            && MSVNBTData.INSTANCE.getMutation(player).equals("hydrophobic")) {
+                    if (entity instanceof PlayerEntity player
+                            && ((Access)player).getMutation().equals("hydrophobic")) {
                         player.damage(MSVDamage.INSTANCE.createDamageSource(player.getWorld(), MSVDamage.INSTANCE.getPOTION()), 1.0F);
                     }
                 });

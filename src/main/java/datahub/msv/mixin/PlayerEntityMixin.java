@@ -1,6 +1,7 @@
 package datahub.msv.mixin;
 
 import datahub.msv.Features;
+import datahub.msv.nbt.Access;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,10 +22,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static datahub.msv.MSVNBTData.*;
+import static datahub.msv.MSVReloaded.*;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity {
+public abstract class PlayerEntityMixin extends LivingEntity implements Access {
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -39,9 +41,9 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Unique
     private Integer sneezeCooldown = 0;
     @Unique
-    private Integer creeperSoundCooldown = 0;
+    private Integer hallucinationCooldown = 0;
     @Unique
-    private Integer timeForUpStage = 0;
+    private Integer infection = 0;
 
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
     protected void writeNbt(NbtCompound nbt, CallbackInfo ci) {
@@ -52,8 +54,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         msv.putString(GIFT, gift);
         msv.putInt(STAGE, stage);
         msv.putInt(SNEEZE_COOLDOWN, sneezeCooldown);
-        msv.putInt(CREEPER_SOUND_COOLDOWN, creeperSoundCooldown);
-        msv.putInt(TIME_FOR_UP_STAGE, timeForUpStage);
+        msv.putInt(HALLUCINATION_COOLDOWN, hallucinationCooldown);
+        msv.putInt(INFECTION, infection);
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
@@ -64,8 +66,57 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         gift = msv.getString(GIFT);
         stage = msv.getInt(STAGE);
         sneezeCooldown = msv.getInt(SNEEZE_COOLDOWN);
-        creeperSoundCooldown = msv.getInt(CREEPER_SOUND_COOLDOWN);
-        timeForUpStage = msv.getInt(TIME_FOR_UP_STAGE);
+        hallucinationCooldown = msv.getInt(HALLUCINATION_COOLDOWN);
+        infection = msv.getInt(INFECTION);
+    }
+
+    @Override
+    public @NotNull String getMutation() {
+        return mutation;
+    }
+    @Override
+    public void setMutation(@NotNull String string) {
+        mutation = string;
+    }
+    @Override
+    public @NotNull String getGift() {
+        return gift;
+    }
+    @Override
+    public void setGift(@NotNull String string) {
+        gift = string;
+    }
+    @Override
+    public int getStage() {
+        return stage;
+    }
+    @Override
+    public void setStage(int i) {
+        stage = i;
+    }
+    @Override
+    public int getSneezeCoolDown() {
+        return sneezeCooldown;
+    }
+    @Override
+    public void setSneezeCoolDown(int i) {
+        sneezeCooldown = i;
+    }
+    @Override
+    public @NotNull int getHallucinationCoolDown() {
+        return hallucinationCooldown;
+    }
+    @Override
+    public void setHallucinationCoolDown(int i) {
+        hallucinationCooldown = i;
+    }
+    @Override
+    public int getInfection() {
+        return infection;
+    }
+    @Override
+    public void setInfection(int i) {
+        infection = i;
     }
 
     @Inject(method = "eatFood", at = @At("TAIL"))

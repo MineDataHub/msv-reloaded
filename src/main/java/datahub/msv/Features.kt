@@ -1,9 +1,7 @@
 package datahub.msv
 
-import datahub.msv.MSVNBTData.FREEZE_COOLDOWN
-import datahub.msv.MSVNBTData.MSV
-import datahub.msv.MSVNBTData.STAGE
-import datahub.msv.MSVNBTData.getStage
+import datahub.msv.MSVFiles.mutationsData
+import datahub.msv.nbt.Access
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
@@ -14,7 +12,6 @@ import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.mob.ZombieHorseEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtCompound
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
@@ -31,12 +28,26 @@ object Features {
         zombieEating()
     }
 
-    private fun elytraFlapping() {
-        EntityElytraEvents.ALLOW.register {
-            it is PlayerEntity && MSVNBTData.getMutation(it) == "fallen"
+
+    fun getRandomMutation(): String {
+        val randomNum = kotlin.random.Random.nextInt(0, mutationsData.values.sumOf {it.weight})
+        var currentSum = 0
+
+        for ((key) in mutationsData) {
+            val chance = mutationsData[key]?.weight
+            currentSum += chance!!
+            if (randomNum < currentSum) {
+                return key
+            }
         }
+        return "none"
     }
 
+    private fun elytraFlapping() {
+        EntityElytraEvents.ALLOW.register {
+            (it as Access).getMutation() == "fallen"
+        }
+    }
     private var tickCounter = 0
     private fun playerEffects() {
         ServerTickEvents.END_SERVER_TICK.register { server ->
@@ -45,12 +56,11 @@ object Features {
                 if (tickCounter % 10 == 0) {
                     if (tickCounter >= 200) {
                         tickCounter = 0
-                        MSVNBTData.playerTimer(player)
                     }
                     player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.updateModifier(
                         EntityAttributeModifier(
                             MSVReloaded.id("health"),
-                            when (getStage(player)) {
+                            when ((player as Access).getStage()) {
                                 in 5..6 -> -4.0
                                 in 2..7 -> -2.0
                                 else -> 0.0 },
@@ -61,7 +71,7 @@ object Features {
 
                 val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                if (MSVNBTData.getMutation(player) == "hydrophobic") {
+                if ((player as Access).getMutation() == "hydrophobic") {
                     player.takeIf { it.isTouchingWater }?.apply {
                         damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
                     }
@@ -72,21 +82,16 @@ object Features {
                 }
 
                 player.takeIf {
-                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && MSVNBTData.getMutation(player) == "vampire" && !MSVItems.UmbrellaItem.check(player)
+                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && NBTData.getMutation(player) == "vampire" && !MSVItems.UmbrellaItem.check(player)
                 }?.apply {
                     fireTicks = 80
                 }
 
-                val nbt = player.writeNbt(NbtCompound())
-                val msv = nbt.getCompound(MSV)
-                if (msv.getInt(FREEZE_COOLDOWN) < 0) {
+                if (NBTData.getFreezeCooldown(player) < 0) {
                     player.isFrozen
                     player.frozenTicks += 3
-                    if (player.frozenTicks >= 160) {
-                        msv.putInt(FREEZE_COOLDOWN, 30 + Random().nextInt(12) - msv.getInt(STAGE))
-                        nbt.put(MSV, msv)
-                        player.readNbt(nbt)
-                    }
+                    if (player.frozenTicks >= 160)
+                        NBTData.setFreezeCooldown(player, 30 + Random().nextInt(12) - NBTData.getStage(player))
                 }
             }
 
@@ -97,7 +102,7 @@ object Features {
     private fun isZombie(entity: Entity): Boolean {return entity is ZombieEntity || entity is ZombieHorseEntity}
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, hand, entity, _ ->
-            if (MSVNBTData.getGift(player) == "zombieEater" && world is ServerWorld && player.hungerManager.isNotFull && isZombie(entity)) {
+            if (NBTData.getGift(player) == "zombieEater" && world is ServerWorld && player.hungerManager.isNotFull && isZombie(entity)) {
                 val lastUseTime = zombieEatingCD[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 
