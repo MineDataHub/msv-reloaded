@@ -1,7 +1,7 @@
-package datahub.msv.mixin;
+package net.datahub.msv.mixin;
 
-import datahub.msv.MSVDamage;
-import datahub.msv.nbt.Access;
+import net.datahub.msv.MSVDamage;
+import net.datahub.msv.nbt.Access;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;

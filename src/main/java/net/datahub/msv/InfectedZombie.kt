@@ -1,6 +1,6 @@
-package datahub.msv
+package net.datahub.msv
 
-import datahub.msv.nbt.NBTData
+import net.datahub.msv.nbt.NBTData
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.player.PlayerEntity

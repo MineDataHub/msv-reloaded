@@ -1,7 +1,7 @@
-package datahub.msv
+package net.datahub.msv
 
 import com.mojang.serialization.Codec
-import datahub.msv.MSVReloaded.Companion.id
+import net.datahub.msv.MSVReloaded.Companion.id
 import eu.pb4.polymer.core.api.item.PolymerItem
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils
 import net.fabricmc.fabric.api.item.v1.EnchantingContext
@@ -117,7 +117,7 @@ object MSVItems {
         return item
     }
     private val MSV_TAB: ItemGroup =
-            PolymerItemGroupUtils.builder().icon{potionInfection()}.displayName(Text.translatable("itemGroup.msv")).entries { _, entries ->
+            PolymerItemGroupUtils.builder().icon{ potionInfection() }.displayName(Text.translatable("itemGroup.msv")).entries { _, entries ->
                 entries.add(ItemStack(UMBRELLA))
                 entries.add(potionInfection())
                 entries.add(potionCure())

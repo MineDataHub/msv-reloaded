@@ -1,7 +1,7 @@
-package datahub.msv
+package net.datahub.msv
 
-import datahub.msv.MSVFiles.mutationsData
-import datahub.msv.nbt.Access
+import net.datahub.msv.MSVFiles.mutationsData
+import net.datahub.msv.nbt.Access
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
@@ -60,7 +60,7 @@ object Features {
                     player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.updateModifier(
                         EntityAttributeModifier(
                             MSVReloaded.id("health"),
-                            when ((player as Access).getStage()) {
+                            when ((player as Access).stage) {
                                 in 5..6 -> -4.0
                                 in 2..7 -> -2.0
                                 else -> 0.0 },
@@ -71,18 +71,23 @@ object Features {
 
                 val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                if ((player as Access).getMutation() == "hydrophobic") {
+                if (player.getMutation() == "hydrophobic") {
                     player.takeIf { it.isTouchingWater }?.apply {
                         damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
                     }
 
-                    player.takeIf { it.world.isRaining && it.world.isSkyVisibleAllowingSea(blockPos) && !MSVItems.UmbrellaItem.check(player)}?.apply {
+                    player.takeIf { it.world.isRaining && it.world.isSkyVisibleAllowingSea(blockPos) && !MSVItems.UmbrellaItem.check(
+                        player
+                    )
+                    }?.apply {
                         damage(MSVDamage.createDamageSource(player.world, MSVDamage.RAIN), 1.5f)
                     }
                 }
 
                 player.takeIf {
-                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && NBTData.getMutation(player) == "vampire" && !MSVItems.UmbrellaItem.check(player)
+                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && NBTData.getMutation(player) == "vampire" && !MSVItems.UmbrellaItem.check(
+                        player
+                    )
                 }?.apply {
                     fireTicks = 80
                 }

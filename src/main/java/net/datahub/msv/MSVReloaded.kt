@@ -1,10 +1,8 @@
-package datahub.msv
+package net.datahub.msv
 
-import datahub.msv.sneeze.BlackSneeze.Companion.BLACK_SNEEZE
+import net.datahub.msv.sneeze.BlackSneeze.Companion.BLACK_SNEEZE
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import net.minecraft.server.MinecraftServer
 import net.minecraft.util.Identifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -1,10 +1,10 @@
-package datahub.msv.nbt
+package net.datahub.msv.nbt
 
-import datahub.msv.MSVFiles.mutationsData
-import datahub.msv.MSVReloaded
-import datahub.msv.MSVReloaded.Companion.STAGE
-import datahub.msv.sneeze.BlackSneeze
-import datahub.msv.sneeze.NormalSneeze
+import net.datahub.msv.MSVFiles.mutationsData
+import net.datahub.msv.MSVReloaded
+import net.datahub.msv.MSVReloaded.Companion.STAGE
+import net.datahub.msv.sneeze.BlackSneeze
+import net.datahub.msv.sneeze.NormalSneeze
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.sound.SoundCategory

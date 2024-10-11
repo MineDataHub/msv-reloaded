@@ -1,6 +1,6 @@
-package datahub.msv.sneeze
+package net.datahub.msv.sneeze
 
-import datahub.msv.MSVStatusEffects
+import net.datahub.msv.MSVStatusEffects
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseItemCallback
 import net.minecraft.component.DataComponentTypes

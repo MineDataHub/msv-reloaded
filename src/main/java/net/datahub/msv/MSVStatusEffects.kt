@@ -1,7 +1,7 @@
-package datahub.msv
+package net.datahub.msv
 
-import datahub.msv.MSVReloaded.Companion.id
-import datahub.msv.nbt.NBTData
+import net.datahub.msv.MSVReloaded.Companion.id
+import net.datahub.msv.nbt.NBTData
 import eu.pb4.polymer.core.api.other.PolymerPotion
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect
 import net.minecraft.entity.LivingEntity

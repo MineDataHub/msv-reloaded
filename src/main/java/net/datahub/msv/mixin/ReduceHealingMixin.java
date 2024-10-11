@@ -1,6 +1,6 @@
-package datahub.msv.mixin;
+package net.datahub.msv.mixin;
 
-import datahub.msv.nbt.Access;
+import net.datahub.msv.nbt.Access;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.Difficulty;

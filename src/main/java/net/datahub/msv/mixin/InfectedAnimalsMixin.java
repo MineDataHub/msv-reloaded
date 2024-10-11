@@ -1,6 +1,6 @@
-package datahub.msv.mixin;
+package net.datahub.msv.mixin;
 
-import datahub.msv.nbt.Access;
+import net.datahub.msv.nbt.Access;
 import kotlin.random.Random;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;

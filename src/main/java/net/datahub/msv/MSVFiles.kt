@@ -1,4 +1,4 @@
-package datahub.msv
+package net.datahub.msv
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

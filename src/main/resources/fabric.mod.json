@@ -18,7 +18,7 @@
 		"main": [
 			{
 				"adapter": "kotlin",
-				"value": "datahub.msv.MSVReloaded"
+				"value": "net.datahub.msv.MSVReloaded"
 			}
 		]
 	},
@@ -40,5 +40,10 @@
 		{
 			"file": "META-INF/polymer-bundled-0.9.9+1.21.jar"
 		}
-	]
+	],
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/class_1657": ["net/datahub/msv/nbt/Access"]
+		}
+	}
 }

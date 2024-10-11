@@ -1,10 +1,8 @@
-package datahub.msv.mixin;
+package net.datahub.msv.mixin;
 
-import datahub.msv.Features;
-import datahub.msv.nbt.Access;
+import net.datahub.msv.Features;
+import net.datahub.msv.nbt.Access;
 import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageEffects;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -22,13 +20,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static datahub.msv.MSVReloaded.*;
+import static net.datahub.msv.MSVReloaded.*;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements Access {
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
-        super(entityType, world);
-    }
+public abstract class PlayerEntityMixin implements Access {
     @Unique
     PlayerEntity player = (PlayerEntity) (Object) this;
 
@@ -72,7 +67,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Access {
 
     @Override
     public @NotNull String getMutation() {
-        return mutation;
+        return this.mutation;
     }
     @Override
     public void setMutation(@NotNull String string) {
@@ -103,7 +98,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Access {
         sneezeCooldown = i;
     }
     @Override
-    public @NotNull int getHallucinationCoolDown() {
+    public int getHallucinationCoolDown() {
         return hallucinationCooldown;
     }
     @Override

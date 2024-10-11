@@ -1,4 +1,4 @@
-package datahub.msv
+package net.datahub.msv
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
@@ -6,9 +6,9 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
-import datahub.msv.nbt.NBTData
-import datahub.msv.sneeze.BlackSneeze
-import datahub.msv.sneeze.NormalSneeze
+import net.datahub.msv.nbt.NBTData
+import net.datahub.msv.sneeze.BlackSneeze
+import net.datahub.msv.sneeze.NormalSneeze
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.command.EntitySelector
@@ -267,7 +267,11 @@ object MSVCommand {
                                                                         it.source.sendMessage(Text.literal("This gift is already exist`s!").withColor(16733525))
                                                                         Command.SINGLE_SUCCESS
                                                                     } else {
-                                                                        MSVFiles.writeMutation(mutation, currentGifts + gift, MSVFiles.mutationsData[mutation]?.weight!!)
+                                                                        MSVFiles.writeMutation(
+                                                                            mutation,
+                                                                            currentGifts + gift,
+                                                                            MSVFiles.mutationsData[mutation]?.weight!!
+                                                                        )
                                                                         it.source.sendMessage(Text.literal("Gift $gift added to mutation: $mutation"))
                                                                         Command.SINGLE_SUCCESS
                                                                     }
@@ -302,7 +306,12 @@ object MSVCommand {
                                                                         it.source.sendMessage(Text.literal("This gift is not added to this mutation!").withColor(16733525))
                                                                         Command.SINGLE_SUCCESS
                                                                     } else {
-                                                                        MSVFiles.writeMutation(mutation, currentGifts - gift, MSVFiles.mutationsData[mutation]?.weight ?: 50)
+                                                                        MSVFiles.writeMutation(
+                                                                            mutation,
+                                                                            currentGifts - gift,
+                                                                            MSVFiles.mutationsData[mutation]?.weight
+                                                                                ?: 50
+                                                                        )
                                                                         it.source.sendMessage(Text.literal("Gift removed from mutation: $mutation"))
                                                                         Command.SINGLE_SUCCESS
                                                                     }
