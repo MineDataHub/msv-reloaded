@@ -55,6 +55,7 @@ public abstract class PlayerEntityMixin implements Access {
     @Unique
     private Integer infection = 0;
 
+    /*
     @Inject(method = "tick", at = @At("TAIL"))
     protected void cdUpdate(CallbackInfo ci) {
         if (tickCounter % 10 == 0) {
@@ -92,7 +93,7 @@ public abstract class PlayerEntityMixin implements Access {
             if (player.getFrozenTicks() >= 160)
                 freezeCooldown = 30 + Random(12).nextInt(12) - stage;
         }
-    }
+    }*/
 
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
     protected void writeNbt(NbtCompound nbt, CallbackInfo ci) {
@@ -178,6 +179,7 @@ public abstract class PlayerEntityMixin implements Access {
         infection = i;
     }
 
+    /*
     @Inject(method = "eatFood", at = @At("TAIL"))
     private void modifyGhoulsFoodEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
         if (mutation.equals("ghoul")) {
@@ -222,5 +224,5 @@ public abstract class PlayerEntityMixin implements Access {
         if (gift.equals("noFallDamage")) {
             cir.setReturnValue(false);
         }
-    }
+    }*/
 }

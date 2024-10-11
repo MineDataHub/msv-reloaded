@@ -29,7 +29,7 @@ object MSVFiles {
     )
 
     fun register() {
-        ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleEvents.ServerStarting { server: MinecraftServer ->
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server: MinecraftServer ->
             init(server)
             MSVDamage.registryDamage(server)
         })

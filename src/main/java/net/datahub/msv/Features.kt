@@ -24,7 +24,6 @@ object Features {
         zombieEating()
     }
 
-
     fun getRandomMutation(): String {
         val randomNum = kotlin.random.Random.nextInt(0, mutationsData.values.sumOf {it.weight})
         var currentSum = 0
@@ -49,7 +48,8 @@ object Features {
     private fun isZombie(entity: Entity): Boolean {return entity is ZombieEntity || entity is ZombieHorseEntity}
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, hand, entity, _ ->
-            if ((player as Access).gift == "zombieEater" && world is ServerWorld && player.hungerManager.isNotFull && isZombie(entity)) {
+            player as Access
+            if (player.gift == "zombieEater" && world is ServerWorld && player.hungerManager.isNotFull && isZombie(entity)) {
                 val lastUseTime = zombieEatingCD[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 

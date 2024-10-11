@@ -118,21 +118,22 @@ object MSVCommand {
                                                             }
                                                             .executes {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
+                                                                player as Access
                                                                 val mutation = it.getArgument("mutation", String::class.java)
                                                                 if (mutation == "random") {
                                                                     val randomMutation = Features.getRandomMutation()
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $randomMutation"))
-                                                                    (player as Access).mutation =  randomMutation
+                                                                    player.mutation = randomMutation
                                                                     Command.SINGLE_SUCCESS
                                                                 } else if (!MSVFiles.mutationsData.contains(mutation) && !mutation.equals("none")) {
                                                                     it.source.sendMessage(Text.literal("This mutation does not exist!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
-                                                                } else if ((player as Access).mutation == mutation) {
+                                                                } else if (player.mutation == mutation) {
                                                                     it.source.sendMessage(Text.literal("${player.name.string} already has this mutation!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
                                                                 } else {
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $mutation"))
-                                                                    (player as Access).mutation = mutation
+                                                                    player.setMutation(mutation)
                                                                     Command.SINGLE_SUCCESS
                                                                 }
                                                             }
@@ -148,26 +149,27 @@ object MSVCommand {
                                                             }
                                                             .executes {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
+                                                                player as Access
                                                                 val gift = it.getArgument("gift", String::class.java)
                                                                 if (gift == "random") {
-                                                                    val randomGift = MSVFiles.mutationsData[(player as Access).mutation]?.gifts?.random()
+                                                                    val randomGift = MSVFiles.mutationsData[ player.mutation]?.gifts?.random()
                                                                     if (randomGift == null) {
                                                                         it.source.sendMessage(Text.literal("There is no gifts for this mutation!").withColor(16733525))
                                                                         Command.SINGLE_SUCCESS
                                                                     } else {
                                                                         it.source.sendMessage(Text.literal("${player.name.string}`s gift is now set to $randomGift"))
-                                                                        (player as Access).gift = randomGift
+                                                                        player.gift = randomGift
                                                                         Command.SINGLE_SUCCESS
                                                                     }
-                                                                } else if (!MSVFiles.mutationsData[(player as Access).mutation]?.gifts?.contains(gift)!! && !gift.equals("none")) {
+                                                                } else if (!MSVFiles.mutationsData[player.mutation]?.gifts?.contains(gift)!! && !gift.equals("none")) {
                                                                     it.source.sendMessage(Text.literal("This gift does not exist!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
-                                                                } else if ((player as Access).gift == gift) {
+                                                                } else if (player.gift == gift) {
                                                                     it.source.sendMessage(Text.literal("${player.name.string} already has this gift!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
                                                                 } else {
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s gift is now set to $gift"))
-                                                                    (player as Access).gift = gift
+                                                                    player.gift = gift
                                                                     Command.SINGLE_SUCCESS
                                                                 }
                                                             }
