@@ -1,8 +1,13 @@
 package net.datahub.msv.mixin;
 
 import net.datahub.msv.Features;
+import net.datahub.msv.MSVItems;
+import net.datahub.msv.MSVReloaded;
 import net.datahub.msv.nbt.Access;
+import net.datahub.msv.MSVDamage;
 import net.minecraft.component.type.FoodComponent;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageEffects;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -11,22 +16,30 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import java.util.Objects;
 
+import static kotlin.random.RandomKt.Random;
 import static net.datahub.msv.MSVReloaded.*;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin implements Access {
+    @Shadow public abstract boolean damage(DamageSource source, float amount);
+
     @Unique
     PlayerEntity player = (PlayerEntity) (Object) this;
-
+    @Unique
+    private int tickCounter = 0;
     @Unique
     private String mutation = "none";
     @Unique
@@ -41,6 +54,45 @@ public abstract class PlayerEntityMixin implements Access {
     private Integer hallucinationCooldown = 0;
     @Unique
     private Integer infection = 0;
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    protected void cdUpdate(CallbackInfo ci) {
+        if (tickCounter % 10 == 0) {
+            if (tickCounter >= 200) {
+                tickCounter = 0;
+            }
+            Objects.requireNonNull(player.getAttributes().getCustomInstance(EntityAttributes.GENERIC_MAX_HEALTH)).updateModifier(
+                    new EntityAttributeModifier(
+                        MSVReloaded.id("health"),
+                        switch (stage) {
+                            case 2, 3, 4: yield -2.0;
+                            case 5, 6: yield -4.0;
+                            default: yield 0.0;
+                        },
+                        EntityAttributeModifier.Operation.ADD_VALUE
+                    )
+            );
+        }
+        World world = player.getWorld();
+        BlockPos pos = player.getBlockPos();
+
+        if (Objects.equals(this.mutation, "hydrophobic")) {
+            if (player.isTouchingWater()) {
+                damage(MSVDamage.INSTANCE.getWaterDamage(), 1.5f);
+            }
+
+            if (world.isRaining() && world.isSkyVisibleAllowingSea(pos) && MSVItems.UmbrellaItem.INSTANCE.check((ServerPlayerEntity) player)) {
+                damage(MSVDamage.INSTANCE.getRainDamage(), 1.5f);
+            }
+        } else if (Objects.equals(this.mutation, "vampire") && world.isSkyVisibleAllowingSea(pos) && MSVItems.UmbrellaItem.INSTANCE.check((ServerPlayerEntity) player)) {
+            player.setFireTicks(80);
+        }
+        if (freezeCooldown < 0) {
+            player.setFrozenTicks(getFreezeCoolDown() + 3);
+            if (player.getFrozenTicks() >= 160)
+                freezeCooldown = 30 + Random(12).nextInt(12) - stage;
+        }
+    }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
     protected void writeNbt(NbtCompound nbt, CallbackInfo ci) {

@@ -3,11 +3,8 @@ package net.datahub.msv
 import net.datahub.msv.MSVFiles.mutationsData
 import net.datahub.msv.nbt.Access
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.Entity
-import net.minecraft.entity.attribute.EntityAttributeModifier
-import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.mob.ZombieHorseEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -17,14 +14,13 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
-import net.minecraft.util.math.BlockPos
 import java.util.*
+
 
 object Features {
     fun register() {
         MSVReloaded.LOGGER.info("Initializing features...")
         elytraFlapping()
-        playerEffects()
         zombieEating()
     }
 
@@ -46,60 +42,6 @@ object Features {
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register {
             (it as Access).mutation == "fallen"
-        }
-    }
-    private var tickCounter = 0
-    private fun playerEffects() {
-        ServerTickEvents.END_SERVER_TICK.register { server ->
-            ++tickCounter
-            server.playerManager.playerList.forEach { player ->
-                if (tickCounter % 10 == 0) {
-                    if (tickCounter >= 200) {
-                        tickCounter = 0
-                    }
-                    player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.updateModifier(
-                        EntityAttributeModifier(
-                            MSVReloaded.id("health"),
-                            when ((player as Access).stage) {
-                                in 5..6 -> -4.0
-                                in 2..7 -> -2.0
-                                else -> 0.0 },
-                            EntityAttributeModifier.Operation.ADD_VALUE
-                        )
-                    )
-                }
-
-                val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
-
-                if ((player as Access).mutation == "hydrophobic") {
-                    player.takeIf { it.isTouchingWater }?.apply {
-                        damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
-                    }
-
-                    player.takeIf { it.world.isRaining && it.world.isSkyVisibleAllowingSea(blockPos) && !MSVItems.UmbrellaItem.check(
-                        player
-                    )
-                    }?.apply {
-                        damage(MSVDamage.createDamageSource(player.world, MSVDamage.RAIN), 1.5f)
-                    }
-                }
-
-                player.takeIf {
-                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && (player as Access).mutation == "vampire" && !MSVItems.UmbrellaItem.check(
-                        player
-                    )
-                }?.apply {
-                    fireTicks = 80
-                }
-
-                if ((player as Access).freezeCoolDown < 0) {
-                    player.isFrozen
-                    player.frozenTicks += 3
-                    if (player.frozenTicks >= 160)
-                        (player as Access).freezeCoolDown = 30 + Random().nextInt(12) - (player as Access).stage
-                }
-            }
-
         }
     }
 

@@ -21,7 +21,7 @@ public abstract class PotionDamageMixin {
                 .forEach(entity -> {
                     if (entity instanceof PlayerEntity player
                             && ((Access)player).getMutation().equals("hydrophobic")) {
-                        player.damage(MSVDamage.INSTANCE.createDamageSource(player.getWorld(), MSVDamage.INSTANCE.getPOTION()), 1.0F);
+                        player.damage(MSVDamage.INSTANCE.getPotionDamage(), 1.0F);
                     }
                 });
     }
