@@ -1,22 +1,17 @@
 package net.datahub.msv.nbt
 
 import net.datahub.msv.MSVFiles.mutationsData
-import net.datahub.msv.MSVReloaded
 import net.datahub.msv.MSVReloaded.Companion.STAGE
 import net.datahub.msv.sneeze.BlackSneeze
 import net.datahub.msv.sneeze.NormalSneeze
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.nbt.NbtCompound
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import kotlin.math.pow
 import kotlin.random.Random
 
 object NBTData {
-    // Пример использования в таймере игрока
-    fun playerTimer(player: PlayerEntity) {
-        val nbt = player.writeNbt(NbtCompound())
-        val msv = nbt.getCompound(MSVReloaded.MSV)
+    /* Пример использования в таймере игрока
+    fun playerTimer() {
         var stage = msv.getInt(STAGE)
 
         if (stage in 1..6) {
@@ -56,4 +51,6 @@ object NBTData {
             setCreeperSoundCooldown(player, --creeperSoundCooldown)
         }
     }
+
+     */
 }

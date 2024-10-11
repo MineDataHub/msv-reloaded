@@ -17,6 +17,7 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
+import net.minecraft.potion.Potion
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
@@ -101,27 +102,17 @@ object MSVItems {
         }
     }
 
-    private fun potionInfection(): ItemStack {
+    private fun potion(potion: RegistryEntry<Potion>): ItemStack {
         val item = ItemStack(Items.POTION)
-        item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(MSVStatusEffects.INFECTION_POTION))
-        return item
-    }
-    private fun potionCurse(): ItemStack {
-        val item = ItemStack(Items.POTION)
-        item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(MSVStatusEffects.CURSE_POTION))
-        return item
-    }
-    private fun potionCure(): ItemStack {
-        val item = ItemStack(Items.POTION)
-        item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(MSVStatusEffects.CURE_POTION))
+        item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(potion))
         return item
     }
     private val MSV_TAB: ItemGroup =
-            PolymerItemGroupUtils.builder().icon{ potionInfection() }.displayName(Text.translatable("itemGroup.msv")).entries { _, entries ->
+            PolymerItemGroupUtils.builder().icon{ potion(MSVStatusEffects.INFECTION_POTION) }.displayName(Text.translatable("itemGroup.msv")).entries { _, entries ->
                 entries.add(ItemStack(UMBRELLA))
-                entries.add(potionInfection())
-                entries.add(potionCure())
-                entries.add(potionCurse())
+                entries.add(potion(MSVStatusEffects.CURE_POTION))
+                entries.add(potion(MSVStatusEffects.CURSE_POTION))
+                entries.add(potion(MSVStatusEffects.INFECTION_POTION))
                     }.build()
 
     private val UMBRELLA: RegistryEntry.Reference<Item> =

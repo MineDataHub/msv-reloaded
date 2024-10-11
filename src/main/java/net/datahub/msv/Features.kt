@@ -45,7 +45,7 @@ object Features {
 
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register {
-            (it as Access).getMutation() == "fallen"
+            (it as Access).mutation == "fallen"
         }
     }
     private var tickCounter = 0
@@ -71,7 +71,7 @@ object Features {
 
                 val blockPos = BlockPos.ofFloored(player.x, player.eyeY, player.z)
 
-                if (player.getMutation() == "hydrophobic") {
+                if ((player as Access).mutation == "hydrophobic") {
                     player.takeIf { it.isTouchingWater }?.apply {
                         damage(MSVDamage.createDamageSource(player.world, MSVDamage.WATER), 1.5f)
                     }
@@ -85,18 +85,18 @@ object Features {
                 }
 
                 player.takeIf {
-                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && NBTData.getMutation(player) == "vampire" && !MSVItems.UmbrellaItem.check(
+                    it.world.isDay && it.world.isSkyVisibleAllowingSea(blockPos) && (player as Access).mutation == "vampire" && !MSVItems.UmbrellaItem.check(
                         player
                     )
                 }?.apply {
                     fireTicks = 80
                 }
 
-                if (NBTData.getFreezeCooldown(player) < 0) {
+                if ((player as Access).freezeCoolDown < 0) {
                     player.isFrozen
                     player.frozenTicks += 3
                     if (player.frozenTicks >= 160)
-                        NBTData.setFreezeCooldown(player, 30 + Random().nextInt(12) - NBTData.getStage(player))
+                        (player as Access).freezeCoolDown = 30 + Random().nextInt(12) - (player as Access).stage
                 }
             }
 
@@ -107,7 +107,7 @@ object Features {
     private fun isZombie(entity: Entity): Boolean {return entity is ZombieEntity || entity is ZombieHorseEntity}
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, hand, entity, _ ->
-            if (NBTData.getGift(player) == "zombieEater" && world is ServerWorld && player.hungerManager.isNotFull && isZombie(entity)) {
+            if ((player as Access).gift == "zombieEater" && world is ServerWorld && player.hungerManager.isNotFull && isZombie(entity)) {
                 val lastUseTime = zombieEatingCD[player] ?: 0L
                 val currentTime = System.currentTimeMillis()
 

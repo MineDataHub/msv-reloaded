@@ -1,9 +1,9 @@
 package net.datahub.msv
 
-import net.datahub.msv.MSVReloaded.Companion.id
-import net.datahub.msv.nbt.NBTData
 import eu.pb4.polymer.core.api.other.PolymerPotion
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect
+import net.datahub.msv.MSVReloaded.Companion.id
+import net.datahub.msv.nbt.Access
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectCategory
@@ -15,7 +15,6 @@ import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.server.network.ServerPlayerEntity
-
 
 object MSVStatusEffects {
     val INFECTION: RegistryEntry<StatusEffect> =
@@ -74,10 +73,10 @@ object MSVStatusEffects {
 
         override fun onApplied(entity: LivingEntity?, amplifier: Int) {
             if (amplifier == 1) {
-                if (entity is MobEntity && !NBTData.isInfected(entity))
-                    NBTData.setInfected(entity, true)
-                if (entity is PlayerEntity && NBTData.getStage(entity) == 0)
-                    NBTData.setStage(entity, 5)
+                if (entity is MobEntity && !(entity as Access).isInfected)
+                    (entity as Access).isInfected = true
+                if (entity is PlayerEntity && (entity as Access).stage == 0)
+                    (entity as Access).stage = 5
             }
         }
     }

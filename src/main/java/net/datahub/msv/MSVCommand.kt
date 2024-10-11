@@ -6,7 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
-import net.datahub.msv.nbt.NBTData
+import net.datahub.msv.nbt.Access
 import net.datahub.msv.sneeze.BlackSneeze
 import net.datahub.msv.sneeze.NormalSneeze
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
@@ -97,12 +97,12 @@ object MSVCommand {
                                                             .executes {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
                                                                 val stage = IntegerArgumentType.getInteger(it, "stage")
-                                                                if (NBTData.getStage(player) == stage) {
+                                                                if ((player as Access).stage == stage) {
                                                                     it.source.sendMessage(Text.literal("${player.name.string} is already at that stage!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
                                                                 } else {
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s stage is now set to $stage"))
-                                                                    NBTData.setStage(player, stage)
+                                                                    (player as Access).stage = stage
                                                                     Command.SINGLE_SUCCESS
                                                                 }
                                                             }
@@ -120,19 +120,19 @@ object MSVCommand {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
                                                                 val mutation = it.getArgument("mutation", String::class.java)
                                                                 if (mutation == "random") {
-                                                                    val randomMutation = NBTData.getRandomMutation()
+                                                                    val randomMutation = Features.getRandomMutation()
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $randomMutation"))
-                                                                    NBTData.setMutation(player, randomMutation)
+                                                                    (player as Access).mutation =  randomMutation
                                                                     Command.SINGLE_SUCCESS
                                                                 } else if (!MSVFiles.mutationsData.contains(mutation) && !mutation.equals("none")) {
                                                                     it.source.sendMessage(Text.literal("This mutation does not exist!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
-                                                                } else if (NBTData.getMutation(player) == mutation) {
+                                                                } else if ((player as Access).mutation == mutation) {
                                                                     it.source.sendMessage(Text.literal("${player.name.string} already has this mutation!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
                                                                 } else {
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s mutation is now set to $mutation"))
-                                                                    NBTData.setMutation(player, mutation)
+                                                                    (player as Access).mutation = mutation
                                                                     Command.SINGLE_SUCCESS
                                                                 }
                                                             }
@@ -143,31 +143,31 @@ object MSVCommand {
                                                     .then(
                                                         RequiredArgumentBuilder.argument<ServerCommandSource, String>("gift", StringArgumentType.word())
                                                             .suggests { source, builder ->
-                                                                MSVFiles.mutationsData[NBTData.getMutation(source.source.player as PlayerEntity)]?.gifts?.plus("none")?.plus("random")?.forEach {builder.suggest(it)}
+                                                                MSVFiles.mutationsData[((source.source.player as PlayerEntity) as Access).mutation]?.gifts?.plus("none")?.plus("random")?.forEach {builder.suggest(it)}
                                                                 builder.buildFuture()
                                                             }
                                                             .executes {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
                                                                 val gift = it.getArgument("gift", String::class.java)
                                                                 if (gift == "random") {
-                                                                    val randomGift = MSVFiles.mutationsData[NBTData.getMutation(player)]?.gifts?.random()
+                                                                    val randomGift = MSVFiles.mutationsData[(player as Access).mutation]?.gifts?.random()
                                                                     if (randomGift == null) {
                                                                         it.source.sendMessage(Text.literal("There is no gifts for this mutation!").withColor(16733525))
                                                                         Command.SINGLE_SUCCESS
                                                                     } else {
                                                                         it.source.sendMessage(Text.literal("${player.name.string}`s gift is now set to $randomGift"))
-                                                                        NBTData.setGift(player, randomGift)
+                                                                        (player as Access).gift = randomGift
                                                                         Command.SINGLE_SUCCESS
                                                                     }
-                                                                } else if (!MSVFiles.mutationsData[NBTData.getMutation(player)]?.gifts?.contains(gift)!! && !gift.equals("none")) {
+                                                                } else if (!MSVFiles.mutationsData[(player as Access).mutation]?.gifts?.contains(gift)!! && !gift.equals("none")) {
                                                                     it.source.sendMessage(Text.literal("This gift does not exist!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
-                                                                } else if (NBTData.getGift(player) == gift) {
+                                                                } else if ((player as Access).gift == gift) {
                                                                     it.source.sendMessage(Text.literal("${player.name.string} already has this gift!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
                                                                 } else {
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s gift is now set to $gift"))
-                                                                    NBTData.setGift(player, gift)
+                                                                    (player as Access).gift = gift
                                                                     Command.SINGLE_SUCCESS
                                                                 }
                                                             }

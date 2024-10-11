@@ -28,6 +28,7 @@ class MSVReloaded : ModInitializer {
             return Identifier.of(MOD_ID, id)
         }
 
+        //NBT Tags
         const val MSV: String = "MSV"
         const val MUTATION: String = "Mutation"
         const val GIFT: String = "Gift"

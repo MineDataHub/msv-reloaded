@@ -36,6 +36,8 @@ public abstract class PlayerEntityMixin implements Access {
     @Unique
     private Integer sneezeCooldown = 0;
     @Unique
+    private Integer freezeCooldown = 0;
+    @Unique
     private Integer hallucinationCooldown = 0;
     @Unique
     private Integer infection = 0;
@@ -49,6 +51,7 @@ public abstract class PlayerEntityMixin implements Access {
         msv.putString(GIFT, gift);
         msv.putInt(STAGE, stage);
         msv.putInt(SNEEZE_COOLDOWN, sneezeCooldown);
+        msv.putInt(FREEZE_COOLDOWN, freezeCooldown);
         msv.putInt(HALLUCINATION_COOLDOWN, hallucinationCooldown);
         msv.putInt(INFECTION, infection);
     }
@@ -61,6 +64,7 @@ public abstract class PlayerEntityMixin implements Access {
         gift = msv.getString(GIFT);
         stage = msv.getInt(STAGE);
         sneezeCooldown = msv.getInt(SNEEZE_COOLDOWN);
+        freezeCooldown = msv.getInt(FREEZE_COOLDOWN);
         hallucinationCooldown = msv.getInt(HALLUCINATION_COOLDOWN);
         infection = msv.getInt(INFECTION);
     }
@@ -96,6 +100,14 @@ public abstract class PlayerEntityMixin implements Access {
     @Override
     public void setSneezeCoolDown(int i) {
         sneezeCooldown = i;
+    }
+    @Override
+    public int getFreezeCoolDown() {
+        return freezeCooldown;
+    }
+    @Override
+    public void setFreezeCoolDown(int i) {
+        freezeCooldown = i;
     }
     @Override
     public int getHallucinationCoolDown() {
