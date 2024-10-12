@@ -95,7 +95,7 @@ object MSVItems {
             return enchantment == Enchantments.MENDING
         }
 
-        fun check(player: ServerPlayerEntity): Boolean {
+        fun check(player: PlayerEntity): Boolean {
             return player.mainHandStack.components.get(UMBRELLA_STATE) == true || player.offHandStack.components.get(
                 UMBRELLA_STATE
             ) == true

@@ -16,7 +16,7 @@ class MSVReloaded : ModInitializer {
         PolymerEntityUtils.registerType(BLACK_SNEEZE)
         MSVStatusEffects.register()
         MSVItems.register()
-        LOGGER.info("Successfully initialised MSV:Reloaded!")
+        LOGGER.info("Successfully infected your Minecraft!")
     }
 
     companion object {

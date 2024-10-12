@@ -24,7 +24,6 @@ public abstract class InfectedAnimalsMixin extends MobEntity implements Access {
         super(entityType, world);
         this.targetPlayer = targetPlayer;
     }
-
     @Inject(method = "canEat", at = @At("HEAD"), cancellable = true)
     private void forbidEating(CallbackInfoReturnable<Boolean> cir) {
         if (this.isInfected()) {

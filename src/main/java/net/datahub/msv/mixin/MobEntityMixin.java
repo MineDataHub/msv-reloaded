@@ -29,12 +29,12 @@ public abstract class MobEntityMixin implements Access {
     }
 
     @Override
-    public boolean isInfected() {
+    public Boolean isInfected() {
         return infected;
     }
     @Override
-    public void setInfected(boolean bl) {
-        infected = bl;
+    public void setInfected(Boolean infected) {
+        this.infected = infected;
     }
 
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)

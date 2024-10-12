@@ -1,11 +1,13 @@
 package net.datahub.msv.mixin;
 
 import net.datahub.msv.Features;
+import net.datahub.msv.MSVDamage;
 import net.datahub.msv.MSVItems;
 import net.datahub.msv.MSVReloaded;
 import net.datahub.msv.nbt.Access;
-import net.datahub.msv.MSVDamage;
 import net.minecraft.component.type.FoodComponent;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageEffects;
@@ -16,30 +18,25 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import java.util.Objects;
 
 import static kotlin.random.RandomKt.Random;
 import static net.datahub.msv.MSVReloaded.*;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin implements Access {
-    @Shadow public abstract boolean damage(DamageSource source, float amount);
+public abstract class PlayerEntityMixin extends LivingEntity implements Access {
+    @Unique
+    private Integer tickCounter = 0;
 
-    @Unique
-    PlayerEntity player = (PlayerEntity) (Object) this;
-    @Unique
-    private int tickCounter = 0;
     @Unique
     private String mutation = "none";
     @Unique
@@ -55,14 +52,18 @@ public abstract class PlayerEntityMixin implements Access {
     @Unique
     private Integer infection = 0;
 
-    /*
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+        super(entityType, world);
+    }
+
+    
     @Inject(method = "tick", at = @At("TAIL"))
     protected void cdUpdate(CallbackInfo ci) {
         if (tickCounter % 10 == 0) {
             if (tickCounter >= 200) {
                 tickCounter = 0;
             }
-            Objects.requireNonNull(player.getAttributes().getCustomInstance(EntityAttributes.GENERIC_MAX_HEALTH)).updateModifier(
+            Objects.requireNonNull(this.getAttributes().getCustomInstance(EntityAttributes.GENERIC_MAX_HEALTH)).updateModifier(
                     new EntityAttributeModifier(
                         MSVReloaded.id("health"),
                         switch (stage) {
@@ -74,26 +75,26 @@ public abstract class PlayerEntityMixin implements Access {
                     )
             );
         }
-        World world = player.getWorld();
-        BlockPos pos = player.getBlockPos();
+        World world = this.getWorld();
+        BlockPos pos = this.getBlockPos();
 
-        if (Objects.equals(this.mutation, "hydrophobic")) {
-            if (player.isTouchingWater()) {
+        if (Objects.equals(mutation, "hydrophobic")) {
+            if (this.isTouchingWater()) {
                 damage(MSVDamage.INSTANCE.getWaterDamage(), 1.5f);
             }
 
-            if (world.isRaining() && world.isSkyVisibleAllowingSea(pos) && MSVItems.UmbrellaItem.INSTANCE.check((ServerPlayerEntity) player)) {
+            if (!MSVItems.UmbrellaItem.INSTANCE.check((PlayerEntity)(Object)this) && world.isRaining() && world.isSkyVisibleAllowingSea(pos)) {
                 damage(MSVDamage.INSTANCE.getRainDamage(), 1.5f);
             }
-        } else if (Objects.equals(this.mutation, "vampire") && world.isSkyVisibleAllowingSea(pos) && MSVItems.UmbrellaItem.INSTANCE.check((ServerPlayerEntity) player)) {
-            player.setFireTicks(80);
+        } else if (!MSVItems.UmbrellaItem.INSTANCE.check((PlayerEntity) (Object) this) && Objects.equals(mutation, "vampire") && world.isSkyVisibleAllowingSea(pos)) {
+            this.setFireTicks(80);
         }
         if (freezeCooldown < 0) {
-            player.setFrozenTicks(getFreezeCoolDown() + 3);
-            if (player.getFrozenTicks() >= 160)
+            this.setFrozenTicks(getFreezeCoolDown() + 3);
+            if (this.getFrozenTicks() >= 160)
                 freezeCooldown = 30 + Random(12).nextInt(12) - stage;
         }
-    }*/
+    }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
     protected void writeNbt(NbtCompound nbt, CallbackInfo ci) {
@@ -123,76 +124,75 @@ public abstract class PlayerEntityMixin implements Access {
     }
 
     @Override
-    public @NotNull String getMutation() {
+    public String getMutation() {
         return this.mutation;
     }
     @Override
-    public void setMutation(@NotNull String string) {
-        mutation = string;
+    public void setMutation(String string) {
+        this.mutation = string;
     }
     @Override
-    public @NotNull String getGift() {
-        return gift;
+    public String getGift() {
+        return this.gift;
     }
     @Override
-    public void setGift(@NotNull String string) {
-        gift = string;
+    public void setGift(String string) {
+        this.gift = string;
     }
     @Override
     public int getStage() {
-        return stage;
+        return this.stage;
     }
     @Override
     public void setStage(int i) {
-        stage = i;
+        this.stage = i;
     }
     @Override
     public int getSneezeCoolDown() {
-        return sneezeCooldown;
+        return this.sneezeCooldown;
     }
     @Override
     public void setSneezeCoolDown(int i) {
-        sneezeCooldown = i;
+        this.sneezeCooldown = i;
     }
     @Override
     public int getFreezeCoolDown() {
-        return freezeCooldown;
+        return this.freezeCooldown;
     }
     @Override
     public void setFreezeCoolDown(int i) {
-        freezeCooldown = i;
+        this.freezeCooldown = i;
     }
     @Override
     public int getHallucinationCoolDown() {
-        return hallucinationCooldown;
+        return this.hallucinationCooldown;
     }
     @Override
     public void setHallucinationCoolDown(int i) {
-        hallucinationCooldown = i;
+        this.hallucinationCooldown = i;
     }
     @Override
     public int getInfection() {
-        return infection;
+        return this.infection;
     }
     @Override
     public void setInfection(int i) {
-        infection = i;
+        this.infection = i;
     }
 
-    /*
     @Inject(method = "eatFood", at = @At("TAIL"))
     private void modifyGhoulsFoodEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
         if (mutation.equals("ghoul")) {
             if (stack.getItem() == Items.ROTTEN_FLESH) {
-                player.removeStatusEffect(StatusEffects.HUNGER);
+                this.removeStatusEffect(StatusEffects.HUNGER);
             } else {
-                StatusEffectInstance currentEffect = player.getStatusEffect(StatusEffects.HUNGER);
+                StatusEffectInstance currentEffect = this.getStatusEffect(StatusEffects.HUNGER);
                 int newDuration = (currentEffect != null) ? currentEffect.getDuration() + 300 : 300;
                 int newAmplifier = (currentEffect != null) ? currentEffect.getAmplifier() + 1 : 0;
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, newDuration, newAmplifier));
+                this.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, newDuration, newAmplifier));
 
                 if (currentEffect != null && currentEffect.getAmplifier() >= 2)
-                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 200, 0));
+                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 200, 0));
             }
         }
     }
@@ -200,8 +200,8 @@ public abstract class PlayerEntityMixin implements Access {
     @Inject(method = "damage", at = @At("TAIL"))
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (stage > 1) {
-            player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false));
-            Features.INSTANCE.dropItem(player);
+            this.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false));
+            Features.INSTANCE.dropItem((PlayerEntity) (Object) this);
         }
     }
 
@@ -213,8 +213,8 @@ public abstract class PlayerEntityMixin implements Access {
     }
 
     @Inject(method = "setFireTicks", at = @At("HEAD"), cancellable = true)
-    private void noFireTicks(int ticks, CallbackInfo ci) {
-        if (gift.equals("noFireDamage")) {
+    private void noFireTicks(int fireTicks, CallbackInfo ci) {
+        if (gift.equals("noFireDamage") && this.getFireTicks() < fireTicks) {
             ci.cancel();
         }
     }
@@ -224,5 +224,5 @@ public abstract class PlayerEntityMixin implements Access {
         if (gift.equals("noFallDamage")) {
             cir.setReturnValue(false);
         }
-    }*/
+    }
 }
