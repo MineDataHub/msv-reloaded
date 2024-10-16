@@ -4,6 +4,8 @@ import net.datahub.msv.Features;
 import net.datahub.msv.MSVDamage;
 import net.datahub.msv.MSVItems;
 import net.datahub.msv.MSVReloaded;
+import net.datahub.msv.constants.Gifts;
+import net.datahub.msv.constants.Mutations;
 import net.datahub.msv.nbt.Access;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.EntityType;
@@ -30,12 +32,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 import static kotlin.random.RandomKt.Random;
-import static net.datahub.msv.MSVReloaded.*;
+import static net.datahub.msv.constants.NBTTags.*;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements Access {
     @Unique
     private Integer tickCounter = 0;
+    @Unique
+    private Integer sneezePicking = 0;
+    @Unique
+    private Integer zombieEatingCD = 0;
+    @Unique
+    private Integer itemDroppingCD = 0;
 
     @Unique
     private String mutation = "none";
@@ -55,10 +63,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Access {
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
-
     
     @Inject(method = "tick", at = @At("TAIL"))
-    protected void cdUpdate(CallbackInfo ci) {
+    protected void tick(CallbackInfo ci) {
         if (tickCounter % 10 == 0) {
             if (tickCounter >= 200) {
                 tickCounter = 0;
@@ -77,8 +84,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Access {
         }
         World world = this.getWorld();
         BlockPos pos = this.getBlockPos();
-
-        if (Objects.equals(mutation, "hydrophobic")) {
+        if (Objects.equals(mutation, Mutations.HYDROPHOBIC)) {
             if (this.isTouchingWater()) {
                 damage(MSVDamage.INSTANCE.getWaterDamage(), 1.5f);
             }
@@ -86,14 +92,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Access {
             if (!MSVItems.UmbrellaItem.INSTANCE.check((PlayerEntity)(Object)this) && world.isRaining() && world.isSkyVisibleAllowingSea(pos)) {
                 damage(MSVDamage.INSTANCE.getRainDamage(), 1.5f);
             }
-        } else if (!MSVItems.UmbrellaItem.INSTANCE.check((PlayerEntity) (Object) this) && Objects.equals(mutation, "vampire") && world.isSkyVisibleAllowingSea(pos)) {
+        } else if (!MSVItems.UmbrellaItem.INSTANCE.check((PlayerEntity) (Object) this) && Objects.equals(mutation, Mutations.VAMPIRE) && world.isSkyVisibleAllowingSea(pos)) {
             this.setFireTicks(80);
         }
         if (freezeCooldown < 0) {
-            this.setFrozenTicks(getFreezeCoolDown() + 3);
+            this.setFrozenTicks(freezeCooldown + 3);
             if (this.getFrozenTicks() >= 160)
                 freezeCooldown = 30 + Random(12).nextInt(12) - stage;
         }
+        if (sneezePicking > 0) sneezePicking--;
+        if (itemDroppingCD > 0) itemDroppingCD--;
+        if (zombieEatingCD > 0) zombieEatingCD--;
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
@@ -179,10 +188,35 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Access {
     public void setInfection(int i) {
         this.infection = i;
     }
+    @Override
+    public int getSneezePicking() {
+        return this.sneezePicking;
+    }
+    @Override
+    public void setSneezePicking(int i) {
+        this.sneezePicking = i;
+    }
+    @Override
+    public int getItemDroppingCD() {
+        return this.sneezePicking;
+    }
+    @Override
+    public void setItemDroppingCD(int i) {
+        this.sneezePicking = i;
+    }
+    @Override
+    public int getZombieEatingCD() {
+        return this.zombieEatingCD;
+    }
+    @Override
+    public void setZombieEatingCD(int i) {
+        this.zombieEatingCD = i;
+    }
+
 
     @Inject(method = "eatFood", at = @At("TAIL"))
     private void modifyGhoulsFoodEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
-        if (mutation.equals("ghoul")) {
+        if (mutation.equals(Mutations.GHOUL)) {
             if (stack.getItem() == Items.ROTTEN_FLESH) {
                 this.removeStatusEffect(StatusEffects.HUNGER);
             } else {
@@ -207,21 +241,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Access {
 
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     private void noFireDamage(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        if (gift.equals("noFireDamage") && damageSource.getType().effects().equals(DamageEffects.BURNING)) {
+        if (gift.equals(Gifts.NO_FIRE_DAMAGE) && damageSource.getType().effects().equals(DamageEffects.BURNING)) {
             cir.setReturnValue(true);
         }
     }
 
     @Inject(method = "setFireTicks", at = @At("HEAD"), cancellable = true)
     private void noFireTicks(int fireTicks, CallbackInfo ci) {
-        if (gift.equals("noFireDamage") && this.getFireTicks() < fireTicks) {
+        if (gift.equals(Gifts.NO_FIRE_DAMAGE) && this.getFireTicks() < fireTicks) {
             ci.cancel();
         }
     }
 
     @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
     private void noFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        if (gift.equals("noFallDamage")) {
+        if (gift.equals(Gifts.NO_FALL_DAMAGE)) {
             cir.setReturnValue(false);
         }
     }

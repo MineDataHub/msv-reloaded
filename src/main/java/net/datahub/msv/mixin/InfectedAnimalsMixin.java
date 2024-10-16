@@ -95,7 +95,7 @@ public abstract class InfectedAnimalsMixin extends MobEntity implements Access {
                     if (!((Access)animalEntity).isInfected()) {
                         if (Random.Default.nextBoolean()) {
                             animalEntity.damage(new DamageSource(this.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MOB_ATTACK), this), 2.0F);
-                            ((Access)animalEntity).setInfected(true);
+                            ((Access) animalEntity).setInfected(true);
                         }
                         CDHitAnimal = Random.Default.nextInt(2200, 2600);
                         break;

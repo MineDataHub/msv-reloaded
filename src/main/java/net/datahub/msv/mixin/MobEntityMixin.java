@@ -1,24 +1,32 @@
 package net.datahub.msv.mixin;
 
+import net.datahub.msv.constants.Gifts;
 import net.datahub.msv.nbt.Access;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static net.datahub.msv.MSVReloaded.*;
+import static net.datahub.msv.constants.NBTTags.*;
 
 @Mixin(MobEntity.class)
-public abstract class MobEntityMixin implements Access {
+public abstract class MobEntityMixin extends LivingEntity implements Access {
     @Unique
     private Boolean infected = false;
+
+    protected MobEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+        super(entityType, world);
+    }
+
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
     public void writeNbt(NbtCompound nbt, CallbackInfo ci) {
         nbt.putBoolean(INFECTED, infected);
@@ -39,12 +47,12 @@ public abstract class MobEntityMixin implements Access {
 
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     private void ignoreVampires(LivingEntity target, CallbackInfo ci) {
-        if (isUndead((MobEntity) (Object) this) && ((Access) target).getGift().equals("unDead")) {
+        if (isUndead(this) && ((Access) target).getGift().equals(Gifts.UNDEAD)) {
             ci.cancel();
         }
     }
     @Unique
-    private boolean isUndead(MobEntity mob) {
+    private boolean isUndead(LivingEntity mob) {
         return mob instanceof ZombieEntity
                 || mob instanceof AbstractSkeletonEntity
                 || mob instanceof PhantomEntity;

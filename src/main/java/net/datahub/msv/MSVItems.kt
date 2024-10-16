@@ -30,7 +30,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
 import net.minecraft.world.World
 
-object MSVItems {
+class MSVItems {
     object UmbrellaItem : Item(Settings().maxCount(1).maxDamage(250)), PolymerItem {
         private val UMBRELLA_STATE: ComponentType<Boolean> = Registry.register(
             Registries.DATA_COMPONENT_TYPE,
@@ -101,28 +101,32 @@ object MSVItems {
             ) == true
         }
     }
-
-    private fun potion(potion: RegistryEntry<Potion>): ItemStack {
-        val item = ItemStack(Items.POTION)
-        item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(potion))
-        return item
-    }
-    private val MSV_TAB: ItemGroup =
+    companion object {
+        private fun potion(potion: RegistryEntry<Potion>): ItemStack {
+            val item = ItemStack(Items.POTION)
+            item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(potion))
+            return item
+        }
+        private val MSV_TAB: ItemGroup =
             PolymerItemGroupUtils.builder().icon{ potion(MSVStatusEffects.INFECTION_POTION) }.displayName(Text.translatable("itemGroup.msv")).entries { _, entries ->
                 entries.add(ItemStack(UMBRELLA))
                 entries.add(potion(MSVStatusEffects.CURE_POTION))
                 entries.add(potion(MSVStatusEffects.CURSE_POTION))
                 entries.add(potion(MSVStatusEffects.INFECTION_POTION))
-                    }.build()
+            }.build()
 
-    private val UMBRELLA: RegistryEntry.Reference<Item> =
-        Registry.registerReference(Registries.ITEM, id("umbrella"), UmbrellaItem)
+        private val UMBRELLA: RegistryEntry.Reference<Item> =
+            Registry.registerReference(Registries.ITEM, id("umbrella"), UmbrellaItem)
 
-    fun register() {
-        MSVReloaded.LOGGER.info("Initializing items...")
+        fun register() {
+            MSVReloaded.LOGGER.info("Initializing items...")
 
-        UMBRELLA
+            this.UMBRELLA
 
-        PolymerItemGroupUtils.registerPolymerItemGroup(RegistryKey.of(Registries.ITEM_GROUP.key, id("msv_tab")), MSV_TAB)
+            PolymerItemGroupUtils.registerPolymerItemGroup(
+                RegistryKey.of(Registries.ITEM_GROUP.key, id("msv_tab")),
+                MSV_TAB
+            )
+        }
     }
 }

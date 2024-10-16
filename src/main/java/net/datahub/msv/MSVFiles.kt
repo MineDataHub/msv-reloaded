@@ -3,6 +3,8 @@ package net.datahub.msv
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import net.datahub.msv.constants.Gifts
+import net.datahub.msv.constants.Mutations
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.WorldSavePath
@@ -22,10 +24,10 @@ object MSVFiles {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     val initialMutations = mapOf(
-        "hydrophobic" to Mutation(listOf("noFireDamage", "hydrophobic2"), 50),
-        "ghoul" to Mutation(listOf("zombieEater", "ghoul2"), 50),
-        "fallen" to Mutation(listOf("noFallDamage", "fallen2"), 50),
-        "vampire" to Mutation(listOf("unDead", "vampire2"), 50)
+        Mutations.HYDROPHOBIC to Mutation(listOf(Gifts.NO_FIRE_DAMAGE, "hydrophobic2"), 50),
+        Mutations.GHOUL to Mutation(listOf(Gifts.ZOMBIE_EATER, "ghoul2"), 50),
+        Mutations.FALLEN to Mutation(listOf(Gifts.NO_FALL_DAMAGE, "fallen2"), 50),
+        Mutations.VAMPIRE to Mutation(listOf(Gifts.UNDEAD, "vampire2"), 50)
     )
 
     fun register() {

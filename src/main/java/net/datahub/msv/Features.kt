@@ -1,6 +1,8 @@
 package net.datahub.msv
 
 import net.datahub.msv.MSVFiles.mutationsData
+import net.datahub.msv.constants.Gifts
+import net.datahub.msv.constants.Mutations
 import net.datahub.msv.nbt.Access
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
@@ -15,7 +17,6 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import java.util.*
-
 
 object Features {
     fun register() {
@@ -40,22 +41,15 @@ object Features {
 
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register {
-            (it as Access).mutation == "fallen"
+            (it as Access).mutation == Mutations.FALLEN
         }
     }
 
-    private val zombieEatingCD = mutableMapOf<PlayerEntity, Long>()
     private fun isZombie(entity: Entity): Boolean {return entity is ZombieEntity || entity is ZombieHorseEntity}
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, hand, entity, _ ->
             player as Access
-            if (player.gift == "zombieEater" && world is ServerWorld && player.hungerManager.isNotFull && isZombie(entity)) {
-                val lastUseTime = zombieEatingCD[player] ?: 0L
-                val currentTime = System.currentTimeMillis()
-
-                if (currentTime - lastUseTime < 1250L)
-                    return@register ActionResult.PASS
-
+            if (world is ServerWorld && player.gift == Gifts.ZOMBIE_EATER && player.hungerManager.isNotFull && isZombie(entity) && player.zombieEatingCD <= 0) {
                 player.swingHand(hand, true)
                 world.spawnParticles(
                     ParticleTypes.CRIMSON_SPORE,
@@ -81,30 +75,26 @@ object Features {
                 player.hungerManager.add(3, 0.5f)
                 entity.kill()
 
-                zombieEatingCD[player] = currentTime
-
+                player.zombieEatingCD = 25
                 return@register ActionResult.SUCCESS
             }
             return@register ActionResult.PASS
         }
     }
 
-    private val itemDroppingCD = mutableMapOf<PlayerEntity, Long>()
     fun dropItem(player: PlayerEntity): ActionResult {
-        val lastUseTime = itemDroppingCD[player] ?: 0L
-        val currentTime = System.currentTimeMillis()
-
-        if (currentTime - lastUseTime < 500L)
+        if ((player as Access).itemDroppingCD > 0)
             return ActionResult.PASS
         
-        val stackToDrop: ItemStack = if (Random().nextBoolean()) {
-            player.offHandStack
-        } else {
-            player.mainHandStack
-        }
+        val stackToDrop: ItemStack =
+            if (Random().nextBoolean())
+                player.offHandStack
+            else
+                player.mainHandStack
+
         if (!stackToDrop.isEmpty) {
             player.dropItem(stackToDrop.split(1), false)
-            itemDroppingCD[player] = currentTime
+            (player as Access).itemDroppingCD = 20
         }
         return ActionResult.SUCCESS
     }

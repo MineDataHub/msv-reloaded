@@ -1,7 +1,6 @@
 package net.datahub.msv.nbt
 
 import net.datahub.msv.MSVFiles.mutationsData
-import net.datahub.msv.MSVReloaded.Companion.STAGE
 import net.datahub.msv.sneeze.BlackSneeze
 import net.datahub.msv.sneeze.NormalSneeze
 import net.minecraft.sound.SoundCategory

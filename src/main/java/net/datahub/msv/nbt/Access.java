@@ -9,6 +9,9 @@ public interface Access {
     Integer hallucinationCoolDown = 0;
     Integer infection = 0;
     Boolean infected = false;
+    Integer sneezePicking = 0;
+    Integer zombieEatingCD = 0;
+    Integer itemDroppingCD = 0;
 
     default int getStage() {
         return this.stage;
@@ -49,4 +52,19 @@ public interface Access {
         return this.infected;
     }
     default void setInfected(Boolean infected) {}
+
+    default int getSneezePicking() {
+        return this.sneezePicking;
+    }
+    default void setSneezePicking(int sneezePicking) {}
+
+    default int getZombieEatingCD() {
+        return this.zombieEatingCD;
+    }
+    default void setZombieEatingCD(int zombieEatingCD) {}
+
+    default int getItemDroppingCD() {
+        return this.itemDroppingCD;
+    }
+    default void setItemDroppingCD(int itemDroppingCD) {}
 }
