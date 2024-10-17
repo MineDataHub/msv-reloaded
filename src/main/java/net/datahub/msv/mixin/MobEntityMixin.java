@@ -8,6 +8,7 @@ import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,7 +48,7 @@ public abstract class MobEntityMixin extends LivingEntity implements Access {
 
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     private void ignoreVampires(LivingEntity target, CallbackInfo ci) {
-        if (isUndead(this) && ((Access) target).getGift().equals(Gifts.UNDEAD)) {
+        if (target != null && isUndead(this) && ((Access) target).getGift().equals(Gifts.UNDEAD)) {
             ci.cancel();
         }
     }

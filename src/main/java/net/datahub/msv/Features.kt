@@ -1,6 +1,7 @@
 package net.datahub.msv
 
 import net.datahub.msv.MSVFiles.mutationsData
+import net.datahub.msv.MSVFiles.mutationsList
 import net.datahub.msv.constants.Gifts
 import net.datahub.msv.constants.Mutations
 import net.datahub.msv.nbt.Access
@@ -37,6 +38,14 @@ object Features {
             }
         }
         return "none"
+    }
+
+    fun getRandomGift(mutation: String ): String {
+        return mutationsData[mutation]?.gifts?.random() ?: "none"
+    }
+
+    fun getRandomGift(player: PlayerEntity ): String {
+        return mutationsData[(player as Access).mutation]?.gifts?.random() ?: "none"
     }
 
     private fun elytraFlapping() {

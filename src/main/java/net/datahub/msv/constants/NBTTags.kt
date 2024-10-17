@@ -9,6 +9,7 @@ object NBTTags {
     const val HALLUCINATION_COOLDOWN: String = "HallucinationCooldown"
     const val STAGE: String = "Stage"
     const val INFECTION: String = "Infection"
+    const val FROZEN_TIME: String = "FrozenTime"
 
     const val INFECTED: String = "Infected"
 }
