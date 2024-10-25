@@ -1,6 +1,7 @@
 package net.datahub.msv.mixin;
 
-import net.datahub.msv.MSVDamage;
+import net.datahub.msv.ModDamage;
+import net.datahub.msv.constant.Mutations;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,8 +25,8 @@ public abstract class PotionDamageMixin extends ThrownItemEntity {
         this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(4.0), entity -> true)
                 .forEach(entity -> {
                     if (entity instanceof PlayerEntity player
-                            && player.getMutation().equals("hydrophobic")) {
-                        player.damage(MSVDamage.INSTANCE.getPotionDamage(), 1.0F);
+                            && player.getMutation().equals(Mutations.HYDROPHOBIC)) {
+                        player.damage(ModDamage.INSTANCE.getPotionDamage(), 1.0F);
                     }
                 });
     }

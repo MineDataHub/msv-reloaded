@@ -30,7 +30,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
 import net.minecraft.world.World
 
-class MSVItems {
+class ModItems {
     object UmbrellaItem : Item(Settings().maxCount(1).maxDamage(250)), PolymerItem {
         private val UMBRELLA_STATE: ComponentType<Boolean> = Registry.register(
             Registries.DATA_COMPONENT_TYPE,
@@ -108,11 +108,11 @@ class MSVItems {
             return item
         }
         private val MSV_TAB: ItemGroup =
-            PolymerItemGroupUtils.builder().icon{ potion(MSVStatusEffects.INFECTION_POTION) }.displayName(Text.translatable("itemGroup.msv")).entries { _, entries ->
+            PolymerItemGroupUtils.builder().icon{ potion(ModStatusEffects.INFECTION_POTION) }.displayName(Text.translatable("itemGroup.msv")).entries { _, entries ->
                 entries.add(ItemStack(UMBRELLA))
-                entries.add(potion(MSVStatusEffects.CURE_POTION))
-                entries.add(potion(MSVStatusEffects.CURSE_POTION))
-                entries.add(potion(MSVStatusEffects.INFECTION_POTION))
+                entries.add(potion(ModStatusEffects.CURE_POTION))
+                entries.add(potion(ModStatusEffects.CURSE_POTION))
+                entries.add(potion(ModStatusEffects.INFECTION_POTION))
             }.build()
 
         private val UMBRELLA: RegistryEntry.Reference<Item> =

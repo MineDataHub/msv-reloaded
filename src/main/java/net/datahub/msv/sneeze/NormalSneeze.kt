@@ -1,6 +1,6 @@
 package net.datahub.msv.sneeze
 
-import net.datahub.msv.MSVStatusEffects
+import net.datahub.msv.ModStatusEffects
 import net.datahub.msv.access.PlayerAccess
 import net.fabricmc.fabric.api.event.player.UseItemCallback
 import net.minecraft.component.DataComponentTypes
@@ -25,7 +25,7 @@ object NormalSneeze {
 
                 itemStack.decrement(1)
                 val item = ItemStack(Items.POTION)
-                item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(MSVStatusEffects.INFECTION_POTION))
+                item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(ModStatusEffects.INFECTION_POTION))
                 player.giveItemStack(item)
                 player.world.playSound(null, player.x, player.y, player.z, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.PLAYERS, 0.5f, 1f)
                 player.world.playSound(null, player.x, player.y, player.z, SoundEvents.BLOCK_MUD_FALL, SoundCategory.PLAYERS, 0.5f, 1.5f)

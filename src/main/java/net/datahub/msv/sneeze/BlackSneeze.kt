@@ -1,9 +1,8 @@
 package net.datahub.msv.sneeze
 
 import eu.pb4.polymer.core.api.entity.PolymerEntity
-import net.datahub.msv.MSVReloaded
 import net.datahub.msv.MSVReloaded.Companion.id
-import net.datahub.msv.MSVStatusEffects
+import net.datahub.msv.ModStatusEffects
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent
 import net.minecraft.entity.Entity
@@ -53,7 +52,7 @@ class BlackSneeze(world: World?) : Entity(BLACK_SNEEZE, world), PolymerEntity {
     private fun collect(entity: Entity, player: PlayerEntity, items: ItemStack) {
         items.decrement(1)
         val item = ItemStack(Items.POTION)
-        item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(MSVStatusEffects.CURSE_POTION))
+        item.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent(ModStatusEffects.CURSE_POTION))
         player.giveItemStack(item)
         player.world.playSound(null, player.x, player.y, player.z, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.PLAYERS, 0.5f, 1f)
         player.world.playSound(null, entity.x, entity.y, entity.z, SoundEvents.BLOCK_MUD_FALL, SoundCategory.PLAYERS, 0.5f, 1f)
@@ -75,7 +74,7 @@ class BlackSneeze(world: World?) : Entity(BLACK_SNEEZE, world), PolymerEntity {
 
         for (entity in world.getOtherEntities(this, boundingBox.expand(0.5))
             .filterIsInstance<LivingEntity>()) {
-            entity.addStatusEffect(StatusEffectInstance(MSVStatusEffects.CURSE, 100, 1))
+            entity.addStatusEffect(StatusEffectInstance(ModStatusEffects.CURSE, 100, 1))
         }
     }
 

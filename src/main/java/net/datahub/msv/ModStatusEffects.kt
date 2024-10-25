@@ -17,7 +17,7 @@ import net.minecraft.registry.Registry
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.server.network.ServerPlayerEntity
 
-object MSVStatusEffects {
+object ModStatusEffects {
     val INFECTION: RegistryEntry<StatusEffect> =
         Registry.registerReference(Registries.STATUS_EFFECT, id("infection"), InfectionStatusEffect)
     val INFECTION_POTION: RegistryEntry<Potion> =

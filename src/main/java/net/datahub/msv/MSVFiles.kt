@@ -33,7 +33,7 @@ object MSVFiles {
     fun register() {
         ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server: MinecraftServer ->
             init(server)
-            MSVDamage.registryDamage(server)
+            ModDamage.registryDamage(server)
         })
         MSVReloaded.LOGGER.info("Initializing configs...")
 

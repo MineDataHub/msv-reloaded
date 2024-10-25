@@ -1,8 +1,8 @@
 package net.datahub.msv.mixin;
 
 import net.datahub.msv.Features;
-import net.datahub.msv.MSVDamage;
-import net.datahub.msv.MSVItems;
+import net.datahub.msv.ModDamage;
+import net.datahub.msv.ModItems;
 import net.datahub.msv.MSVReloaded;
 import net.datahub.msv.constant.Gifts;
 import net.datahub.msv.constant.Mutations;
@@ -143,13 +143,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAc
         BlockPos pos = this.getBlockPos();
         if (Objects.equals(mutation, Mutations.HYDROPHOBIC)) {
             if (this.isTouchingWater()) {
-                damage(MSVDamage.INSTANCE.getWaterDamage(), 1.5f);
+                damage(ModDamage.INSTANCE.getWaterDamage(), 1.5f);
             }
 
-            if (!MSVItems.UmbrellaItem.INSTANCE.check((PlayerEntity)(Object)this) && world.isRaining() && world.isSkyVisibleAllowingSea(pos)) {
-                damage(MSVDamage.INSTANCE.getRainDamage(), 1.5f);
+            if (!ModItems.UmbrellaItem.INSTANCE.check((PlayerEntity)(Object)this) && world.isRaining() && world.isSkyVisibleAllowingSea(pos)) {
+                damage(ModDamage.INSTANCE.getRainDamage(), 1.5f);
             }
-        } else if (!MSVItems.UmbrellaItem.INSTANCE.check((PlayerEntity) (Object) this) && Objects.equals(mutation, Mutations.VAMPIRE) && world.isSkyVisibleAllowingSea(pos)) {
+        } else if (!ModItems.UmbrellaItem.INSTANCE.check((PlayerEntity) (Object) this) && Objects.equals(mutation, Mutations.VAMPIRE) && world.isSkyVisibleAllowingSea(pos)) {
             this.setFireTicks(80);
         }
         if (sneezePicking > 0) sneezePicking--;

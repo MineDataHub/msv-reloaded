@@ -7,7 +7,7 @@ import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.server.MinecraftServer
 
-object MSVDamage {
+object ModDamage {
     private lateinit var waterDamage: DamageSource
     private lateinit var rainDamage: DamageSource
     private lateinit var potionDamage: DamageSource

@@ -7,7 +7,6 @@ import net.datahub.msv.constant.Gifts
 import net.datahub.msv.constant.Mutations
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
-import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.mob.ZombieHorseEntity
@@ -60,11 +59,14 @@ object Features {
         }
     }
 
-    private fun isZombie(entity: Entity): Boolean {return entity is ZombieEntity || entity is ZombieHorseEntity}
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, hand, entity, _ ->
             player as PlayerAccess
-            if (world is ServerWorld && player.gift == Gifts.ZOMBIE_EATER && player.hungerManager.isNotFull && isZombie(entity) && player.zombieEatingCD <= 0) {
+            if (world is ServerWorld
+                && player.gift == Gifts.ZOMBIE_EATER
+                && player.hungerManager.isNotFull
+                && (entity is ZombieEntity || entity is ZombieHorseEntity)
+                && player.zombieEatingCD <= 0) {
                 player.swingHand(hand, true)
                 world.spawnParticles(
                     ParticleTypes.CRIMSON_SPORE,

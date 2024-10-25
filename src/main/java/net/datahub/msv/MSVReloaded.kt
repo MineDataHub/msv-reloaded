@@ -10,22 +10,22 @@ import org.slf4j.LoggerFactory
 class MSVReloaded : ModInitializer {
 
     override fun onInitialize() {
+        LOGGER.info("Booting...")
         Features.register()
         MSVFiles.register()
         MSVCommand.register()
         PolymerEntityUtils.registerType(BLACK_SNEEZE)
-        MSVStatusEffects.register()
-        MSVItems.register()
+        ModStatusEffects.register()
+        ModItems.register()
         LOGGER.info("Successfully infected your Minecraft!")
     }
 
     companion object {
-        private const val MOD_ID: String = "msv"
         val LOGGER: Logger = LoggerFactory.getLogger("MSV:Reloaded")
 
         @JvmStatic
 		fun id(id: String?): Identifier? {
-            return Identifier.of(MOD_ID, id)
+            return Identifier.of("msv", id)
         }
     }
 }

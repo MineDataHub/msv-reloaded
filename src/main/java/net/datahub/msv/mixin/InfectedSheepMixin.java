@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SheepEntity.class)
-public abstract class InfSheepMixin extends MobEntity {
-    protected InfSheepMixin(EntityType<? extends MobEntity> entityType, World world) {
+public abstract class InfectedSheepMixin extends MobEntity {
+    protected InfectedSheepMixin(EntityType<? extends MobEntity> entityType, World world) {
         super(entityType, world);
     }
 
