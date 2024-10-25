@@ -1,76 +1,58 @@
-package net.datahub.msv.nbt;
+package net.datahub.msv.access;
 
-public interface Access {
-    int stage = 0;
-    String mutation = "none";
-    String gift = "none";
-    int freezeCoolDown = 0;
-    int sneezeCoolDown = 0;
-    int hallucinationCoolDown = 0;
-    int infection = 0;
-    boolean infected = false;
-    int sneezePicking = 0;
-    int zombieEatingCD = 0;
-    int itemDroppingCD = 0;
-    int frozenTime = 0;
-
+public interface PlayerAccess {
     default int getStage() {
-        return this.stage;
+        return 0;
     }
     default void setStage(int stage) {}
 
     default String getMutation() {
-        return this.mutation;
+        return "";
     }
     default void setMutation(String mutation) {}
 
     default String getGift() {
-        return this.gift;
+        return "";
     }
     default void setGift(String gift) {}
 
     default int getFreezeCoolDown() {
-        return this.freezeCoolDown;
+        return 0;
     }
     default void setFreezeCoolDown(int freezeCoolDown) {}
 
     default int getSneezeCoolDown() {
-        return this.sneezeCoolDown;
+        return 0;
     }
     default void setSneezeCoolDown(int sneezeCoolDown) {}
 
     default int getHallucinationCoolDown() {
-        return this.hallucinationCoolDown;
+        return 0;
     }
     default void setHallucinationCoolDown(int hallucinationCoolDown) {}
 
     default int getInfection() {
-        return this.infection;
+        return 0;
     }
     default void setInfection(int infection) {}
 
-    default Boolean isInfected() {
-        return this.infected;
-    }
-    default void setInfected(Boolean infected) {}
-
     default int getSneezePicking() {
-        return this.sneezePicking;
+        return 0;
     }
     default void setSneezePicking(int sneezePicking) {}
 
     default int getZombieEatingCD() {
-        return this.zombieEatingCD;
+        return 0;
     }
     default void setZombieEatingCD(int zombieEatingCD) {}
 
     default int getItemDroppingCD() {
-        return this.itemDroppingCD;
+        return 0;
     }
     default void setItemDroppingCD(int itemDroppingCD) {}
     
     default int getFrozenTime() {
-        return frozenTime;
+        return 0;
     }
     default void setFrozenTime(int frozenTime) {}
     default void addFrozenTime(int frozenTime) {}

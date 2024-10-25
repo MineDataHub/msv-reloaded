@@ -1,7 +1,7 @@
 package net.datahub.msv.sneeze
 
 import net.datahub.msv.MSVStatusEffects
-import net.datahub.msv.nbt.Access
+import net.datahub.msv.access.PlayerAccess
 import net.fabricmc.fabric.api.event.player.UseItemCallback
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent
@@ -20,7 +20,7 @@ object NormalSneeze {
         UseItemCallback.EVENT.register { player, _, hand ->
             val itemStack = player.getStackInHand(hand)
 
-            if ((player as Access).sneezePicking > 0 && itemStack.item == Items.GLASS_BOTTLE) {
+            if ((player as PlayerAccess).sneezePicking > 0 && itemStack.item == Items.GLASS_BOTTLE) {
                 player.sneezePicking = 0
 
                 itemStack.decrement(1)
@@ -37,7 +37,7 @@ object NormalSneeze {
     }
 
     fun spawn(player: PlayerEntity) {
-        (player as Access).sneezePicking = 100
+        (player as PlayerAccess).sneezePicking = 100
 
         val world = player.world as ServerWorld
         val particlePos = Vec3d(player.x, player.eyeY, player.z).add(player.getRotationVec(1.0f).multiply(0.5))

@@ -1,8 +1,9 @@
 package net.datahub.msv.sneeze
 
+import eu.pb4.polymer.core.api.entity.PolymerEntity
+import net.datahub.msv.MSVReloaded
 import net.datahub.msv.MSVReloaded.Companion.id
 import net.datahub.msv.MSVStatusEffects
-import eu.pb4.polymer.core.api.entity.PolymerEntity
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent
 import net.minecraft.entity.Entity
@@ -27,14 +28,13 @@ import net.minecraft.util.Hand
 import net.minecraft.world.World
 import java.util.*
 
-class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
-
+class BlackSneeze(world: World?) : Entity(BLACK_SNEEZE, world), PolymerEntity {
     companion object {
         val BLACK_SNEEZE: EntityType<BlackSneeze> = Registry.register(
             ENTITY_TYPE,
             id("black_sneeze"),
             EntityType.Builder.create(BlackSneezeEntityFactory, SpawnGroup.MISC)
-                .dimensions(0.5F, 0.5F)
+                .dimensions(1.0F, 1.0F)
                 .build()
         )
 
@@ -67,8 +67,6 @@ class BlackSneeze(world: World) : Entity(BLACK_SNEEZE, world), PolymerEntity {
     }
 
     override fun tick() {
-        super.tick()
-
         (world as? ServerWorld)?.spawnParticles(ParticleTypes.SQUID_INK, pos.x, pos.y, pos.z, 3, 0.25, 0.5, 0.25, 0.001)
 
         if (age >= 200) { // 200 тиков = 10 секунд

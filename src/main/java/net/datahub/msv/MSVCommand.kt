@@ -6,7 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
-import net.datahub.msv.nbt.Access
+import net.datahub.msv.access.PlayerAccess
 import net.datahub.msv.sneeze.BlackSneeze
 import net.datahub.msv.sneeze.NormalSneeze
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
@@ -65,7 +65,7 @@ object MSVCommand {
                             .then(
                                 LiteralArgumentBuilder.literal<ServerCommandSource>("zombie")
                                     .executes {
-                                        InfectedZombie.spawn(it.source.player!!)
+                                        Features.spawnInfectedZombie(it.source.player!!)
                                         it.source.sendMessage(Text.literal("Attempted to summon new Infected zombie"))
                                         Command.SINGLE_SUCCESS
                                     }
@@ -73,7 +73,7 @@ object MSVCommand {
                                         RequiredArgumentBuilder.argument<ServerCommandSource, EntitySelector>("target", EntityArgumentType.player())
                                             .executes {
                                                 val player = EntityArgumentType.getPlayer(it, "target")
-                                                InfectedZombie.spawn(player)
+                                                Features.spawnInfectedZombie(player)
                                                 it.source.sendMessage(Text.literal("Attempted to summon new Infected zombie for ${player.name.string}"))
                                                 Command.SINGLE_SUCCESS
                                             }
@@ -97,12 +97,12 @@ object MSVCommand {
                                                             .executes {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
                                                                 val stage = IntegerArgumentType.getInteger(it, "stage")
-                                                                if ((player as Access).stage == stage) {
+                                                                if ((player as PlayerAccess).stage == stage) {
                                                                     it.source.sendMessage(Text.literal("${player.name.string} is already at that stage!").withColor(16733525))
                                                                     Command.SINGLE_SUCCESS
                                                                 } else {
                                                                     it.source.sendMessage(Text.literal("${player.name.string}`s stage is now set to $stage"))
-                                                                    (player as Access).stage = stage
+                                                                    (player as PlayerAccess).stage = stage
                                                                     Command.SINGLE_SUCCESS
                                                                 }
                                                             }
@@ -118,7 +118,7 @@ object MSVCommand {
                                                             }
                                                             .executes {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
-                                                                player as Access
+                                                                player as PlayerAccess
                                                                 val mutation = it.getArgument("mutation", String::class.java)
                                                                 if (mutation == "random") {
                                                                     val randomMutation = Features.getRandomMutation()
@@ -144,12 +144,12 @@ object MSVCommand {
                                                     .then(
                                                         RequiredArgumentBuilder.argument<ServerCommandSource, String>("gift", StringArgumentType.word())
                                                             .suggests { source, builder ->
-                                                                MSVFiles.mutationsData[((source.source.player as PlayerEntity) as Access).mutation]?.gifts?.plus("none")?.plus("random")?.forEach {builder.suggest(it)}
+                                                                MSVFiles.mutationsData[((source.source.player as PlayerEntity) as PlayerAccess).mutation]?.gifts?.plus("none")?.plus("random")?.forEach {builder.suggest(it)}
                                                                 builder.buildFuture()
                                                             }
                                                             .executes {
                                                                 val player = EntityArgumentType.getPlayer(it, "player")
-                                                                player as Access
+                                                                player as PlayerAccess
                                                                 val gift = it.getArgument("gift", String::class.java)
                                                                 if (gift == "random") {
                                                                     val randomGift = MSVFiles.mutationsData[ player.mutation]?.gifts?.random()

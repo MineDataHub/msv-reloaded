@@ -1,6 +1,6 @@
 package net.datahub.msv.mixin;
 
-import net.datahub.msv.nbt.Access;
+import net.datahub.msv.access.PlayerAccess;
 import kotlin.random.Random;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
@@ -19,11 +19,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AnimalEntity.class)
-public abstract class InfectedAnimalsMixin extends MobEntity implements Access {
+public abstract class InfectedAnimalsMixin extends MobEntity implements PlayerAccess {
     protected InfectedAnimalsMixin(EntityType<? extends MobEntity> entityType, World world, PlayerEntity targetPlayer) {
         super(entityType, world);
         this.targetPlayer = targetPlayer;
     }
+
     @Inject(method = "canEat", at = @At("HEAD"), cancellable = true)
     private void forbidEating(CallbackInfoReturnable<Boolean> cir) {
         if (this.isInfected()) {
@@ -60,7 +61,7 @@ public abstract class InfectedAnimalsMixin extends MobEntity implements Access {
             if (CDHitPlayer > 0) CDHitPlayer--;
             if (CDHitAnimal > 0) CDHitAnimal--;
 
-            PlayerEntity player = this.getWorld().getClosestPlayer(this.getX(), this.getY(), this.getZ(), 15.0, p -> this.canSee(p) && ((Access)p).getStage() == 0 && !((PlayerEntity) p).isCreative());
+            PlayerEntity player = this.getWorld().getClosestPlayer(this.getX(), this.getY(), this.getZ(), 15.0, p -> this.canSee(p) && ((PlayerAccess)p).getStage() == 0 && !((PlayerEntity) p).isCreative());
             if (player != null) {
                 if (this.distanceTo(player) <= 1.5F && CDHitPlayer == 0) {
                     this.lookControl.lookAt(player, 180, 180);
@@ -92,10 +93,10 @@ public abstract class InfectedAnimalsMixin extends MobEntity implements Access {
 
             if (CDHitAnimal == 0) {
                 for (AnimalEntity animalEntity : this.getWorld().getEntitiesByClass(AnimalEntity.class, this.getBoundingBox().expand(2.0), animalEntity -> true)) {
-                    if (!((Access)animalEntity).isInfected()) {
+                    if (!animalEntity.isInfected()) {
                         if (Random.Default.nextBoolean()) {
                             animalEntity.damage(new DamageSource(this.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MOB_ATTACK), this), 2.0F);
-                            ((Access) animalEntity).setInfected(true);
+                            animalEntity.setInfected(true);
                         }
                         CDHitAnimal = Random.Default.nextInt(2200, 2600);
                         break;

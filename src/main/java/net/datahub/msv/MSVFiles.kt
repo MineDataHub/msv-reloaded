@@ -3,8 +3,8 @@ package net.datahub.msv
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import net.datahub.msv.constants.Gifts
-import net.datahub.msv.constants.Mutations
+import net.datahub.msv.constant.Gifts
+import net.datahub.msv.constant.Mutations
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.WorldSavePath

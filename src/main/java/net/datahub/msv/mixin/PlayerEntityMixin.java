@@ -4,9 +4,9 @@ import net.datahub.msv.Features;
 import net.datahub.msv.MSVDamage;
 import net.datahub.msv.MSVItems;
 import net.datahub.msv.MSVReloaded;
-import net.datahub.msv.constants.Gifts;
-import net.datahub.msv.constants.Mutations;
-import net.datahub.msv.nbt.Access;
+import net.datahub.msv.constant.Gifts;
+import net.datahub.msv.constant.Mutations;
+import net.datahub.msv.access.PlayerAccess;
 import net.datahub.msv.sneeze.BlackSneeze;
 import net.datahub.msv.sneeze.NormalSneeze;
 import net.minecraft.component.type.FoodComponent;
@@ -19,9 +19,7 @@ import net.minecraft.entity.damage.DamageEffects;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -29,9 +27,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -41,16 +37,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 import static kotlin.random.RandomKt.Random;
-import static net.datahub.msv.constants.NBTTags.*;
+import static net.datahub.msv.constant.NBTTags.*;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements Access {
-    @Shadow @Final private PlayerInventory inventory;
-
-    @Shadow public abstract boolean isPlayer();
-
-    @Shadow public abstract PlayerAbilities getAbilities();
-
+public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAccess {
     @Unique
     private int tickCounter = 0;
     @Unique

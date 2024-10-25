@@ -1,4 +1,4 @@
-package net.datahub.msv.constants
+package net.datahub.msv.constant
 
 object NBTTags {
     const val MSV: String = "MSV"

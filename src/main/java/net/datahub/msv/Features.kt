@@ -1,13 +1,14 @@
 package net.datahub.msv
 
 import net.datahub.msv.MSVFiles.mutationsData
-import net.datahub.msv.MSVFiles.mutationsList
-import net.datahub.msv.constants.Gifts
-import net.datahub.msv.constants.Mutations
-import net.datahub.msv.nbt.Access
+import net.datahub.msv.access.MobAccess
+import net.datahub.msv.access.PlayerAccess
+import net.datahub.msv.constant.Gifts
+import net.datahub.msv.constant.Mutations
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.mob.ZombieHorseEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -17,6 +18,10 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3d
+import net.minecraft.world.World
+import net.minecraft.world.biome.BiomeKeys
 import java.util.*
 
 object Features {
@@ -44,20 +49,21 @@ object Features {
         return mutationsData[mutation]?.gifts?.random() ?: "none"
     }
 
+    @Suppress("unused")
     fun getRandomGift(player: PlayerEntity ): String {
-        return mutationsData[(player as Access).mutation]?.gifts?.random() ?: "none"
+        return mutationsData[(player as PlayerAccess).mutation]?.gifts?.random() ?: "none"
     }
 
     private fun elytraFlapping() {
         EntityElytraEvents.ALLOW.register {
-            (it as Access).mutation == Mutations.FALLEN
+            (it as PlayerAccess).mutation == Mutations.FALLEN
         }
     }
 
     private fun isZombie(entity: Entity): Boolean {return entity is ZombieEntity || entity is ZombieHorseEntity}
     private fun zombieEating() {
         UseEntityCallback.EVENT.register { player, world, hand, entity, _ ->
-            player as Access
+            player as PlayerAccess
             if (world is ServerWorld && player.gift == Gifts.ZOMBIE_EATER && player.hungerManager.isNotFull && isZombie(entity) && player.zombieEatingCD <= 0) {
                 player.swingHand(hand, true)
                 world.spawnParticles(
@@ -91,8 +97,46 @@ object Features {
         }
     }
 
+    fun spawnInfectedZombie(player: PlayerEntity) {
+        val zombieType: EntityType<*> = when (player.world.getBiome(player.blockPos)) {
+            BiomeKeys.DESERT, BiomeKeys.BADLANDS, BiomeKeys.SAVANNA, BiomeKeys.SAVANNA_PLATEAU -> EntityType.HUSK
+            BiomeKeys.OCEAN, BiomeKeys.RIVER, BiomeKeys.FROZEN_OCEAN, BiomeKeys.FROZEN_RIVER -> EntityType.DROWNED
+            else -> EntityType.ZOMBIE
+        }
+
+        val zombie = zombieType.create(player.world)!!.also {
+            (it as MobAccess).isInfected = true
+        }
+        zombie.refreshPositionAndAngles(findSpot(player), 0.0f, 0.0f)
+        player.world.spawnEntity(zombie)
+    }
+
+    private fun findSpot(
+        player: PlayerEntity
+    ): BlockPos? {
+        val world: World = player.world
+        val startPos: BlockPos = player.blockPos
+        val playerPos: Vec3d = player.pos
+        val playerDirection: Vec3d = player.getRotationVec(1.0f)
+        val random = Random()
+
+        return (0..9).asSequence().map {
+            val xOffset = random.nextInt(20) - 10
+            val yOffset = random.nextInt(8) - 4
+            val zOffset = random.nextInt(20) - 10
+            startPos.add(xOffset, yOffset, zOffset)
+        }.firstOrNull { pos ->
+            world.getLightLevel(pos) < 8 &&
+                    !world.getBlockState(pos).isSolidBlock(world, pos) &&
+                    Vec3d(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble()).let { vec ->
+                        vec.subtract(playerPos).normalize().dotProduct(playerDirection.normalize()) < -0.5 &&
+                                vec.distanceTo(playerPos) >= 2.0
+                    }
+        }
+    }
+
     fun dropItem(player: PlayerEntity): ActionResult {
-        if ((player as Access).itemDroppingCD > 0)
+        if ((player as PlayerAccess).itemDroppingCD > 0)
             return ActionResult.PASS
         
         val stackToDrop: ItemStack =
@@ -103,7 +147,7 @@ object Features {
 
         if (!stackToDrop.isEmpty) {
             player.dropItem(stackToDrop.split(1), false)
-            (player as Access).itemDroppingCD = 20
+            (player as PlayerAccess).itemDroppingCD = 20
         }
         return ActionResult.SUCCESS
     }

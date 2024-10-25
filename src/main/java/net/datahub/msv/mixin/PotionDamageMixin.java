@@ -1,7 +1,6 @@
 package net.datahub.msv.mixin;
 
 import net.datahub.msv.MSVDamage;
-import net.datahub.msv.nbt.Access;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

@@ -43,7 +43,8 @@
 	],
 	"custom": {
 		"loom:injected_interfaces": {
-			"net/minecraft/class_1657": ["net/datahub/msv/nbt/Access"]
+			"net/minecraft/class_1657": ["net/datahub/msv/access/PlayerAccess"],
+			"net/minecraft/class_1308": ["net/datahub/msv/access/MobAccess"]
 		}
 	}
 }
