@@ -1,6 +1,5 @@
 package net.datahub.msv.mixin;
 
-import net.datahub.msv.access.PlayerAccess;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.SheepEntity;
@@ -18,7 +17,7 @@ public abstract class InfSheepMixin extends MobEntity {
 
     @Inject(method = "onEatingGrass", at = @At("HEAD"), cancellable = true)
     private void forbidEating(CallbackInfo ci) {
-        if (((PlayerAccess)this).isInfected())
+        if (this.isInfected())
             ci.cancel();
     }
 }

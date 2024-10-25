@@ -3,6 +3,7 @@ package net.datahub.msv
 import eu.pb4.polymer.core.api.other.PolymerPotion
 import eu.pb4.polymer.core.api.other.PolymerStatusEffect
 import net.datahub.msv.MSVReloaded.Companion.id
+import net.datahub.msv.access.MobAccess
 import net.datahub.msv.access.PlayerAccess
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffect
@@ -73,10 +74,10 @@ object MSVStatusEffects {
 
         override fun onApplied(entity: LivingEntity?, amplifier: Int) {
             if (amplifier == 1) {
-                if (entity is MobEntity && !(entity as PlayerAccess).isInfected)
-                    (entity as PlayerAccess).isInfected = true
+                if (entity is MobEntity && !(entity as MobAccess).isInfected)
+                    entity.isInfected = true
                 if (entity is PlayerEntity && (entity as PlayerAccess).stage == 0)
-                    (entity as PlayerAccess).stage = 5
+                    entity.stage = 5
             }
         }
     }
