@@ -23,7 +23,7 @@ object ModDamage {
     }
 
     private fun register(id: String): RegistryKey<DamageType> {
-        MSVReloaded.LOGGER.info("Initializing custom-damage...")
+        MSVReloaded.LOGGER.info("Registering ${id}-damage...")
         return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id(id))
     }
     fun getWaterDamage(): DamageSource {

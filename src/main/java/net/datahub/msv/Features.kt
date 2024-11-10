@@ -6,9 +6,14 @@ import net.datahub.msv.access.PlayerAccess
 import net.datahub.msv.constant.Gifts
 import net.datahub.msv.constant.Mutations
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.SpawnReason
+import net.minecraft.entity.damage.DamageSource
+import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.mob.ZombieHorseEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -27,8 +32,8 @@ import java.util.*
 object Features {
     fun register() {
         MSVReloaded.LOGGER.info("Initializing features...")
-        elytraFlapping()
         zombieEating()
+        onDamage()
     }
 
     fun getRandomMutation(): String {
@@ -54,9 +59,12 @@ object Features {
         return mutationsData[(player as PlayerAccess).mutation]?.gifts?.random() ?: "none"
     }
 
-    private fun elytraFlapping() {
-        EntityElytraEvents.ALLOW.register {
-            (it as PlayerAccess).mutation == Mutations.FALLEN
+    private fun onDamage() {
+        ServerLivingEntityEvents.AFTER_DAMAGE.register { entity: LivingEntity, _: DamageSource, _: Float, _: Float, _: Boolean ->
+            if (entity is PlayerEntity && (entity as PlayerAccess).stage > 1) {
+                entity.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false))
+                if (Random().nextBoolean()) dropItem(entity)
+            }
         }
     }
 

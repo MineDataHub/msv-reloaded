@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "msv:water",
+    "msv:rain",
+    "msv:potion"
+  ]
+}

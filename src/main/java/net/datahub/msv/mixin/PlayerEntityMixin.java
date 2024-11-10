@@ -281,36 +281,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAc
         this.frozenTime += frozenTime;
     }
 
-    //@Inject(method = "eatFood", at = @At("TAIL"))
-    //private void modifyGhoulsFoodEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
-    //    if (mutation.equals(Mutations.GHOUL)) {
-    //        if (stack.getItem() == Items.ROTTEN_FLESH) {
-    //            this.removeStatusEffect(StatusEffects.HUNGER);
-    //        } else {
-    //            StatusEffectInstance currentEffect = this.getStatusEffect(StatusEffects.HUNGER);
-    //            int newDuration = (currentEffect != null) ? currentEffect.getDuration() + 300 : 300;
-    //            int newAmplifier = (currentEffect != null) ? currentEffect.getAmplifier() + 1 : 0;
-    //            this.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, newDuration, newAmplifier));
-
-    //            if (currentEffect != null && currentEffect.getAmplifier() >= 2)
-    //                this.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 200, 0));
-    //        }
-    //    }
-    //}
-
-    @Inject(method = "damage", at = @At("TAIL"))
-    private void onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (stage > 1) {
-            this.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false));
-            Features.INSTANCE.dropItem((PlayerEntity) (Object) this);
-        }
-    }
-
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     private void noFireDamage(ServerWorld world, DamageSource source, CallbackInfoReturnable<Boolean> cir) {
         if (gift.equals(Gifts.NO_FIRE_DAMAGE) && source.getType().effects().equals(DamageEffects.BURNING)) {
             cir.setReturnValue(true);
         }
+    }
+
+    @Inject(method = "canGlide", at = @At("HEAD"), cancellable = true)
+    private void blockElytra(CallbackInfoReturnable<Boolean> cir) {
+        if (mutation.equals(Mutations.FALLEN)) cir.setReturnValue(false);
     }
 
     @Inject(method = "setFireTicks", at = @At("HEAD"), cancellable = true)

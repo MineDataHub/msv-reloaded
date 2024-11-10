@@ -21,6 +21,7 @@ import net.minecraft.potion.Potion
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
+import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
@@ -31,7 +32,7 @@ import net.minecraft.world.World
 import xyz.nucleoid.packettweaker.PacketContext
 
 class ModItems {
-    object UmbrellaItem : Item(Settings().maxCount(1).maxDamage(250)), PolymerItem {
+    object UmbrellaItem : Item(Settings().maxCount(1).maxDamage(250).registryKey(RegistryKey.of(RegistryKeys.ITEM, id("umbrella")))), PolymerItem {
         private val UMBRELLA_STATE: ComponentType<Boolean> = Registry.register(
             Registries.DATA_COMPONENT_TYPE,
             "umbrella_state",
@@ -121,7 +122,7 @@ class ModItems {
         fun register() {
             MSVReloaded.LOGGER.info("Initializing items...")
 
-            this.UMBRELLA
+            UMBRELLA
 
             PolymerItemGroupUtils.registerPolymerItemGroup(
                 RegistryKey.of(Registries.ITEM_GROUP.key, id("msv_tab")),
