@@ -3,13 +3,11 @@ package net.datahub.msv.mixin;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.WaterCreatureEntity;
 import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -37,7 +35,7 @@ public abstract class InfectedFishMixin extends WaterCreatureEntity {
 
     @Inject(method = "createFishAttributes", at = @At("HEAD"), cancellable = true)
     private static void createFishAttributes(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
-        cir.setReturnValue(MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 1.5));
+        cir.setReturnValue(MobEntity.createMobAttributes().add(EntityAttributes.MAX_HEALTH, 1.5));
     }
 
     @Inject(method = "tickMovement", at = @At("TAIL"))
@@ -65,7 +63,7 @@ public abstract class InfectedFishMixin extends WaterCreatureEntity {
                 else if (this.distanceTo(player) < 1.5) {
                     biteCD = random.nextBetween(200, 300);
                     if (random.nextBoolean())
-                        player.damage(new DamageSource(this.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MOB_ATTACK), this), 0.5F);
+                        player.damage((ServerWorld) getWorld(), this.getWorld().getDamageSources().mobAttack(this), 0.5F);
                 }
 
                 if (moveCD == 1) this.getNavigation().startMovingTo(player, 1.6);

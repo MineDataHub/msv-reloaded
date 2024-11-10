@@ -1,0 +1,204 @@
+{
+  "main": {
+    "id": "9a4594f02209db40",
+    "type": "split",
+    "children": [
+      {
+        "id": "1ffd9dd9d6b52c45",
+        "type": "tabs",
+        "dimension": 67.13197969543147,
+        "children": [
+          {
+            "id": "70ab99728c5b9d3b",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "MSV Reloaded.canvas",
+                "viewState": {
+                  "x": -1306.5695615050793,
+                  "y": -1582.4691125206402,
+                  "zoom": -0.5272043580609385
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "MSV Reloaded"
+            }
+          }
+        ]
+      },
+      {
+        "id": "08073aaf414cd207",
+        "type": "tabs",
+        "dimension": 32.868020304568525,
+        "children": [
+          {
+            "id": "f07722d8970ec31a",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "b8412a43de2328e8",
+    "type": "split",
+    "children": [
+      {
+        "id": "52dba27bc0c04e3d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e033fc411ac7719a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "c9b66d10f0c83aaf",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "cfbb684172f387e4",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "e968444b5dd295d6",
+    "type": "split",
+    "children": [
+      {
+        "id": "7b3dfbfcf7d4860b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2aa62bdf407b0f80",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "MSV Reloaded.canvas",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for MSV Reloaded"
+            }
+          },
+          {
+            "id": "ff22f608a55a42de",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "MSV Reloaded.canvas",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from MSV Reloaded"
+            }
+          },
+          {
+            "id": "6bf2eb9886a45cd6",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "ad6381ef3b788bea",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "MSV Reloaded.canvas"
+              },
+              "icon": "lucide-list",
+              "title": "Outline of MSV Reloaded"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "70ab99728c5b9d3b",
+  "lastOpenFiles": [
+    "MSV Reloaded.canvas",
+    "Welcome.md",
+    "Укреплённый Хазмат.md",
+    "Распространение.md",
+    "Появление.md",
+    "Падший.md",
+    "Обычный Хазмат.md",
+    "Нулевой пациент.md",
+    "Зонт.md",
+    "Заражённый моб.md",
+    "Задачи.md",
+    "Гуль.md",
+    "Гидрофоб.md",
+    "Вампир.md",
+    "desktop.ini"
+  ]
+}

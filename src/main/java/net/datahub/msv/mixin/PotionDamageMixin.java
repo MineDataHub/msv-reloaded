@@ -7,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,7 +27,7 @@ public abstract class PotionDamageMixin extends ThrownItemEntity {
                 .forEach(entity -> {
                     if (entity instanceof PlayerEntity player
                             && player.getMutation().equals(Mutations.HYDROPHOBIC)) {
-                        player.damage(ModDamage.INSTANCE.getPotionDamage(), 1.0F);
+                        player.damage((ServerWorld) player.getWorld(), ModDamage.INSTANCE.getPotionDamage(), 1.0F);
                     }
                 });
     }

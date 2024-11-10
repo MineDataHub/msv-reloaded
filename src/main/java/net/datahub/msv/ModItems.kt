@@ -1,9 +1,9 @@
 package net.datahub.msv
 
 import com.mojang.serialization.Codec
-import net.datahub.msv.MSVReloaded.Companion.id
 import eu.pb4.polymer.core.api.item.PolymerItem
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils
+import net.datahub.msv.MSVReloaded.Companion.id
 import net.fabricmc.fabric.api.item.v1.EnchantingContext
 import net.minecraft.component.ComponentType
 import net.minecraft.component.DataComponentTypes
@@ -22,13 +22,13 @@ import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.entry.RegistryEntry
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
+import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
-import net.minecraft.util.TypedActionResult
 import net.minecraft.world.World
+import xyz.nucleoid.packettweaker.PacketContext
 
 class ModItems {
     object UmbrellaItem : Item(Settings().maxCount(1).maxDamage(250)), PolymerItem {
@@ -38,11 +38,11 @@ class ModItems {
             ComponentType.builder<Boolean>().codec(Codec.BOOL).build()
         )
 
-        override fun use(world: World, user: PlayerEntity, hand: Hand?): TypedActionResult<ItemStack> {
+        override fun use(world: World, user: PlayerEntity, hand: Hand?): ActionResult {
             val currentState = user.getStackInHand(hand).components.get(UMBRELLA_STATE) ?: false
             user.getStackInHand(hand).set(UMBRELLA_STATE, !currentState)
             world.playSound(user, user.blockPos, SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.PLAYERS)
-            return TypedActionResult.success(user.getStackInHand(hand))
+            return ActionResult.SUCCESS
         }
 
         private var tickCounter = 0
@@ -79,12 +79,12 @@ class ModItems {
             }
         }
 
-        override fun getPolymerItem(itemStack: ItemStack, player: ServerPlayerEntity?): Item {
-            return if (itemStack.components.get(UMBRELLA_STATE) == true) Items.EMERALD else Items.DIAMOND
-        }
-
-        override fun isEnchantable(stack: ItemStack?): Boolean {
-            return true
+        override fun getPolymerItem(itemStack: ItemStack?, p1: PacketContext?): Item? {
+            return if (itemStack != null) {
+                if (itemStack.components.get(UMBRELLA_STATE) == true) Items.EMERALD else Items.DIAMOND
+            } else {
+                null
+            }
         }
 
         override fun canBeEnchantedWith(

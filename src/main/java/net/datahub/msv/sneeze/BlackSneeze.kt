@@ -5,10 +5,8 @@ import net.datahub.msv.MSVReloaded.Companion.id
 import net.datahub.msv.ModStatusEffects
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.SpawnGroup
+import net.minecraft.entity.*
+import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.player.PlayerEntity
@@ -18,27 +16,31 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.registry.Registries.ENTITY_TYPE
 import net.minecraft.registry.Registry
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.registry.RegistryKey
+import net.minecraft.registry.RegistryKeys
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.world.World
+import xyz.nucleoid.packettweaker.PacketContext
 import java.util.*
 
 class BlackSneeze(world: World?) : Entity(BLACK_SNEEZE, world), PolymerEntity {
     companion object {
+        private var key: RegistryKey<EntityType<*>> = RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("black_sneeze"))
+
         val BLACK_SNEEZE: EntityType<BlackSneeze> = Registry.register(
             ENTITY_TYPE,
             id("black_sneeze"),
             EntityType.Builder.create(BlackSneezeEntityFactory, SpawnGroup.MISC)
                 .dimensions(1.0F, 1.0F)
-                .build()
+                .build(key)
         )
 
         fun spawn(player: PlayerEntity) {
-            val entity = ENTITY_TYPE.get(id("black_sneeze")).create(player.world)
+            val entity = ENTITY_TYPE.get(id("black_sneeze")).create(player.world, SpawnReason.EVENT)
             val offsetX = Random().nextInt(3) - 1
             val offsetZ = Random().nextInt(3) - 1
             entity?.setPos(player.x + offsetX, player.y, player.z + offsetZ)
@@ -56,7 +58,7 @@ class BlackSneeze(world: World?) : Entity(BLACK_SNEEZE, world), PolymerEntity {
         player.giveItemStack(item)
         player.world.playSound(null, player.x, player.y, player.z, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.PLAYERS, 0.5f, 1f)
         player.world.playSound(null, entity.x, entity.y, entity.z, SoundEvents.BLOCK_MUD_FALL, SoundCategory.PLAYERS, 0.5f, 1f)
-        entity.kill()
+        entity.kill(entityWorld as ServerWorld?)
     }
 
     object BlackSneezeEntityFactory : EntityType.EntityFactory<BlackSneeze> {
@@ -69,13 +71,17 @@ class BlackSneeze(world: World?) : Entity(BLACK_SNEEZE, world), PolymerEntity {
         (world as? ServerWorld)?.spawnParticles(ParticleTypes.SQUID_INK, pos.x, pos.y, pos.z, 3, 0.25, 0.5, 0.25, 0.001)
 
         if (age >= 200) { // 200 тиков = 10 секунд
-            kill()
+            kill(world as ServerWorld?)
         }
 
         for (entity in world.getOtherEntities(this, boundingBox.expand(0.5))
             .filterIsInstance<LivingEntity>()) {
             entity.addStatusEffect(StatusEffectInstance(ModStatusEffects.CURSE, 100, 1))
         }
+    }
+
+    override fun damage(world: ServerWorld?, source: DamageSource?, amount: Float): Boolean {
+        return false
     }
 
     override fun interact(player: PlayerEntity, hand: Hand?): ActionResult {
@@ -98,7 +104,7 @@ class BlackSneeze(world: World?) : Entity(BLACK_SNEEZE, world), PolymerEntity {
     override fun readCustomDataFromNbt(nbt: NbtCompound) {
     }
 
-    override fun getPolymerEntityType(player: ServerPlayerEntity?): EntityType<*>? {
+    override fun getPolymerEntityType(p0: PacketContext?): EntityType<*>? {
         return EntityType.INTERACTION
     }
 }

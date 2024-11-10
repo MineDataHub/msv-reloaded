@@ -1,0 +1,22 @@
+{
+	"nodes":[
+		{"id":"e824bfcd26f14c48","type":"group","x":-2240,"y":-2440,"width":2280,"height":640,"label":"Мутации"},
+		{"id":"be60ff686b1868f6","type":"group","x":-2280,"y":-1640,"width":1040,"height":625,"label":"Предметы"},
+		{"id":"49cddf63fa2fcbf1","type":"group","x":-1880,"y":-1560,"width":583,"height":480,"label":"Хазматы"},
+		{"id":"46170dbf2141411a","x":-540,"y":-1440,"width":400,"height":400,"type":"file","file":"Заражённый моб.md"},
+		{"id":"7292b721c21f4b44","type":"file","file":"Падший.md","x":-880,"y":-2400,"width":400,"height":400},
+		{"id":"e94e215fca880099","type":"file","file":"Задачи.md","x":240,"y":-1840,"width":400,"height":400},
+		{"id":"c98d29f7c656f61c","type":"file","file":"Нулевой пациент.md","x":-440,"y":-2400,"width":440,"height":560},
+		{"id":"b78b5c4d58114542","type":"file","file":"Укреплённый Хазмат.md","x":-1597,"y":-1500,"width":277,"height":400},
+		{"id":"c5ad3c12d3e78bbd","type":"file","file":"Гидрофоб.md","x":-1772,"y":-2400,"width":400,"height":400},
+		{"id":"08873b971bb5aec5","type":"file","file":"Вампир.md","x":-1320,"y":-2400,"width":400,"height":400},
+		{"id":"577e20604d2a652b","type":"file","file":"Обычный Хазмат.md","x":-1860,"y":-1500,"width":220,"height":400},
+		{"id":"a2acf93dc3fca746","type":"file","file":"Гуль.md","x":-2220,"y":-2400,"width":400,"height":480},
+		{"id":"2c9cb1cbe7deff3a","type":"file","file":"Зонт.md","x":-2220,"y":-1560,"width":280,"height":345},
+		{"id":"ae7b9f3637948cb4","type":"file","file":"Появление.md","x":-1160,"y":-1720,"width":400,"height":180},
+		{"id":"821d242ceca18043","type":"file","file":"Распространение.md","x":-1160,"y":-1440,"width":400,"height":340}
+	],
+	"edges":[
+		{"id":"bb9778ab824bf45e","fromNode":"ae7b9f3637948cb4","fromSide":"bottom","toNode":"821d242ceca18043","toSide":"top"}
+	]
+}

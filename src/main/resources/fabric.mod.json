@@ -2,10 +2,10 @@
 	"schemaVersion": 1,
 	"id": "msv",
 	"version": "${version}",
-	"name": "MS-Virus: Reloaded",
+	"name": "MSV: Reloaded",
 	"description": "En:\nThis mod will add a virus to your world, the idea of which was taken from the Minecraft server \"MineShield: 3\", and then modified by our community to make the game more interesting.\n\nRu:\nЭтот мод добавит в ваш мир вирус, идея которого была взята с Майнкрафт сервера \"МайнШилд: 3\", а затем модифицирована нашим комьюнити чтобы сделать игру интереснее.",
 	"authors": [
-		"DataHub community"
+		"DTHub community"
 	],
 	"contact": {
 		"homepage": "https://discord.gg/Uh7dcTS4UV",
@@ -23,22 +23,17 @@
 		]
 	},
 	"mixins": [
-		"msv.mixins.json",
-		{
-			"config": "msv.mixins.json",
-			"environment": "server"
-		}
+		"msv.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.21",
-		"java": ">=21",
-		"fabric-api": "*",
-		"fabric-language-kotlin": ">=1.11.0+kotlin.2.0.0"
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "${minecraft_version}",
+		"fabric-api": ">=${fabric_version}",
+		"fabric-language-kotlin": ">=${kotlin_loader_version}"
 	},
 	"jars": [
 		{
-			"file": "META-INF/polymer-bundled-0.9.9+1.21.jar"
+			"file": "META-INF/polymer-bundled-0.10.2+1.21.3.jar"
 		}
 	],
 	"custom": {

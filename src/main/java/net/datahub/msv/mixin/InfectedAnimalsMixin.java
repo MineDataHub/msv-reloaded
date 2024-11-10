@@ -3,13 +3,11 @@ package net.datahub.msv.mixin;
 import net.datahub.msv.access.PlayerAccess;
 import kotlin.random.Random;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -66,7 +64,7 @@ public abstract class InfectedAnimalsMixin extends MobEntity implements PlayerAc
                 if (this.distanceTo(player) <= 1.5F && CDHitPlayer == 0) {
                     this.lookControl.lookAt(player, 180, 180);
                     if (Random.Default.nextBoolean())
-                        player.damage(new DamageSource(this.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MOB_ATTACK), this), 2.0F);
+                        player.damage((ServerWorld) this.getWorld(), this.getWorld().getDamageSources().mobAttack(this), 2.0F);
                     CDHitPlayer = Random.Default.nextInt(500, 800);
                 }
 
@@ -95,7 +93,7 @@ public abstract class InfectedAnimalsMixin extends MobEntity implements PlayerAc
                 for (AnimalEntity animalEntity : this.getWorld().getEntitiesByClass(AnimalEntity.class, this.getBoundingBox().expand(2.0), animalEntity -> true)) {
                     if (!animalEntity.isInfected()) {
                         if (Random.Default.nextBoolean()) {
-                            animalEntity.damage(new DamageSource(this.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MOB_ATTACK), this), 2.0F);
+                            animalEntity.damage((ServerWorld) this.getWorld(), this.getWorld().getDamageSources().mobAttack(this), 2.0F);
                             animalEntity.setInfected(true);
                         }
                         CDHitAnimal = Random.Default.nextInt(2200, 2600);

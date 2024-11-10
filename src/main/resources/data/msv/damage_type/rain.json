@@ -1,6 +1,7 @@
 {
-  "message_id": "water",
+  "message_id": "rain",
   "exhaustion": 0.1,
   "scaling": "never",
+  "effects": "drowning",
   "death_message_type": "default"
 }

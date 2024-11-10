@@ -12,7 +12,7 @@ import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.util.TypedActionResult
+import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
 
 object NormalSneeze {
@@ -30,9 +30,9 @@ object NormalSneeze {
                 player.world.playSound(null, player.x, player.y, player.z, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.PLAYERS, 0.5f, 1f)
                 player.world.playSound(null, player.x, player.y, player.z, SoundEvents.BLOCK_MUD_FALL, SoundCategory.PLAYERS, 0.5f, 1.5f)
 
-                TypedActionResult.success(itemStack, true)
+                ActionResult.SUCCESS
             } else
-                TypedActionResult.pass(itemStack)
+                ActionResult.PASS
         }
     }
 

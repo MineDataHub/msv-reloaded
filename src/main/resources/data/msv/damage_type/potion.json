@@ -2,5 +2,6 @@
   "message_id": "potion",
   "exhaustion": 0.1,
   "scaling": "never",
+  "effects": "drowning",
   "death_message_type": "default"
 }

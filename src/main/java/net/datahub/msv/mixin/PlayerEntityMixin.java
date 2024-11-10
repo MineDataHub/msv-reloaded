@@ -9,6 +9,7 @@ import net.datahub.msv.constant.Mutations;
 import net.datahub.msv.access.PlayerAccess;
 import net.datahub.msv.sneeze.BlackSneeze;
 import net.datahub.msv.sneeze.NormalSneeze;
+import net.minecraft.block.Blocks;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -23,6 +24,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -129,7 +131,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAc
             default:
                 yield 0.0;
         };
-        EntityAttributeInstance attributeInstance = Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH));
+        EntityAttributeInstance attributeInstance = Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.MAX_HEALTH));
         if (!attributeInstance.hasModifier(MSVReloaded.id("health")) || Objects.requireNonNull(attributeInstance.getModifier(MSVReloaded.id("health"))).value() != modifier) {
             attributeInstance.updateModifier(
                     new EntityAttributeModifier(
@@ -143,11 +145,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAc
         BlockPos pos = this.getBlockPos();
         if (Objects.equals(mutation, Mutations.HYDROPHOBIC)) {
             if (this.isTouchingWater()) {
-                damage(ModDamage.INSTANCE.getWaterDamage(), 1.5f);
+                damage((ServerWorld) world, ModDamage.INSTANCE.getWaterDamage(), 1.5f);
             }
 
             if (!ModItems.UmbrellaItem.INSTANCE.check((PlayerEntity)(Object)this) && world.isRaining() && world.isSkyVisibleAllowingSea(pos)) {
-                damage(ModDamage.INSTANCE.getRainDamage(), 1.5f);
+                damage((ServerWorld) world, ModDamage.INSTANCE.getRainDamage(), 1.5f);
             }
         } else if (!ModItems.UmbrellaItem.INSTANCE.check((PlayerEntity) (Object) this) && Objects.equals(mutation, Mutations.VAMPIRE) && world.isSkyVisibleAllowingSea(pos)) {
             this.setFireTicks(80);
@@ -279,25 +281,25 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAc
         this.frozenTime += frozenTime;
     }
 
-    @Inject(method = "eatFood", at = @At("TAIL"))
-    private void modifyGhoulsFoodEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
-        if (mutation.equals(Mutations.GHOUL)) {
-            if (stack.getItem() == Items.ROTTEN_FLESH) {
-                this.removeStatusEffect(StatusEffects.HUNGER);
-            } else {
-                StatusEffectInstance currentEffect = this.getStatusEffect(StatusEffects.HUNGER);
-                int newDuration = (currentEffect != null) ? currentEffect.getDuration() + 300 : 300;
-                int newAmplifier = (currentEffect != null) ? currentEffect.getAmplifier() + 1 : 0;
-                this.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, newDuration, newAmplifier));
+    //@Inject(method = "eatFood", at = @At("TAIL"))
+    //private void modifyGhoulsFoodEffect(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
+    //    if (mutation.equals(Mutations.GHOUL)) {
+    //        if (stack.getItem() == Items.ROTTEN_FLESH) {
+    //            this.removeStatusEffect(StatusEffects.HUNGER);
+    //        } else {
+    //            StatusEffectInstance currentEffect = this.getStatusEffect(StatusEffects.HUNGER);
+    //            int newDuration = (currentEffect != null) ? currentEffect.getDuration() + 300 : 300;
+    //            int newAmplifier = (currentEffect != null) ? currentEffect.getAmplifier() + 1 : 0;
+    //            this.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, newDuration, newAmplifier));
 
-                if (currentEffect != null && currentEffect.getAmplifier() >= 2)
-                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 200, 0));
-            }
-        }
-    }
+    //            if (currentEffect != null && currentEffect.getAmplifier() >= 2)
+    //                this.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 200, 0));
+    //        }
+    //    }
+    //}
 
     @Inject(method = "damage", at = @At("TAIL"))
-    private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    private void onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (stage > 1) {
             this.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false));
             Features.INSTANCE.dropItem((PlayerEntity) (Object) this);
@@ -305,8 +307,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAc
     }
 
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
-    private void noFireDamage(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        if (gift.equals(Gifts.NO_FIRE_DAMAGE) && damageSource.getType().effects().equals(DamageEffects.BURNING)) {
+    private void noFireDamage(ServerWorld world, DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+        if (gift.equals(Gifts.NO_FIRE_DAMAGE) && source.getType().effects().equals(DamageEffects.BURNING)) {
             cir.setReturnValue(true);
         }
     }

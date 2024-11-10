@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	kotlin("jvm") version "2.0.0"
-	id("fabric-loom") version "1.7.1"
+	id("fabric-loom") version "1.8-SNAPSHOT"
 	id("maven-publish")
 }
 
@@ -24,12 +24,9 @@ java {
 }
 
 loom {
-	splitEnvironmentSourceSets()
-
 	mods {
 		register("msv") {
 			sourceSet("main")
-			sourceSet("client")
 		}
 	}
 }
@@ -58,17 +55,19 @@ dependencies {
 }
 
 tasks.processResources {
-	inputs.property("version", project.version)
+	inputs.property("version", project.property("mod_version"))
+	inputs.property("fabric_version", project.property("fabric_version"))
 	inputs.property("minecraft_version", project.property("minecraft_version"))
 	inputs.property("loader_version", project.property("loader_version"))
 	filteringCharset = "UTF-8"
 
 	filesMatching("fabric.mod.json") {
 		expand(
-				"version" to project.version,
-				"minecraft_version" to project.property("minecraft_version"),
-				"loader_version" to project.property("loader_version"),
-				"kotlin_loader_version" to project.property("kotlin_loader_version")
+			"version" to project.property("mod_version"),
+			"fabric_version" to project.property("fabric_version"),
+			"minecraft_version" to project.property("minecraft_version"),
+			"loader_version" to project.property("loader_version"),
+			"kotlin_loader_version" to project.property("kotlin_loader_version")
 		)
 	}
 }

@@ -17,9 +17,9 @@ object ModDamage {
     private val POTION: RegistryKey<DamageType> = register("potion")
 
     fun registryDamage(server: MinecraftServer) {
-        waterDamage = DamageSource(server.registryManager.get(RegistryKeys.DAMAGE_TYPE).entryOf(WATER))
-        rainDamage = DamageSource(server.registryManager.get(RegistryKeys.DAMAGE_TYPE).entryOf(RAIN))
-        potionDamage = DamageSource(server.registryManager.get(RegistryKeys.DAMAGE_TYPE).entryOf(POTION))
+        waterDamage = DamageSource(server.registryManager.getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(WATER))
+        rainDamage = DamageSource(server.registryManager.getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(RAIN))
+        potionDamage = DamageSource(server.registryManager.getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(POTION))
     }
 
     private fun register(id: String): RegistryKey<DamageType> {

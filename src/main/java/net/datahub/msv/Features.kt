@@ -8,6 +8,7 @@ import net.datahub.msv.constant.Mutations
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.entity.mob.ZombieHorseEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -90,7 +91,7 @@ object Features {
                     world.random.nextFloat() * 0.1f + 0.9f
                 )
                 player.hungerManager.add(3, 0.5f)
-                entity.kill()
+                entity.kill(entity.world as ServerWorld?)
 
                 player.zombieEatingCD = 25
                 return@register ActionResult.SUCCESS
@@ -106,7 +107,7 @@ object Features {
             else -> EntityType.ZOMBIE
         }
 
-        val zombie = zombieType.create(player.world)!!.also {
+        val zombie = zombieType.create(player.world, SpawnReason.EVENT)!!.also {
             (it as MobAccess).isInfected = true
         }
         zombie.refreshPositionAndAngles(findSpot(player), 0.0f, 0.0f)
