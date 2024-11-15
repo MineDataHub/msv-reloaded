@@ -3,25 +3,15 @@ package net.datahub.msv
 import net.datahub.msv.MSVFiles.mutationsData
 import net.datahub.msv.access.MobAccess
 import net.datahub.msv.access.PlayerAccess
-import net.datahub.msv.constant.Gifts
-import net.datahub.msv.constant.Mutations
-import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
-import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
-import net.minecraft.entity.mob.ZombieEntity
-import net.minecraft.entity.mob.ZombieHorseEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.particle.ParticleTypes
-import net.minecraft.server.world.ServerWorld
-import net.minecraft.sound.SoundCategory
-import net.minecraft.sound.SoundEvents
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -30,9 +20,8 @@ import net.minecraft.world.biome.BiomeKeys
 import java.util.*
 
 object Features {
-    fun register() {
+    init {
         MSVReloaded.LOGGER.info("Initializing features...")
-        zombieEating()
         onDamage()
     }
 
@@ -50,7 +39,7 @@ object Features {
         return "none"
     }
 
-    fun getRandomGift(mutation: String ): String {
+    fun getRandomGift(mutation: String): String {
         return mutationsData[mutation]?.gifts?.random() ?: "none"
     }
 
@@ -65,46 +54,6 @@ object Features {
                 entity.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 60, 1, false, false))
                 if (Random().nextBoolean()) dropItem(entity)
             }
-        }
-    }
-
-    private fun zombieEating() {
-        UseEntityCallback.EVENT.register { player, world, hand, entity, _ ->
-            player as PlayerAccess
-            if (world is ServerWorld
-                && player.gift == Gifts.ZOMBIE_EATER
-                && player.hungerManager.isNotFull
-                && (entity is ZombieEntity || entity is ZombieHorseEntity)
-                && player.zombieEatingCD <= 0) {
-                player.swingHand(hand, true)
-                world.spawnParticles(
-                    ParticleTypes.CRIMSON_SPORE,
-                    entity.x,
-                    entity.y,
-                    entity.z,
-                    5,
-                    0.25,
-                    0.5,
-                    0.25,
-                    0.001
-                )
-                world.playSound(
-                    null,
-                    player.x,
-                    player.y,
-                    player.z,
-                    SoundEvents.ENTITY_PLAYER_BURP,
-                    SoundCategory.PLAYERS,
-                    0.5f,
-                    world.random.nextFloat() * 0.1f + 0.9f
-                )
-                player.hungerManager.add(3, 0.5f)
-                entity.kill(entity.world as ServerWorld?)
-
-                player.zombieEatingCD = 25
-                return@register ActionResult.SUCCESS
-            }
-            return@register ActionResult.PASS
         }
     }
 
@@ -146,7 +95,7 @@ object Features {
         }
     }
 
-    fun dropItem(player: PlayerEntity): ActionResult {
+    private fun dropItem(player: PlayerEntity): ActionResult {
         if ((player as PlayerAccess).itemDroppingCD > 0)
             return ActionResult.PASS
         

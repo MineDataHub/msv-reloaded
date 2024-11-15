@@ -238,7 +238,7 @@ object MSVCommand {
                                                 it.source.sendMessage(Text.literal("Mutations are already on default!").withColor(16733525))
                                                 Command.SINGLE_SUCCESS
                                             } else {
-                                                MSVFiles.writeOnlyDefault()
+                                                MSVFiles.setDefault()
                                                 it.source.sendMessage(Text.literal("Mutations has been set to default"))
                                                 Command.SINGLE_SUCCESS
                                             }

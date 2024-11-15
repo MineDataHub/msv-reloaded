@@ -1,16 +1,14 @@
 package net.datahub.msv.mixin;
 
 import net.datahub.msv.Features;
-import net.datahub.msv.ModDamage;
 import net.datahub.msv.ModItems;
 import net.datahub.msv.MSVReloaded;
 import net.datahub.msv.constant.Gifts;
 import net.datahub.msv.constant.Mutations;
 import net.datahub.msv.access.PlayerAccess;
+import net.datahub.msv.mutations.Hydrophobic;
 import net.datahub.msv.sneeze.BlackSneeze;
 import net.datahub.msv.sneeze.NormalSneeze;
-import net.minecraft.block.Blocks;
-import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -18,16 +16,11 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageEffects;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -43,6 +36,11 @@ import static net.datahub.msv.constant.NBTTags.*;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAccess {
+
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+        super(entityType, world);
+    }
+
     @Unique
     private int tickCounter = 0;
     @Unique
@@ -68,96 +66,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAc
     private int hallucinationCooldown = 0;
     @Unique
     private int infection = 0;
-
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
-        super(entityType, world);
-    }
-
-    @Unique
-    private void freezing() {
-        this.frozenTime--;
-        this.setFrozenTicks(getFrozenTicks() + 3);
-    }
-    
-    @Inject(method = "tick", at = @At("TAIL"))
-    protected void tick(CallbackInfo ci) {
-        if (frozenTime > 0) {
-            freezing();
-        }
-        if (++tickCounter % 10 == 0) {
-            if (tickCounter >= 200) {
-                tickCounter = 0;
-                if (stage > 0 && stage < 7) {
-                    if (--infection <= 0) {
-                        stage++;
-                        infection = (int) ((257 + random.nextInt(27)) * Math.pow(2.0, stage - 2));
-                        if (stage == 6) {
-                            mutation = Features.INSTANCE.getRandomMutation();
-                        }
-                        if (stage == 7) {
-                            gift = Features.INSTANCE.getRandomGift(mutation);
-                        }
-                    }
-                }
-                if (stage > 1 && stage <= 7) {
-                    if (--sneezeCooldown <= 0) {
-                        sneezeCooldown = 15 + random.nextInt(42) - stage;
-                        if (stage < 7) {
-                            NormalSneeze.INSTANCE.spawn((PlayerEntity) (Object) this);
-                        } else {
-                            BlackSneeze.Companion.spawn((PlayerEntity) (Object) this);
-                        }
-                    }
-                }
-                if (stage > 2 && stage <= 7) {
-                    if (--hallucinationCooldown <= 0) {
-                        hallucinationCooldown = 15 + random.nextInt(42) - stage;
-                        this.getWorld().playSound((PlayerEntity) (Object) this, getBlockPos(), SoundEvents.ENTITY_CREEPER_PRIMED, SoundCategory.PLAYERS);
-                    }
-                }
-                if (stage > 3 && stage < 7) {
-                    if (--freezeCooldown < 0) {
-                        this.frozenTime += 160;
-                        this.freezeCooldown = 30 + Random(12).nextInt(12) - stage;
-                    }
-                }
-            }
-        }
-        double modifier = switch (stage) {
-            case 2, 3, 4, 7:
-                yield -2.0;
-            case 5, 6:
-                yield -4.0;
-            default:
-                yield 0.0;
-        };
-        EntityAttributeInstance attributeInstance = Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.MAX_HEALTH));
-        if (!attributeInstance.hasModifier(MSVReloaded.id("health")) || Objects.requireNonNull(attributeInstance.getModifier(MSVReloaded.id("health"))).value() != modifier) {
-            attributeInstance.updateModifier(
-                    new EntityAttributeModifier(
-                            MSVReloaded.id("health"),
-                            modifier,
-                            EntityAttributeModifier.Operation.ADD_VALUE
-                    )
-            );
-        }
-        World world = this.getWorld();
-        BlockPos pos = this.getBlockPos();
-        if (Objects.equals(mutation, Mutations.HYDROPHOBIC)) {
-            if (this.isTouchingWater()) {
-                damage((ServerWorld) world, ModDamage.INSTANCE.getWaterDamage(), 1.5f);
-            }
-
-            if (!ModItems.UmbrellaItem.INSTANCE.check((PlayerEntity)(Object)this) && world.isRaining() && world.isSkyVisibleAllowingSea(pos)) {
-                damage((ServerWorld) world, ModDamage.INSTANCE.getRainDamage(), 1.5f);
-            }
-        } else if (!ModItems.UmbrellaItem.INSTANCE.check((PlayerEntity) (Object) this) && Objects.equals(mutation, Mutations.VAMPIRE) && world.isSkyVisibleAllowingSea(pos)) {
-            this.setFireTicks(80);
-        }
-        if (sneezePicking > 0) sneezePicking--;
-        if (itemDroppingCD > 0) itemDroppingCD--;
-        if (zombieEatingCD > 0) zombieEatingCD--;
-    }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
     protected void writeNbt(NbtCompound nbt, CallbackInfo ci) {
@@ -281,6 +189,94 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAc
         this.frozenTime += frozenTime;
     }
 
+    @Unique
+    private void freezing() {
+        this.frozenTime--;
+        this.setFrozenTicks(getFrozenTicks() + 3);
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    protected void tick(CallbackInfo ci) {
+        if (frozenTime > 0) {
+            freezing();
+        }
+        if (stage > 0) {
+            if (++tickCounter % 10 == 0) {
+                if (tickCounter >= 200) {
+                    tickCounter = 0;
+                    if (stage < 7) {
+                        if (--infection <= 0) {
+                            stage++;
+                            infection = (int) ((257 + random.nextInt(27)) * Math.pow(2.0, stage - 2));
+                            if (stage == 6) {
+                                mutation = Features.INSTANCE.getRandomMutation();
+                            }
+                            if (stage == 7) {
+                                gift = Features.INSTANCE.getRandomGift(mutation);
+                            }
+                        }
+                    }
+                    if (stage > 1 && stage <= 7) {
+                        if (--sneezeCooldown <= 0) {
+                            sneezeCooldown = 15 + random.nextInt(42) - stage;
+                            if (stage < 7) {
+                                NormalSneeze.INSTANCE.spawn((PlayerEntity) (Object) this);
+                            } else {
+                                BlackSneeze.Companion.spawn((PlayerEntity) (Object) this);
+                            }
+                        }
+                    }
+                    if (stage > 2 && stage <= 7) {
+                        if (--hallucinationCooldown <= 0) {
+                            hallucinationCooldown = 15 + random.nextInt(42) - stage;
+                            this.getWorld().playSound((PlayerEntity) (Object) this, getBlockPos(), SoundEvents.ENTITY_CREEPER_PRIMED, SoundCategory.PLAYERS);
+                        }
+                    }
+                    if (stage > 3 && stage < 7) {
+                        if (--freezeCooldown < 0) {
+                            this.frozenTime += 160;
+                            this.freezeCooldown = 30 + Random(12).nextInt(12) - stage;
+                        }
+                    }
+                }
+            }
+            double modifier = switch (stage) {
+                case 2, 3, 4, 7:
+                    yield -2.0;
+                case 5, 6:
+                    yield -4.0;
+                default:
+                    yield 0.0;
+            };
+            EntityAttributeInstance attributeInstance = Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.MAX_HEALTH));
+            if (!attributeInstance.hasModifier(MSVReloaded.id("health")) || Objects.requireNonNull(attributeInstance.getModifier(MSVReloaded.id("health"))).value() != modifier) {
+                attributeInstance.updateModifier(
+                        new EntityAttributeModifier(
+                                MSVReloaded.id("health"),
+                                modifier,
+                                EntityAttributeModifier.Operation.ADD_VALUE
+                        )
+                );
+            }
+            World world = this.getWorld();
+            if (Objects.equals(mutation, Mutations.HYDROPHOBIC)) {
+                Hydrophobic.INSTANCE.waterDamage(this);
+            } else if (!ModItems.UmbrellaItem.INSTANCE.check((PlayerEntity) (Object) this) && Objects.equals(mutation, Mutations.VAMPIRE) && world.isSkyVisibleAllowingSea(this.getBlockPos())) {
+                this.setFireTicks(80);
+            }
+            if (sneezePicking > 0) sneezePicking--;
+            if (itemDroppingCD > 0) itemDroppingCD--;
+            if (zombieEatingCD > 0) zombieEatingCD--;
+        }
+    }
+
+    @Inject(method = "setFireTicks", at = @At("HEAD"), cancellable = true)
+    private void noFireTicks(int fireTicks, CallbackInfo ci) {
+        if (gift.equals(Gifts.NO_FIRE_DAMAGE) && this.getFireTicks() < fireTicks) {
+            ci.cancel();
+        }
+    }
+
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     private void noFireDamage(ServerWorld world, DamageSource source, CallbackInfoReturnable<Boolean> cir) {
         if (gift.equals(Gifts.NO_FIRE_DAMAGE) && source.getType().effects().equals(DamageEffects.BURNING)) {
@@ -290,13 +286,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerAc
 
     @Inject(method = "canGlide", at = @At("HEAD"), cancellable = true)
     private void blockElytra(CallbackInfoReturnable<Boolean> cir) {
-        if (mutation.equals(Mutations.FALLEN)) cir.setReturnValue(false);
-    }
-
-    @Inject(method = "setFireTicks", at = @At("HEAD"), cancellable = true)
-    private void noFireTicks(int fireTicks, CallbackInfo ci) {
-        if (gift.equals(Gifts.NO_FIRE_DAMAGE) && this.getFireTicks() < fireTicks) {
-            ci.cancel();
+        if (mutation.equals(Mutations.FALLEN)) {
+            cir.setReturnValue(false);
         }
     }
 

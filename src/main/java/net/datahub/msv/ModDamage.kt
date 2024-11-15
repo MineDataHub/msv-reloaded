@@ -16,16 +16,18 @@ object ModDamage {
     private val RAIN: RegistryKey<DamageType> = register("rain")
     private val POTION: RegistryKey<DamageType> = register("potion")
 
+    private fun register(id: String): RegistryKey<DamageType> {
+        MSVReloaded.LOGGER.info("Registering ${id}-damage...")
+        return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id(id))
+    }
+
+
     fun registryDamage(server: MinecraftServer) {
         waterDamage = DamageSource(server.registryManager.getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(WATER))
         rainDamage = DamageSource(server.registryManager.getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(RAIN))
         potionDamage = DamageSource(server.registryManager.getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(POTION))
     }
 
-    private fun register(id: String): RegistryKey<DamageType> {
-        MSVReloaded.LOGGER.info("Registering ${id}-damage...")
-        return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id(id))
-    }
     fun getWaterDamage(): DamageSource {
         return waterDamage
     }

@@ -32,7 +32,7 @@ object ModStatusEffects {
     val CURSE_POTION: RegistryEntry<Potion> =
         Registry.registerReference(Registries.POTION, id("curse"), CursePotion)
 
-    fun register() {
+    init {
         MSVReloaded.LOGGER.info("Initializing status-effects...")
         INFECTION
         INFECTION_POTION

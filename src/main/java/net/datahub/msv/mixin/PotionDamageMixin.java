@@ -1,13 +1,9 @@
 package net.datahub.msv.mixin;
 
-import net.datahub.msv.ModDamage;
-import net.datahub.msv.constant.Mutations;
+import net.datahub.msv.mutations.Hydrophobic;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,12 +19,6 @@ public abstract class PotionDamageMixin extends ThrownItemEntity {
 
     @Inject(method = "onCollision", at = @At("HEAD"))
     private void onCollision(HitResult hitResult, CallbackInfo ci) {
-        this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(4.0), entity -> true)
-                .forEach(entity -> {
-                    if (entity instanceof PlayerEntity player
-                            && player.getMutation().equals(Mutations.HYDROPHOBIC)) {
-                        player.damage((ServerWorld) player.getWorld(), ModDamage.INSTANCE.getPotionDamage(), 1.0F);
-                    }
-                });
+        Hydrophobic.INSTANCE.potionDamage(this);
     }
 }

@@ -29,14 +29,12 @@ import java.util.*
 
 class BlackSneeze(world: World?) : Entity(BLACK_SNEEZE, world), PolymerEntity {
     companion object {
-        private var key: RegistryKey<EntityType<*>> = RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("black_sneeze"))
-
         val BLACK_SNEEZE: EntityType<BlackSneeze> = Registry.register(
             ENTITY_TYPE,
             id("black_sneeze"),
             EntityType.Builder.create(BlackSneezeEntityFactory, SpawnGroup.MISC)
                 .dimensions(1.0F, 1.0F)
-                .build(key)
+                .build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("black_sneeze")))
         )
 
         fun spawn(player: PlayerEntity) {
@@ -70,7 +68,7 @@ class BlackSneeze(world: World?) : Entity(BLACK_SNEEZE, world), PolymerEntity {
     override fun tick() {
         (world as? ServerWorld)?.spawnParticles(ParticleTypes.SQUID_INK, pos.x, pos.y, pos.z, 3, 0.25, 0.5, 0.25, 0.001)
 
-        if (age >= 200) { // 200 тиков = 10 секунд
+        if (age >= 200) {
             kill(world as ServerWorld?)
         }
 

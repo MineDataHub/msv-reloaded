@@ -96,7 +96,7 @@ class ModItems {
             return enchantment == Enchantments.MENDING
         }
 
-        fun check(player: PlayerEntity): Boolean {
+        fun check(player: LivingEntity): Boolean {
             return player.mainHandStack.components.get(UMBRELLA_STATE) == true || player.offHandStack.components.get(
                 UMBRELLA_STATE
             ) == true

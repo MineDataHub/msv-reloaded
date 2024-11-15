@@ -5,9 +5,9 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import net.datahub.msv.constant.Gifts
 import net.datahub.msv.constant.Mutations
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.WorldSavePath
+import net.minecraft.world.World
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -17,38 +17,27 @@ object MSVFiles {
 
     private lateinit var worldDir: Path
     private val msvDir: Path
-        get() = worldDir.resolve("MSV") // Создание директории при обращении
+        get() = worldDir.resolve("MSV")
     private val mutationsFile: File
-        get() = msvDir.resolve("mutations.json").toFile() // Файл создается только после инициализации worldDir
+        get() = msvDir.resolve("mutations.json").toFile()
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     val initialMutations = mapOf(
-        Mutations.HYDROPHOBIC to Mutation(listOf(Gifts.NO_FIRE_DAMAGE, "hydrophobic2"), 50),
+        Mutations.HYDROPHOBIC to Mutation(listOf(Gifts.NO_FIRE_DAMAGE, Gifts.PHOENIX), 50),
         Mutations.GHOUL to Mutation(listOf(Gifts.ZOMBIE_EATER, "ghoul2"), 50),
         Mutations.FALLEN to Mutation(listOf(Gifts.NO_FALL_DAMAGE, "fallen2"), 50),
         Mutations.VAMPIRE to Mutation(listOf(Gifts.UNDEAD, "vampire2"), 50)
     )
 
-    fun register() {
-        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server: MinecraftServer ->
-            init(server)
-            ModDamage.registryDamage(server)
-        })
-        MSVReloaded.LOGGER.info("Initializing configs...")
+    fun initFiles() {
+        worldDir = Path.of(WorldSavePath.ROOT.relativePath)
 
-    }
-
-    private fun init(server: MinecraftServer) {
-        worldDir = server.getSavePath(WorldSavePath.ROOT)
-
-        // Проверяем, существует ли папка, если нет — создаем
         if (!Files.exists(msvDir)) {
             Files.createDirectories(msvDir)
             MSVReloaded.LOGGER.info("Created MSV directory for the world!")
         }
 
-        // Проверяем, существует ли файл, если нет — создаем и записываем начальные данные
         if (!mutationsFile.exists()) {
             mutationsFile.writeText(gson.toJson(initialMutations))
             MSVReloaded.LOGGER.info("Created mutations.json for the world!")
@@ -92,7 +81,7 @@ object MSVFiles {
         }
     }
 
-    fun writeOnlyDefault() {
+    fun setDefault() {
         if (!Files.exists(msvDir)) {
             Files.createDirectories(msvDir)
         }
