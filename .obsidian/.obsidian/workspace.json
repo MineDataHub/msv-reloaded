@@ -6,7 +6,6 @@
       {
         "id": "1ffd9dd9d6b52c45",
         "type": "tabs",
-        "dimension": 67.13197969543147,
         "children": [
           {
             "id": "70ab99728c5b9d3b",
@@ -16,24 +15,17 @@
               "state": {
                 "file": "MSV Reloaded.canvas",
                 "viewState": {
-                  "x": -1306.5695615050793,
-                  "y": -1582.4691125206402,
-                  "zoom": -0.5272043580609385
+                  "x": -1434.3550850050017,
+                  "y": -2709.419811320755,
+                  "zoom": -0.5302529558269942
                 }
               },
               "icon": "lucide-layout-dashboard",
               "title": "MSV Reloaded"
             }
-          }
-        ]
-      },
-      {
-        "id": "08073aaf414cd207",
-        "type": "tabs",
-        "dimension": 32.868020304568525,
-        "children": [
+          },
           {
-            "id": "f07722d8970ec31a",
+            "id": "42c357f3d881c996",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -41,8 +33,23 @@
               "icon": "lucide-git-fork",
               "title": "Graph view"
             }
+          },
+          {
+            "id": "5e7980ed679d446c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Задачи.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Задачи"
+            }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -180,25 +187,39 @@
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
-      "command-palette:Open command palette": false
+      "command-palette:Open command palette": false,
+      "obsidian-projects:Open projects": false
     }
   },
-  "active": "70ab99728c5b9d3b",
+  "active": "5e7980ed679d446c",
   "lastOpenFiles": [
     "MSV Reloaded.canvas",
+    "Зонт.md",
+    "Мутации/Вампир.md",
+    "Мутации/Нулевой пациент.md",
+    "Падший.md",
+    "Нулевой пациент.md",
+    "Гидрофоб.md",
+    "Вампир.md",
+    "Задачи.md",
+    "Мутации/Падший.md",
+    "Мутации/Вегетативность.md",
+    "Мутации/Гуль.md",
+    "Мутации/Гидрофоб.md",
+    "Мутации",
+    "Появление.md",
+    "Обычный Хазмат.md",
+    "Заражённый моб.md",
+    "2024-11-15.md",
+    "Projects - Demo Project/5 Mistakes I Made When I Started Using Obsidian.md",
+    "Projects - Demo Project/What I Learned From Taking 15,000 Notes.md",
+    "Projects - Demo Project/Why You Should Be Taking More Notes.md",
+    "Projects - Demo Project/The Easiest Way to Start Taking Notes.md",
+    "Projects - Demo Project/The Best Notes You'll Ever Make.md",
+    "Projects - Demo Project",
     "Welcome.md",
     "Укреплённый Хазмат.md",
     "Распространение.md",
-    "Появление.md",
-    "Падший.md",
-    "Обычный Хазмат.md",
-    "Нулевой пациент.md",
-    "Зонт.md",
-    "Заражённый моб.md",
-    "Задачи.md",
-    "Гуль.md",
-    "Гидрофоб.md",
-    "Вампир.md",
     "desktop.ini"
   ]
 }
